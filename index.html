@@ -147,61 +147,18 @@
     <button class="danger" id="settingsLogoutBtn" type="button">退出登录</button>
   </div>
 </div>
-<div id="renewalCenterCard" class="profile-card renewal-card">
+<div class="profile-card">
   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
     <div>
-      <h3 style="font-size:15px;margin:0">使用期与续期 🎟️</h3>
-      <div class="meta" style="margin-top:4px">把使用状态、续期码和续期记录都放在这里。</div>
+      <h3 style="font-size:14px;margin:0">账号资料 👤</h3>
+      <div class="meta" style="margin-top:4px">查看当前账号、使用期限和 UUID。</div>
     </div>
     <span id="profileAccessBadge" class="access-badge">读取中…</span>
   </div>
-
-  <div class="renewal-summary">
-    <div class="renewal-summary-grid">
-      <div><span>工作台名称</span><b id="renewWorkspaceName">--</b></div>
-      <div><span>到期时间</span><b id="profileValidUntil">--</b></div>
-      <div class="renewal-big"><span>剩余使用时长</span><b id="profileRemaining">--</b></div>
-    </div>
-  </div>
-
-  <div style="margin-top:14px">
-    <h3 style="font-size:13px;margin:0">续期时长</h3>
-    <div class="renewal-plans">
-      <div class="renewal-plan"><b>7 天</b><span>短期续期</span></div>
-      <div class="renewal-plan"><b>30 天</b><span>月度</span></div>
-      <div class="renewal-plan"><b>90 天</b><span>季度</span></div>
-      <div class="renewal-plan"><b>365 天</b><span>年度</span></div>
-      <div class="renewal-plan"><b>永久</b><span>永久使用</span></div>
-    </div>
-    <div class="renewal-contact">
-      需要续期码时请联系开发者 <b>i-Sooong</b>。获得续期码后直接在下方输入即可，不需要连接银行卡。
-      <button id="copyRenewContactBtn" class="copy-mini" type="button" style="display:inline-block;margin-left:5px">复制联系方式</button>
-    </div>
-  </div>
-
-  <div style="margin-top:14px">
-    <label style="display:block;font-size:11px;color:var(--muted)">续期码
-      <input id="profileRenewCode" type="text" autocomplete="off" placeholder="输入续期码" style="margin-top:6px;text-transform:uppercase">
-    </label>
-    <div class="actions" style="margin-top:8px">
-      <button id="profileRenewBtn" class="primary" type="button">立即续期</button>
-    </div>
-    <div id="profileRenewHint" class="authhint"></div>
-  </div>
-
-  <div style="margin-top:16px">
-    <h3 style="font-size:13px;margin:0">续期记录</h3>
-    <div id="profileRenewHistory" style="margin-top:8px"><div class="empty">正在读取续期记录…</div></div>
-  </div>
-</div>
-
-<div class="profile-card">
-  <div>
-    <h3 style="font-size:14px;margin:0">账号资料 👤</h3>
-    <div class="meta" style="margin-top:4px">登录信息和账号 UUID。</div>
-  </div>
   <div class="profile-grid">
     <div class="profile-item"><span>登录邮箱</span><b id="profileEmail">--</b></div>
+    <div class="profile-item"><span>剩余使用</span><b id="profileRemaining">--</b></div>
+    <div class="profile-item"><span>到期时间</span><b id="profileValidUntil">--</b></div>
     <div class="profile-item"><span>注册时间</span><b id="profileCreatedAt">--</b></div>
     <div class="profile-item" style="grid-column:1/-1"><span>UUID</span><b id="profileUserId">--</b><button id="copyUserIdBtn" class="copy-mini" type="button">复制 UUID</button></div>
   </div>
@@ -455,7 +412,56 @@
     </div>
   </div>
 </div></div>
-<div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div>
+<div id="redeemModalBg" class="modalbg"><div class="modal renewal-modal" style="width:min(720px,100%)">
+  <div class="modalhead">
+    <div>
+      <h2>使用期与续期 🎟️</h2>
+      <div class="meta">使用状态、续期时长、兑换和记录都放在这里。</div>
+    </div>
+    <button class="ghost" id="closeRedeemModal" type="button">×</button>
+  </div>
+
+  <div class="renewal-summary" style="margin-top:14px">
+    <div class="renewal-summary-grid">
+      <div><span>工作台名称</span><b id="renewModalWorkspaceName">--</b></div>
+      <div><span>到期时间</span><b id="renewModalValidUntil">--</b></div>
+      <div class="renewal-big"><span>剩余使用时长</span><b id="renewModalRemaining">--</b></div>
+    </div>
+    <div style="margin-top:10px"><span id="renewModalAccessBadge" class="access-badge">读取中…</span></div>
+  </div>
+
+  <div style="margin-top:16px">
+    <h3 style="font-size:13px;margin:0">续期时长</h3>
+    <div class="renewal-plans">
+      <div class="renewal-plan"><b>7 天</b><span>短期续期</span></div>
+      <div class="renewal-plan"><b>30 天</b><span>月度</span></div>
+      <div class="renewal-plan"><b>90 天</b><span>季度</span></div>
+      <div class="renewal-plan"><b>365 天</b><span>年度</span></div>
+      <div class="renewal-plan"><b>永久</b><span>永久使用</span></div>
+    </div>
+    <div class="renewal-contact">
+      需要续期码时请联系开发者 <b>i-Sooong</b>。拿到续期码后直接在这里兑换，不需要连接银行卡。
+      <button id="copyRenewContactBtn" class="copy-mini" type="button" style="display:inline-block;margin-left:5px">复制联系方式</button>
+    </div>
+  </div>
+
+  <div style="margin-top:16px">
+    <h3 style="font-size:13px;margin:0 0 8px">输入续期码</h3>
+    <label style="display:block;font-size:11px;color:var(--muted)">续期码
+      <input id="redeemCode" type="text" autocomplete="off" placeholder="输入 7天 / 30天 / 90天 / 365天 / 永久续期码" style="margin-top:6px;text-transform:uppercase">
+    </label>
+    <div id="redeemModalHint" class="authhint"></div>
+    <div class="actions" style="justify-content:flex-end">
+      <button class="ghost" id="cancelRedeemModal" type="button">取消</button>
+      <button class="primary" id="redeemModalBtn" type="button">立即续期</button>
+    </div>
+  </div>
+
+  <div style="margin-top:18px">
+    <h3 style="font-size:13px;margin:0">续期记录</h3>
+    <div id="renewalModalHistory" style="margin-top:8px"><div class="empty">正在读取续期记录…</div></div>
+  </div>
+</div></div>
 <div id="accessExpiryModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>使用期快到啦 🎟️</h2><div class="meta" id="accessExpiryModalMeta">还有 2 天到期。</div></div><button class="ghost" id="closeAccessExpiryModal" type="button">×</button></div><p class="meta" style="font-size:12px;line-height:1.8;margin:14px 0">到期后不会删除任何数据，顾客也仍然可以查看你的顾客端；但美工端会进入只读模式，不能新增、修改或删除内容。</p><div class="actions" style="justify-content:flex-end"><button class="ghost" id="laterAccessExpiryBtn" type="button">稍后再说</button><button class="primary" id="renewFromExpiryBtn" type="button">现在续期</button></div></div></div>
 <div id="authGate" class="authbg"><div class="authcard"><div class="portal-switch"><span class="active">🎨 美工端</span><a href="./customer.html">👤 顾客端</a></div><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div class="meta" style="margin-top:6px;text-align:center">为避免频繁发送，密码重置邮件每小时最多发送 2 次，请确认邮箱填写正确后再点击。</div><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div><div id="maintenanceView" class="hidden"><h2>系统暂时维护中 🔒</h2><p>当前工作台已临时锁定，数据不会被删除。维护结束后重新打开即可继续使用。</p><div class="actions"><button id="maintenanceLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div class="authhint">如有需要，请联系开发者 i-Sooong。</div></div></div></div>
 <script type="module">
@@ -530,7 +536,7 @@ function applyTitle(){
   document.title=appName;
   if($("appNameInput"))$("appNameInput").value=appName;
   if($("notificationNameInput"))$("notificationNameInput").value=notificationName;
-  if($("renewWorkspaceName"))$("renewWorkspaceName").textContent=appName;
+  if($("renewModalWorkspaceName"))$("renewModalWorkspaceName").textContent=appName;
   if($("appleAppTitle"))$("appleAppTitle").setAttribute("content",appName);
 
   const customIcon=publicAppIconUrl();
@@ -1384,7 +1390,7 @@ $("installPwaBtn").onclick=installPWA;
 $("enableNotificationsBtn").onclick=enableSystemNotifications;
 $("testNotificationBtn").onclick=testSystemNotification;
 $("settingsAvatarBtn").onclick=()=>$("avatarInput").click();
-$("settingsRedeemBtn").onclick=()=>$("renewalCenterCard")?.scrollIntoView({behavior:"smooth",block:"start"});
+$("settingsRedeemBtn").onclick=openRedeemModal;
 $("openChangePasswordBtn").onclick=openChangePasswordModal;
 $("settingsResetPasswordBtn").onclick=sendSettingsPasswordReset;
 $("closeChangePasswordModal").onclick=closeChangePasswordModal;
@@ -1401,8 +1407,6 @@ $("settingsResetAvatarBtn").onclick=()=>{
   persist();
 };
 $("settingsLogoutBtn").onclick=()=>supabase.auth.signOut();
-$("profileRenewBtn").onclick=redeemFromProfile;
-$("profileRenewCode").addEventListener("keydown",e=>{if(e.key==="Enter")redeemFromProfile()});
 $("copyRenewContactBtn").onclick=async()=>{
   const contact="i-Sooong";
   try{
@@ -2198,10 +2202,13 @@ async function sendSettingsPasswordReset(){
   alert("重置邮件已发送到 "+user.email);
 }
 
-function openRedeemModal(){
+async function openRedeemModal(){
   $("redeemCode").value="";
   $("redeemModalHint").textContent="";
+  if($("renewModalWorkspaceName"))$("renewModalWorkspaceName").textContent=S.title||"莓桃工作台";
   $("redeemModalBg").classList.add("show");
+  await refreshAccountProfile();
+  await loadProfileRenewalHistory();
   setTimeout(()=>$("redeemCode").focus(),50);
 }
 function closeRedeemModal(){
@@ -2346,7 +2353,7 @@ async function loadArtistPortalProfile(){
   }
 }
 async function loadProfileRenewalHistory(){
-  const host=$("profileRenewHistory");
+  const host=$("renewalModalHistory");
   if(!host||!user)return;
   host.innerHTML='<div class="empty">正在读取续期记录…</div>';
   const {data,error}=await supabase.rpc("get_my_renewal_history");
@@ -2367,49 +2374,31 @@ async function loadProfileRenewalHistory(){
     return '<div class="renewal-entry"><div><b>'+esc(grant)+'</b><small>'+esc(when)+'</small></div><div style="text-align:right"><span class="tag">'+esc(until)+'</span></div></div>';
   }).join("");
 }
-async function redeemFromProfile(){
-  const code=$("profileRenewCode")?.value.trim().toUpperCase();
-  if(!code){$("profileRenewHint").textContent="请输入续期码。";return}
-  $("profileRenewHint").textContent="正在兑换…";
-  const {data,error}=await supabase.rpc("redeem_renewal_code",{p_code:code});
-  if(error){$("profileRenewHint").textContent="兑换失败："+error.message;return}
-  if(!data?.success){
-    $("profileRenewHint").textContent=data?.reason==="ALREADY_PERMANENT"
-      ?"这个账号已经是永久使用权限，不需要继续兑换。"
-      :"续期码无效、已经使用或已经过期。";
-    return;
-  }
-  if(data.access_type==="permanent"){
-    $("profileRenewHint").textContent="🎀 续期成功，当前账号已获得永久使用权限。";
-  }else{
-    const date=data.valid_until?(" 新到期时间："+formatAccessDate(data.valid_until)):"";
-    $("profileRenewHint").textContent="🎟️ 续期成功，已增加 "+(data.added_days||"")+" 天。"+date;
-  }
-  $("profileRenewCode").value="";
-  await refreshAccountProfile();
-  await loadProfileRenewalHistory();
-  const {data:{session}}=await supabase.auth.getSession();
-  await applySession(session);
-}
-
 function renderAccountProfile(status=currentAccessStatus){
   if(!user)return;
   currentAccessStatus=status||{};
   if($("profileEmail"))$("profileEmail").textContent=user.email||"--";
   if($("profileUserId"))$("profileUserId").textContent=user.id||"--";
   if($("profileCreatedAt"))$("profileCreatedAt").textContent=user.created_at?formatAccessDate(user.created_at):"--";
-  if($("renewWorkspaceName"))$("renewWorkspaceName").textContent=S.title||"莓桃工作台";
+  if($("renewModalWorkspaceName"))$("renewModalWorkspaceName").textContent=S.title||"莓桃工作台";
 
   const remaining=remainingAccessText(currentAccessStatus);
   if($("profileRemaining"))$("profileRemaining").textContent=remaining;
+  if($("renewModalRemaining"))$("renewModalRemaining").textContent=remaining;
   if($("sidebarAccessRemaining"))$("sidebarAccessRemaining").textContent="使用期限："+remaining;
 
   const permanent=currentAccessStatus?.access_type==="permanent";
   const active=!!currentAccessStatus?.has_access;
   if($("profileValidUntil"))$("profileValidUntil").textContent=permanent?"永久有效":currentAccessStatus?.valid_until?formatAccessDate(currentAccessStatus.valid_until):"--";
+  if($("renewModalValidUntil"))$("renewModalValidUntil").textContent=permanent?"永久有效":currentAccessStatus?.valid_until?formatAccessDate(currentAccessStatus.valid_until):"--";
 
   if($("profileAccessBadge")){
     const badge=$("profileAccessBadge");
+    badge.className="access-badge "+(permanent?"permanent":active?"":"expired");
+    badge.textContent=permanent?"永久权限":active?"使用中":"已到期";
+  }
+  if($("renewModalAccessBadge")){
+    const badge=$("renewModalAccessBadge");
     badge.className="access-badge "+(permanent?"permanent":active?"":"expired");
     badge.textContent=permanent?"永久权限":active?"使用中":"已到期";
   }
@@ -2431,7 +2420,7 @@ function setAccessReadOnly(on,status={}){
 
   const allowedIds=new Set([
     "search","logoutBtn","settingsLogoutBtn","redeemOpenBtn","settingsRedeemBtn",
-    "profileRenewCode","profileRenewBtn","copyRenewContactBtn",
+    "copyRenewContactBtn",
     "redeemCode","redeemModalBtn","cancelRedeemModal","closeRedeemModal",
     "readOnlyRenewBtn","closeAccessExpiryModal","laterAccessExpiryBtn","renewFromExpiryBtn",
     "exportJson","exportCsv","copyUserIdBtn","copyDeveloperContactBtn",
@@ -2479,7 +2468,7 @@ function accessReadOnlyControlAllowed(el){
   if(!el)return true;
   const allowedIds=new Set([
     "search","logoutBtn","settingsLogoutBtn","redeemOpenBtn","settingsRedeemBtn",
-    "profileRenewCode","profileRenewBtn","copyRenewContactBtn",
+    "copyRenewContactBtn",
     "redeemCode","redeemModalBtn","cancelRedeemModal","closeRedeemModal",
     "readOnlyRenewBtn","closeAccessExpiryModal","laterAccessExpiryBtn","renewFromExpiryBtn",
     "exportJson","exportCsv","copyUserIdBtn","copyDeveloperContactBtn",
