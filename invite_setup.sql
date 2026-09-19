@@ -64,7 +64,7 @@ $$;
 drop trigger if exists trg_require_invite_on_signup on auth.users;
 
 create trigger trg_require_invite_on_signup
-before insert on auth.users
+after insert on auth.users
 for each row
 execute function public.consume_invite_on_signup();
 
