@@ -392,8 +392,17 @@
       <select id="artistCustomerLinkSelect">
         <option value="">暂不关联</option>
       </select>
+      <span class="meta" style="display:block;margin-top:5px">如果顾客已经先用你的美工顾客码进入，就在这里选她；如果顾客还没注册，保存档案后会自动生成她自己的专属码。</span>
     </label>
     <label style="grid-column:1/-1">备注<textarea id="artistCustomerNoteInput" rows="3" maxlength="500" placeholder="只在美工端查看的备注"></textarea></label>
+  </div>
+  <div class="profile-item" id="artistCustomerProfileCodeBox" style="margin-top:12px">
+    <span>顾客专属码 🎟️</span>
+    <b id="artistCustomerProfileCodeValue" style="display:block;margin-top:5px">保存顾客后自动生成</b>
+    <div id="artistCustomerProfileCodeHelp" class="meta" style="margin-top:5px">先建立档案时，把这个专属码发给对应顾客。她注册或登录顾客端输入后，会自动绑定到你和这份顾客档案。</div>
+    <div class="actions" style="margin-top:8px">
+      <button id="copyArtistCustomerProfileCodeBtn" class="ghost" type="button">复制专属码</button>
+    </div>
   </div>
   <div class="profile-item" id="artistCustomerBalanceBox" style="margin-top:12px">
     <span>当前余额</span>
@@ -1534,6 +1543,7 @@ let boundCustomerAccounts=[];
 let editingArtistCustomerId=null;
 let editingArtistCustomerAvatar="";
 let artistCustomerAvatarReady=true;
+let currentArtistCustomerProfileCode="";
 
 function artistCustomerMoney(v){
   return "¥"+Number(v||0).toLocaleString("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1787,6 +1797,43 @@ async function generateOrderShare(orderId){
   alert(msg+"\n这笔订单没有关联顾客档案，所以使用这笔订单自己的专属免登录链接。");
 }
 
+async function loadArtistCustomerProfileCode(customer){
+  const value=$("artistCustomerProfileCodeValue");
+  const help=$("artistCustomerProfileCodeHelp");
+  const btn=$("copyArtistCustomerProfileCodeBtn");
+  currentArtistCustomerProfileCode="";
+  if(!value||!help||!btn)return;
+
+  if(!customer?.id){
+    value.textContent="保存顾客后自动生成";
+    help.textContent="如果顾客还没注册，先保存这份档案，系统会生成只属于她的专属码。";
+    btn.disabled=true;
+    return;
+  }
+
+  if(customer.linked_customer_user_id){
+    value.textContent="已绑定顾客端账号 ✓";
+    help.textContent="这份档案已经和顾客账号绑定，不需要再使用专属码。";
+    btn.disabled=true;
+    return;
+  }
+
+  value.textContent="正在生成…";
+  btn.disabled=true;
+  const {data,error}=await supabase.rpc("ensure_artist_customer_profile_code",{p_artist_customer_id:customer.id});
+  if(error){
+    console.warn("customer profile code:",error.message);
+    value.textContent="专属码功能还没有完成数据库升级";
+    help.textContent="请先运行最新的「顾客专属码」SQL。";
+    return;
+  }
+
+  currentArtistCustomerProfileCode=String(data||"").trim().toUpperCase();
+  value.textContent=currentArtistCustomerProfileCode||"生成失败";
+  help.textContent="把这个码发给这位顾客。她注册或登录顾客端输入后，会直接绑定到你的美工账号和这份档案。";
+  btn.disabled=!currentArtistCustomerProfileCode;
+}
+
 async function openArtistCustomerModal(customerId=null){
   if(!user)return;
   editingArtistCustomerId=customerId||null;
@@ -1816,6 +1863,7 @@ async function openArtistCustomerModal(customerId=null){
   $("artistCustomerModalHint").textContent="";
   $("artistCustomerBalanceHint").textContent="";
   await renderArtistCustomerLedger(customer?.id||null);
+  await loadArtistCustomerProfileCode(customer);
   if(customer){
     const share=await ensureCustomerPersistentShare(customer.id);
     $("artistCustomerShareUrl").textContent=share?.token?publicShareUrl(share.token):(share?.error||"暂时无法读取");
@@ -1844,21 +1892,38 @@ async function saveArtistCustomer(){
   if(artistCustomerAvatarReady)payload.avatar_data=editingArtistCustomerAvatar||"";
   let result;
   if(editingArtistCustomerId){
-    result=await supabase.from("artist_customers").update(payload).eq("id",editingArtistCustomerId).eq("artist_user_id",user.id).select("id").single();
+    result=await supabase.from("artist_customers").update(payload).eq("id",editingArtistCustomerId).eq("artist_user_id",user.id).select("id,linked_customer_user_id").single();
   }else{
-    result=await supabase.from("artist_customers").insert(payload).select("id").single();
+    result=await supabase.from("artist_customers").insert(payload).select("id,linked_customer_user_id").single();
   }
   if(result.error){
     console.error(result.error);
     $("artistCustomerModalHint").textContent=(result.error.code==="23505")?"这个顾客端账号已经关联到另一个顾客档案。":"保存失败："+result.error.message;
     return;
   }
+  const wasNew=!editingArtistCustomerId;
   $("artistCustomerModalHint").textContent="已保存 ✓";
-  await loadArtistCustomers();
-  if(!editingArtistCustomerId){
+  if(wasNew){
     editingArtistCustomerId=result.data.id;
     await ensureCustomerPersistentShare(editingArtistCustomerId);
   }
+  await loadArtistCustomers();
+  const savedCustomer=artistCustomers.find(x=>x.id===editingArtistCustomerId) || {
+    id:editingArtistCustomerId,
+    linked_customer_user_id:result.data.linked_customer_user_id||linked
+  };
+  await loadArtistCustomerProfileCode(savedCustomer);
+
+  if(wasNew && !savedCustomer.linked_customer_user_id){
+    $("artistCustomerModalHint").textContent="顾客档案已建立，专属码也生成好了。复制发给顾客即可直接绑定 ✓";
+    $("artistCustomerBudgetTools").classList.remove("hidden");
+    $("artistCustomerBalanceBox").classList.remove("hidden");
+    $("artistCustomerShareTools").classList.remove("hidden");
+    const share=await ensureCustomerPersistentShare(editingArtistCustomerId);
+    $("artistCustomerShareUrl").textContent=share?.token?publicShareUrl(share.token):(share?.error||"暂时无法读取");
+    return;
+  }
+
   setTimeout(closeArtistCustomerModal,450);
 }
 function parseMoneyExpression(value){
@@ -2212,6 +2277,18 @@ $("closeArtistCustomerModalBtn").onclick=closeArtistCustomerModal;
 $("cancelArtistCustomerModalBtn").onclick=closeArtistCustomerModal;
 $("artistCustomerModalBg").addEventListener("click",e=>{if(e.target===$("artistCustomerModalBg"))closeArtistCustomerModal()});
 $("saveArtistCustomerBtn").onclick=saveArtistCustomer;
+$("copyArtistCustomerProfileCodeBtn").onclick=async()=>{
+  const code=currentArtistCustomerProfileCode;
+  if(!code)return;
+  const btn=$("copyArtistCustomerProfileCodeBtn"),old=btn.textContent;
+  try{
+    await navigator.clipboard.writeText(code);
+    btn.textContent="已复制 ✓";
+    setTimeout(()=>btn.textContent=old,900);
+  }catch(_){
+    prompt("复制顾客专属码：",code);
+  }
+};
 $("artistCustomerNameInput").addEventListener("input",()=>{if(!editingArtistCustomerAvatar)renderCustomerAvatarPreview()});
 $("artistCustomerAvatarBtn").onclick=()=>$("artistCustomerAvatarInput").click();
 $("artistCustomerAvatarInput").onchange=async e=>{
