@@ -43,7 +43,7 @@ to authenticated
 using (
   (
     auth.uid() = artist_user_id
-    and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+    and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
   )
   or auth.uid() = linked_customer_user_id
 );
@@ -56,7 +56,7 @@ for insert
 to authenticated
 with check (
   auth.uid() = artist_user_id
-  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+  and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
 );
 
 drop policy if exists "artists_update_customers"
@@ -67,11 +67,11 @@ for update
 to authenticated
 using (
   auth.uid() = artist_user_id
-  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+  and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
 )
 with check (
   auth.uid() = artist_user_id
-  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+  and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
 );
 
 drop policy if exists "artists_delete_customers"
@@ -82,7 +82,7 @@ for delete
 to authenticated
 using (
   auth.uid() = artist_user_id
-  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+  and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
 );
 
 
@@ -112,7 +112,7 @@ to authenticated
 using (
   (
     auth.uid() = artist_user_id
-    and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+    and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
   )
   or exists (
     select 1
@@ -130,7 +130,7 @@ for insert
 to authenticated
 with check (
   auth.uid() = artist_user_id
-  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+  and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
   and exists (
     select 1
     from public.artist_customers c
@@ -155,7 +155,7 @@ as $$
     '顾客 · ' || right(b.customer_user_id::text, 4) as customer_label
   from public.customer_artist_bindings b
   where b.artist_user_id = auth.uid()
-    and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+    and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
   order by b.created_at;
 $$;
 
@@ -171,7 +171,7 @@ security definer
 set search_path = public, auth
 as $$
 begin
-  if encode(digest(new.artist_user_id::text, 'sha256'), 'hex') <> 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8' then
+  if encode(extensions.digest(new.artist_user_id::text, 'sha256'), 'hex') <> 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8' then
     return new;
   end if;
 
@@ -211,7 +211,7 @@ select
   '顾客 · ' || right(b.customer_user_id::text, 4),
   b.customer_user_id
 from public.customer_artist_bindings b
-where encode(digest(b.artist_user_id::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+where encode(extensions.digest(b.artist_user_id::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
 on conflict do nothing;
 
 commit;
