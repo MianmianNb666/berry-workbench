@@ -299,6 +299,26 @@ const SUPABASE_URL="https://cwzeknrjetwbczqgmdit.supabase.co";
 const SUPABASE_KEY="sb_publishable_kI3ZY_VCFSHIn1sVm1xJ1Q_b9zZAGV2";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const $=id=>document.getElementById(id);
+let capacityHeartbeatTimer=null;
+const capacityPresenceSessionId=(crypto.randomUUID?crypto.randomUUID():"customer-"+Date.now()+"-"+Math.random().toString(36).slice(2));
+function stopCapacityHeartbeat(){
+  if(capacityHeartbeatTimer){clearInterval(capacityHeartbeatTimer);capacityHeartbeatTimer=null}
+}
+function startCapacityHeartbeat(){
+  if(!user)return;
+  const ping=async()=>{
+    try{
+      await supabase.rpc("report_client_presence",{
+        p_session_id:capacityPresenceSessionId,
+        p_client_type:"customer",
+        p_realtime_channels:1
+      });
+    }catch(_){}
+  };
+  stopCapacityHeartbeat();
+  ping();
+  capacityHeartbeatTimer=setInterval(ping,30000);
+}
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const normCode=v=>String(v||"").trim().toUpperCase();
 let user=null;
@@ -1137,6 +1157,7 @@ async function applySession(session){
     }
 
     if(accessError||!(accessRows||[]).length){
+      stopCapacityHeartbeat();
       $("customerNav").classList.add("hidden");
       $("customerAccountBar").classList.add("hidden");
       $("dashboard").classList.add("hidden");
@@ -1158,6 +1179,7 @@ async function applySession(session){
     await loadMyCustomerChatProfile();
     await loadBindings();
     await loadCustomerChatConversations();
+    startCapacityHeartbeat();
 
     if(artistCode){
       $("customerNav").classList.add("hidden");
@@ -1170,6 +1192,7 @@ async function applySession(session){
       setCustomerView(preferred);
     }
   }else{
+    stopCapacityHeartbeat();
     if(customerChatChannel){supabase.removeChannel(customerChatChannel);customerChatChannel=null}
     customerChatConversations=[];activeCustomerChat=null;customerChatAvatar="";customerDisplayName="";
     customerChatLoaded=false;customerBindingsLoaded=false;
