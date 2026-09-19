@@ -197,19 +197,25 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
         <div class="meta">左边是当前可以继续使用的，右边是已经停用、过期或使用次数已满的。新生成的可用邀请码可以直接复制。</div>
         <div class="invite-bulkbar">
           <span class="count" id="inviteSelectedCount">已选 0 个</span>
-          <button class="ghost" id="selectAllInvitesBtn" type="button">☑️ 全选当前列表</button>
+          <button class="ghost" id="selectAllInvitesBtn" type="button">☑️ 全部全选</button>
           <button class="ghost" id="clearInviteSelectionBtn" type="button">取消选择</button>
           <button class="danger" id="bulkDisableInvitesBtn" type="button" disabled>⛔ 停用选中</button>
           <button class="danger" id="bulkDeleteInvitesBtn" type="button" disabled>🗑 删除选中</button>
         </div>
         <div class="invite-columns">
           <div class="invite-box">
-            <h3>✅ 可以使用</h3>
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap">
+              <h3>✅ 可以使用</h3>
+              <button class="ghost" id="selectActiveInvitesBtn" type="button" style="min-height:28px;padding:0 8px;font-size:9px">☑️ 左边全选</button>
+            </div>
             <div class="meta">当前仍有效的邀请码</div>
             <div id="inviteActiveList"><div class="empty">正在读取…</div></div>
           </div>
           <div class="invite-box">
-            <h3>⛔ 已停用</h3>
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap">
+              <h3>⛔ 已停用</h3>
+              <button class="ghost" id="selectInactiveInvitesBtn" type="button" style="min-height:28px;padding:0 8px;font-size:9px">☑️ 右边全选</button>
+            </div>
             <div class="meta">已停用 / 已过期 / 次数已满</div>
             <div id="inviteInactiveList"><div class="empty">正在读取…</div></div>
           </div>
@@ -827,6 +833,24 @@ $("copyGeneratedBtn").onclick=async()=>{
 };
 $("selectAllInvitesBtn").onclick=()=>{
   inviteRowsCache.forEach(i=>selectedInviteIds.add(String(i.id)));
+  syncInviteChecks();
+};
+$("selectActiveInvitesBtn").onclick=()=>{
+  inviteRowsCache.filter(i=>{
+    const now=new Date();
+    const notExpired=!i.expires_at||new Date(i.expires_at)>now;
+    const hasUses=i.max_uses==null||Number(i.used_count||0)<Number(i.max_uses);
+    return !!i.is_active&&notExpired&&hasUses;
+  }).forEach(i=>selectedInviteIds.add(String(i.id)));
+  syncInviteChecks();
+};
+$("selectInactiveInvitesBtn").onclick=()=>{
+  inviteRowsCache.filter(i=>{
+    const now=new Date();
+    const notExpired=!i.expires_at||new Date(i.expires_at)>now;
+    const hasUses=i.max_uses==null||Number(i.used_count||0)<Number(i.max_uses);
+    return !(!!i.is_active&&notExpired&&hasUses);
+  }).forEach(i=>selectedInviteIds.add(String(i.id)));
   syncInviteChecks();
 };
 $("clearInviteSelectionBtn").onclick=()=>{
