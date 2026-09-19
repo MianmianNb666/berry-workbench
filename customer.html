@@ -63,15 +63,15 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
         <div>
           <div class="meta">当前登录账号</div>
           <b id="customerAccountEmail" style="font-size:12px"></b>
-          <div class="meta" style="margin-top:7px">美工由顾客码绑定，一个顾客账号只能对应一个美工。</div>
-          <button class="hidden" id="openBindModalBtn" type="button" aria-hidden="true" tabindex="-1">使用顾客码</button>
+          <div class="meta" style="margin-top:7px">每位美工都有自己的顾客码。拿到谁的码，就能解锁谁的顾客端内容。</div>
+          <div style="margin-top:8px"><button class="ghost" id="openBindModalBtn" type="button">＋ 添加美工</button></div>
         </div>
         <button class="danger" id="logoutBtn2" type="button">退出登录</button>
       </div>
     </section>
     <section class="card" style="margin-top:14px">
       <h2>我的美工</h2>
-      <div class="meta">这里固定显示顾客码对应的美工、余额和排单入口。</div>
+      <div class="meta">可以绑定多个美工；每个美工都必须用她自己的顾客码单独解锁。</div>
       <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
     </section>
   </section>
@@ -150,7 +150,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
   <div class="maintenance-card">
     <div class="berry">🎟️</div>
     <h2>需要顾客码</h2>
-    <p>这个顾客账号还没有绑定美工。请输入美工发给你的专属顾客码。绑定成功后，这个账号只会查看这一位美工。</p>
+    <p>这个顾客账号还没有解锁任何美工。先输入任意一位美工发给你的专属顾客码；以后还可以继续添加其他美工。</p>
     <input id="accessGateCode" autocomplete="off" autocapitalize="characters" placeholder="GC-XXXXXXXXXXXX" style="margin-top:10px">
     <div id="accessGateHint" class="authhint"></div>
     <div class="actions" style="margin-top:10px">
@@ -176,11 +176,11 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
     <div class="portal-switch"><a href="./index.html">🎨 美工端</a><span class="active">👤 顾客端</span></div>
     <div id="loginView">
       <h2>登录顾客端</h2>
-      <p>顾客端采用美工专属顾客码。第一次注册必须填写美工发给你的顾客码，注册后账号只会查看这一位美工。</p>
+      <p>顾客端采用美工专属顾客码。第一次注册至少需要一位美工的顾客码；以后拿到其他美工码，还可以继续添加更多美工。</p>
       <form id="authForm">
         <label>邮箱<input id="email" type="email" autocomplete="username" placeholder="name@example.com"></label>
         <label>密码<input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"></label>
-        <label>顾客码 <span style="font-size:10px;color:var(--muted)">第一次注册必填；已有账号可留空</span><input id="customerAccessCode" autocomplete="off" autocapitalize="characters" placeholder="GC-XXXXXXXXXXXX"></label>
+        <label>顾客码 <span style="font-size:10px;color:var(--muted)">第一次注册必填；已有账号也可填新美工码</span><input id="customerAccessCode" autocomplete="off" autocapitalize="characters" placeholder="GC-XXXXXXXXXXXX"></label>
         <div class="authactions">
           <button class="primary" type="submit">登录</button>
           <button class="ghost" id="signupBtn" type="button">第一次使用 · 注册</button>
@@ -320,33 +320,34 @@ async function loadArtistPublic(code){
   $("artistPageName").textContent="正在读取美工…";
   $("artistPageCode").textContent=code;
 
-  const {data:access,error:accessError}=await supabase.from("customer_portal_access")
-    .select("artist_user_id")
-    .eq("customer_user_id",user.id)
-    .maybeSingle();
-
-  if(accessError||!access){
-    $("artistPageName").textContent="需要有效顾客码";
-    $("scheduleList").innerHTML='<div class="empty">当前账号还没有顾客端访问权限。</div>';
-    return;
-  }
-
-  const {data,error}=await supabase.from("artist_profiles")
+  const {data:artist,error}=await supabase.from("artist_profiles")
     .select("artist_user_id,artist_code,public_name,privacy_mode")
     .eq("artist_code",code)
     .maybeSingle();
 
-  if(error||!data||data.artist_user_id!==access.artist_user_id){
-    $("artistPageName").textContent="无法查看这个美工";
-    $("scheduleList").innerHTML='<div class="empty">你的顾客码只对应当前绑定的美工。</div>';
+  if(error||!artist){
+    $("artistPageName").textContent="没有找到这个美工";
+    $("scheduleList").innerHTML='<div class="empty">请检查美工编号是否正确。</div>';
     return;
   }
 
-  $("artistPageName").textContent=data.public_name||"莓桃美工";
-  $("artistPageCode").textContent="美工编号："+data.artist_code;
+  const {data:access,error:accessError}=await supabase.from("customer_portal_access")
+    .select("artist_user_id")
+    .eq("customer_user_id",user.id)
+    .eq("artist_user_id",artist.artist_user_id)
+    .maybeSingle();
+
+  if(accessError||!access){
+    $("artistPageName").textContent="需要这位美工的顾客码";
+    $("scheduleList").innerHTML='<div class="empty">你的账号还没有解锁这位美工。请先在“我的”里输入她的专属顾客码。</div>';
+    return;
+  }
+
+  $("artistPageName").textContent=artist.public_name||"莓桃美工";
+  $("artistPageCode").textContent="美工编号："+artist.artist_code;
   const badge=$("artistPrivacyBadge");
-  badge.className="badge "+(data.privacy_mode==="private"?"private":"");
-  badge.textContent=data.privacy_mode==="private"?"🔒 隐私排单":"🌷 公开排单";
+  badge.className="badge "+(artist.privacy_mode==="private"?"private":"");
+  badge.textContent=artist.privacy_mode==="private"?"🔒 隐私排单":"🌷 公开排单";
   $("scheduleList").innerHTML='<div class="empty">暂无可查看的排单。</div>';
 }
 
@@ -354,67 +355,79 @@ async function loadBindings(){
   if(!user)return;
   $("artistList").innerHTML='<div class="empty">正在读取…</div>';
 
-  const {data:access,error:accessError}=await supabase.from("customer_portal_access")
+  const {data:accessRows,error:accessError}=await supabase.from("customer_portal_access")
     .select("artist_user_id,granted_at")
     .eq("customer_user_id",user.id)
-    .maybeSingle();
+    .order("granted_at",{ascending:true});
 
   if(accessError){
     $("artistList").innerHTML='<div class="empty">顾客端访问权限读取失败，请确认已经运行最新 SQL。</div>';
     return;
   }
-  if(!access){
-    $("artistList").innerHTML='<div class="empty">当前账号还没有绑定美工，需要先使用美工提供的顾客码。</div>';
+
+  const artistIds=[...new Set((accessRows||[]).map(x=>x.artist_user_id))];
+  if(!artistIds.length){
+    $("artistList").innerHTML='<div class="empty">还没有解锁美工。点“＋ 添加美工”，输入对方给你的顾客码就可以啦 🍓</div>';
     return;
   }
 
-  const artistId=access.artist_user_id;
-  const [{data:artist,error:artistError},{data:record,error:recordError}]=await Promise.all([
+  const [{data:artists,error:artistError},{data:records,error:recordError}]=await Promise.all([
     supabase.from("artist_profiles")
       .select("artist_user_id,artist_code,public_name,privacy_mode")
-      .eq("artist_user_id",artistId)
-      .maybeSingle(),
+      .in("artist_user_id",artistIds),
     supabase.from("artist_customers")
       .select("id,artist_user_id,display_name,linked_customer_user_id")
       .eq("linked_customer_user_id",user.id)
-      .eq("artist_user_id",artistId)
-      .maybeSingle()
+      .in("artist_user_id",artistIds)
   ]);
 
-  if(artistError||!artist){
+  if(artistError){
     $("artistList").innerHTML='<div class="empty">读取美工资料失败，请稍后刷新。</div>';
     return;
   }
 
+  const artistMap=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
+  const recordByArtist=new Map();
   budgetByCustomerRecord.clear();
-  let balance=0;
-  let group=null;
 
-  if(!recordError&&record){
-    group={record,balance:0,entries:[]};
+  (records||[]).forEach(record=>{
+    const group={record,balance:0,entries:[]};
+    recordByArtist.set(record.artist_user_id,group);
     budgetByCustomerRecord.set(record.id,group);
+  });
+
+  const recordIds=(records||[]).map(r=>r.id);
+  if(!recordError&&recordIds.length){
     const {data:entries,error:eerr}=await supabase.from("artist_customer_ledger")
       .select("id,artist_customer_id,artist_user_id,amount,note,created_at")
-      .eq("artist_customer_id",record.id)
+      .in("artist_customer_id",recordIds)
       .order("created_at",{ascending:false});
     if(!eerr){
       (entries||[]).forEach(entry=>{
-        const amount=Number(entry.amount||0);
-        group.balance+=amount;
+        const group=budgetByCustomerRecord.get(entry.artist_customer_id);
+        if(!group)return;
+        group.balance+=Number(entry.amount||0);
         group.entries.push(entry);
       });
-      balance=group.balance;
     }
   }
 
-  const detailButton=group
-    ?'<button class="ghost" data-budget-current="1">余额明细</button>'
-    :'<button class="ghost" type="button" disabled style="opacity:.55">暂无余额档案</button>';
+  $("artistList").innerHTML=artistIds.map(id=>{
+    const artist=artistMap.get(id);
+    if(!artist)return "";
+    const group=recordByArtist.get(id);
+    const balance=group?.balance||0;
+    const detailButton=group
+      ?'<button class="ghost" data-budget-artist="'+esc(id)+'">余额明细</button>'
+      :'<button class="ghost" type="button" disabled style="opacity:.55">暂无余额档案</button>';
+    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(artist.public_name||"莓桃美工")+'</div><div class="code">'+esc(artist.artist_code)+'</div><div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">当前余额 '+budgetMoney(balance)+'</div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(artist.artist_code)+'">查看排单</a>'+detailButton+'</div></div>';
+  }).join("")||'<div class="empty">暂无美工资料。</div>';
 
-  $("artistList").innerHTML='<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(artist.public_name||"莓桃美工")+'</div><div class="code">'+esc(artist.artist_code)+'</div><div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">当前余额 '+budgetMoney(balance)+'</div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(artist.artist_code)+'">查看排单</a>'+detailButton+'</div></div>';
-
-  const detail=$("[data-budget-current]");
-  if(detail&&group)detail.onclick=()=>openCustomerBudgetDetails(group,artist);
+  document.querySelectorAll("[data-budget-artist]").forEach(btn=>btn.onclick=()=>{
+    const group=recordByArtist.get(btn.dataset.budgetArtist);
+    const artist=artistMap.get(btn.dataset.budgetArtist);
+    if(group)openCustomerBudgetDetails(group,artist);
+  });
 }
 
 const budgetByCustomerRecord=new Map();
@@ -456,9 +469,7 @@ async function claimCustomerAccess(code,hintEl){
     return false;
   }
   if(!data?.success){
-    hintEl.textContent=data?.reason==="ALREADY_LINKED"
-      ?"这个账号已经绑定了另一位美工，不能再使用第二个顾客码。"
-      :"顾客码无效或已经失效。";
+    hintEl.textContent="顾客码无效或已经失效。";
     return false;
   }
   sessionStorage.removeItem("berry-pending-customer-code");
@@ -618,27 +629,21 @@ async function applySession(session){
     $("bindSelfTestBtn").classList.add("hidden");
     await ensureCustomerRole();
 
-    let {data:access}=await supabase.from("customer_portal_access")
-      .select("artist_user_id,granted_at")
-      .eq("customer_user_id",user.id)
-      .maybeSingle();
-
-    if(!access){
-      const pending=normCode(urlCustomerCode||sessionStorage.getItem("berry-pending-customer-code")||$("customerAccessCode").value);
-      if(pending){
-        const {data:claimed,error:claimError}=await supabase.rpc("claim_customer_access_code",{p_code:pending});
-        if(!claimError&&claimed?.success){
-          const refreshed=await supabase.from("customer_portal_access")
-            .select("artist_user_id,granted_at")
-            .eq("customer_user_id",user.id)
-            .maybeSingle();
-          access=refreshed.data||null;
-          sessionStorage.removeItem("berry-pending-customer-code");
-        }
+    const pending=normCode(urlCustomerCode||sessionStorage.getItem("berry-pending-customer-code")||$("customerAccessCode").value);
+    if(pending){
+      const {data:claimed,error:claimError}=await supabase.rpc("claim_customer_access_code",{p_code:pending});
+      if(!claimError&&claimed?.success){
+        sessionStorage.removeItem("berry-pending-customer-code");
+        $("customerAccessCode").value="";
       }
     }
 
-    if(!access){
+    const {data:accessRows,error:accessError}=await supabase.from("customer_portal_access")
+      .select("artist_user_id,granted_at")
+      .eq("customer_user_id",user.id)
+      .order("granted_at",{ascending:true});
+
+    if(accessError||!(accessRows||[]).length){
       $("customerNav").classList.add("hidden");
       $("customerAccountBar").classList.add("hidden");
       $("dashboard").classList.add("hidden");
@@ -646,7 +651,6 @@ async function applySession(session){
       $("customerSettings").classList.add("hidden");
       $("artistPage").classList.add("hidden");
       $("customerCodeGate").classList.remove("hidden");
-      const pending=normCode(urlCustomerCode||sessionStorage.getItem("berry-pending-customer-code"));
       if(pending)$("accessGateCode").value=pending;
       $("accessGateHint").textContent=pending?"顾客码未通过验证，请检查后重试。":"";
       return;
@@ -655,7 +659,7 @@ async function applySession(session){
     $("customerCodeGate").classList.add("hidden");
     $("customerNav").classList.remove("hidden");
     $("customerAccountBar").classList.remove("hidden");
-    $("welcomeText").textContent="查看这位美工为你记录的排单、进度和预计完成时间。";
+    $("welcomeText").textContent="查看已解锁美工为你记录的排单、进度和预计完成时间。";
 
     await loadCustomerPreferences();
     await loadBindings();
