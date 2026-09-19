@@ -81,7 +81,7 @@
 <section id="p-schedule" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">排单表</h2><div id="scheduleList" class="list"></div></div></section>
 <section id="p-money" class="panel"><div class="work"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="font-size:17px;margin:0">财务汇总</h2><div><button class="ghost" id="exportJson">导出备份</button><button class="ghost" id="importBtn">导入备份</button><button class="ghost" id="exportCsv">导出CSV</button><input id="importFile" type="file" accept=".json" hidden></div></div><section class="summary" style="margin-top:12px"><div class="stat"><span>累计收入</span><b id="mTotal">¥0</b></div><div class="stat"><span>已完成收入</span><b id="mDone">¥0</b></div><div class="stat"><span>待收款</span><b id="mWait">¥0</b></div><div class="stat"><span>订单数</span><b id="mNum">0</b></div></section><div id="moneyList" class="list" style="margin-top:12px"></div></div></section>
 <section id="p-time" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">制作计时</h2><div class="timer"><div><input id="timerTask" placeholder="现在在做什么"><div class="actions"><button class="primary" id="startTimer">开始计时</button><button class="ghost" id="stopTimer" disabled>结束并保存</button></div></div><div id="clock" class="clock">00:00:00</div></div><h2 style="font-size:17px">时间记录 <span id="todayTime" class="tag">今日 0m</span></h2><div id="timeList" class="list"></div></div></section>
-<section id="p-profile" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">我的 👤</h2><div class="meta">查看账号资料、使用期限、头像和开发者联系方式。</div>
+<section id="p-profile" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">我的 👤</h2><div class="meta">查看账号资料、使用期限、头像、导航和开发者联系方式。</div>
 <div class="settings-account">
   <div>
     <b id="settingsAccountEmail">当前账号</b>
@@ -110,21 +110,6 @@
     <div class="profile-item" style="grid-column:1/-1"><span>账号 ID</span><b id="profileUserId">--</b><button id="copyUserIdBtn" class="copy-mini" type="button">复制账号 ID</button></div>
   </div>
 </div>
-<div class="profile-card">
-  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
-    <div>
-      <h3 style="font-size:14px;margin:0">开发者联系 💌</h3>
-      <div class="meta" style="margin-top:4px">需要反馈、建议或帮助时，可以复制联系方式添加。</div>
-    </div>
-    <button id="copyDeveloperContactBtn" class="ghost" type="button">复制添加</button>
-  </div>
-  <div class="profile-item" style="margin-top:12px">
-    <span>开发者联系方式</span>
-    <b id="developerContact">i-Sooong</b>
-  </div>
-</div>
-</div></section>
-<section id="p-settings" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">设置 ⚙️</h2><div class="meta">通知、应用个性化、密码、个人显示和配色都会保存到当前账号，换设备登录后也会同步。</div>
 <div class="profile-card">
   <div>
     <h3 style="font-size:14px;margin:0">左侧导航名称 ✏️</h3>
@@ -155,6 +140,21 @@
   </div>
 </div>
 <div class="profile-card">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+    <div>
+      <h3 style="font-size:14px;margin:0">开发者联系 💌</h3>
+      <div class="meta" style="margin-top:4px">需要反馈、建议或帮助时，可以复制联系方式添加。</div>
+    </div>
+    <button id="copyDeveloperContactBtn" class="ghost" type="button">复制添加</button>
+  </div>
+  <div class="profile-item" style="margin-top:12px">
+    <span>开发者联系方式</span>
+    <b id="developerContact">i-Sooong</b>
+  </div>
+</div>
+</div></section>
+<section id="p-settings" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">设置 ⚙️</h2><div class="meta">系统通知、密码、应用个性化、个人显示和配色都会保存到当前账号，换设备登录后也会同步。</div>
+<div class="profile-card">
   <div>
     <h3 style="font-size:14px;margin:0">系统通知 🔔</h3>
     <div class="meta" style="margin-top:4px">把工作台安装到手机主屏幕，并允许通知。完成后可以先发送一条测试通知。</div>
@@ -172,6 +172,15 @@
   <div><b>iPhone：</b>请先用 Safari 打开工作台 → 点“分享” → “添加到主屏幕” → 从桌面图标重新打开工作台 → 再开启系统通知。</div>
   <div style="margin-top:6px"><b>Android：</b>建议用 Chrome 打开工作台 → 点右上角菜单 → “安装应用 / 添加到主屏幕” → 安装后从桌面图标打开 → 再允许通知。如果收不到提醒，请检查系统通知权限和电池优化是否限制了 Chrome / 工作台。</div>
 </div>
+</div>
+<div style="margin-top:14px;border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--panel)">
+  <h3 style="font-size:14px;margin:0 0 8px">密码管理 🔐</h3>
+  <div class="meta">为了安全，本站不会保存或显示历史密码。登录页支持“显示密码”，并可使用浏览器 / 手机自带的密码保存和自动填充。</div><div class="meta" style="margin-top:6px">忘记密码时可发送重置邮件。为避免频繁发送，每小时最多发送 2 次，请确认邮箱可正常收信。</div>
+  <div class="meta" id="passwordChangedAt" style="margin-top:6px">最近修改：暂无记录</div>
+  <div class="actions">
+    <button class="primary" id="openChangePasswordBtn" type="button">修改登录密码</button>
+    <button class="ghost" id="settingsResetPasswordBtn" type="button">发送重置邮件</button>
+  </div>
 </div>
 <div class="profile-card">
   <div>
@@ -192,15 +201,6 @@
       <div class="meta" style="margin-top:6px">建议上传正方形图片。工作台内显示会立即更新；主屏幕图标会通过专用图片地址提供给手机。已经安装过的旧图标需要删除后，从 Safari 重新“添加到主屏幕”才会刷新。</div>
     </div>
     <input id="appIconInput" type="file" accept="image/*" hidden>
-  </div>
-</div>
-<div style="margin-top:14px;border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--panel)">
-  <h3 style="font-size:14px;margin:0 0 8px">密码管理 🔐</h3>
-  <div class="meta">为了安全，本站不会保存或显示历史密码。登录页支持“显示密码”，并可使用浏览器 / 手机自带的密码保存和自动填充。</div><div class="meta" style="margin-top:6px">忘记密码时可发送重置邮件。为避免频繁发送，每小时最多发送 2 次，请确认邮箱可正常收信。</div>
-  <div class="meta" id="passwordChangedAt" style="margin-top:6px">最近修改：暂无记录</div>
-  <div class="actions">
-    <button class="primary" id="openChangePasswordBtn" type="button">修改登录密码</button>
-    <button class="ghost" id="settingsResetPasswordBtn" type="button">发送重置邮件</button>
   </div>
 </div>
 <div style="margin-top:16px;border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--panel)">
