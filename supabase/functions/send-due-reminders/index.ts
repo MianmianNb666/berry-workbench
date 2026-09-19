@@ -12,6 +12,7 @@ const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY")!;
 const VAPID_SUBJECT =
   Deno.env.get("VAPID_SUBJECT") ||
   "https://mianmiannb666.github.io/berry-workbench/";
+const CRON_SECRET = Deno.env.get("CRON_SECRET")!;
 
 const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
@@ -44,6 +45,10 @@ export default {
   async fetch(req: Request): Promise<Response> {
     if (req.method !== "POST") {
       return new Response("Method not allowed", { status: 405 });
+    }
+
+    if (!CRON_SECRET || req.headers.get("x-cron-secret") !== CRON_SECRET) {
+      return new Response("Unauthorized", { status: 401 });
     }
 
     if (!VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
