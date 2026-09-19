@@ -318,10 +318,11 @@
     <div id="artistCustomerLedgerList" class="list" style="margin-top:8px"><div class="empty">新建顾客后即可记录余额。</div></div>
   </div>
   <div id="artistCustomerShareTools" class="profile-item" style="margin-top:12px">
-    <span>免登录入口 🔗</span>
-    <div class="meta" style="margin-top:4px">生成后顾客不需要注册或登录，只能看到这个顾客已关联的排单 / 订单，不会显示金额、内部备注或联系方式。</div>
+    <span>顾客匿名链接 🔗</span>
+    <div class="meta" style="margin-top:4px">这个顾客固定使用这一条免登录链接。以后给她新增并关联订单，会自动出现在同一个入口里，不用每单重新生成。</div>
+    <b id="artistCustomerShareUrl" style="display:block;margin-top:7px;font-size:11px;word-break:break-all">--</b>
     <div class="actions" style="margin-top:9px">
-      <button class="ghost" id="generateArtistCustomerShareBtn" type="button">生成顾客排单链接</button>
+      <button class="ghost" id="generateArtistCustomerShareBtn" type="button">复制顾客匿名链接</button>
     </div>
     <div id="artistCustomerShareHint" class="authhint"></div>
   </div>
@@ -761,7 +762,7 @@ function createCustomSection(){
   setTimeout(()=>document.querySelector('[data-page="custom-'+id+'"]')?.click(),50);
 }
 
-function card(o){let d=dayLeft(o.due),rl=orderReminderLabel(o);return '<article class="order"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||"未填客户")+' · '+esc(o.cat||"未分类")+'</div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+(o.dueTime?" "+esc(o.dueTime):"")+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div>'+(rl?'<div class="order-reminder">🔔 '+esc(rl)+'</div>':'')+(o.note?'<div class="order-note"><b>备注：</b>'+esc(o.note)+'</div>':'')+'<div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="ghost" data-share-order="'+o.id+'">🔗 免登录链接</button><button class="danger" data-del="'+o.id+'">删除</button></div></article>'}
+function card(o){let d=dayLeft(o.due),rl=orderReminderLabel(o);const shareLabel=o.artistCustomerId?"🔗 顾客链接":"🔗 散客链接";return '<article class="order"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||"未填客户")+' · '+esc(o.cat||"未分类")+'</div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+(o.dueTime?" "+esc(o.dueTime):"")+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div>'+(rl?'<div class="order-reminder">🔔 '+esc(rl)+'</div>':'')+(o.note?'<div class="order-note"><b>备注：</b>'+esc(o.note)+'</div>':'')+'<div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="ghost" data-share-order="'+o.id+'">'+shareLabel+'</button><button class="danger" data-del="'+o.id+'">删除</button></div></article>'}
 
 function render(){
   let q=$("search").value.trim().toLowerCase(),os=S.orders,show=os.filter(o=>(filter==="全部"||o.status===filter)&&(!q||[o.name,o.client,o.note,o.cat].join(" ").toLowerCase().includes(q))).slice().reverse();
@@ -1372,8 +1373,9 @@ async function loadArtistCustomers(){
     const linked=customer.linked_customer_user_id
       ?'<span class="tag">已绑定顾客端</span>'
       :'<span class="tag" style="opacity:.65">未绑定顾客端</span>';
-    return '<div class="item"><div style="min-width:0"><b>'+esc(customer.display_name||"未命名顾客")+'</b><small>'+linked+(customer.note?' · '+esc(customer.note):'')+'</small></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end"><b>'+artistCustomerMoney(balance)+'</b><button class="ghost" type="button" data-edit-artist-customer="'+esc(customer.id)+'">管理</button></div></div>';
+    return '<div class="item"><div style="min-width:0"><b>'+esc(customer.display_name||"未命名顾客")+'</b><small>'+linked+(customer.note?' · '+esc(customer.note):'')+'</small></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end"><b>'+artistCustomerMoney(balance)+'</b><button class="ghost" type="button" data-copy-customer-share="'+esc(customer.id)+'">🔗 匿名链接</button><button class="ghost" type="button" data-edit-artist-customer="'+esc(customer.id)+'">管理</button></div></div>';
   }).join("");
+  host.querySelectorAll("[data-copy-customer-share]").forEach(btn=>btn.onclick=()=>copyCustomerPersistentShare(btn.dataset.copyCustomerShare));
   host.querySelectorAll("[data-edit-artist-customer]").forEach(btn=>btn.onclick=()=>openArtistCustomerModal(btn.dataset.editArtistCustomer));
 }
 async function renderArtistCustomerLedger(customerId){
@@ -1473,28 +1475,65 @@ async function createPublicCustomerShare(customerId,orderId=""){
   });
   if(error){
     console.error(error);
-    const msg=(error.message||"").includes("只读")?"当前账号已到期，只读模式下不能生成新链接。":"生成失败："+error.message;
+    const msg=(error.message||"").includes("只读")
+      ?"当前账号已到期，只读模式下不能生成新链接。"
+      :"生成失败："+error.message;
     return {error:msg};
   }
   return {token:data};
 }
 
+async function ensureCustomerPersistentShare(customerId){
+  if(!customerId)return null;
+
+  const {data:existing,error:readError}=await supabase.from("customer_public_share_links")
+    .select("token")
+    .eq("artist_user_id",user.id)
+    .eq("artist_customer_id",customerId)
+    .is("order_id",null)
+    .is("revoked_at",null)
+    .order("created_at",{ascending:false})
+    .limit(1)
+    .maybeSingle();
+
+  if(!readError&&existing?.token)return {token:existing.token};
+
+  return await createPublicCustomerShare(customerId,"");
+}
+
+async function copyCustomerPersistentShare(customerId){
+  const result=await ensureCustomerPersistentShare(customerId);
+  if(result?.error){alert(result.error);return}
+  if(!result?.token){alert("暂时无法读取这个顾客的匿名链接。");return}
+  const msg=await copyPublicShareLink(result.token,"顾客匿名链接");
+  const customer=artistCustomers.find(x=>x.id===customerId);
+  alert((customer?.display_name||"顾客")+"："+msg+"\n后续关联到这个顾客的新订单，会继续使用同一条链接。");
+}
+
 async function generateArtistCustomerShare(){
   if(!editingArtistCustomerId)return;
   const hint=$("artistCustomerShareHint");
-  hint.textContent="正在生成免登录入口…";
-  const result=await createPublicCustomerShare(editingArtistCustomerId,"");
+  hint.textContent="正在读取顾客匿名链接…";
+  const result=await ensureCustomerPersistentShare(editingArtistCustomerId);
   if(result?.error){hint.textContent=result.error;return}
-  hint.textContent=await copyPublicShareLink(result.token,"顾客排单链接");
+  if(!result?.token){hint.textContent="暂时无法读取匿名链接。";return}
+  $("artistCustomerShareUrl").textContent=publicShareUrl(result.token);
+  hint.textContent=await copyPublicShareLink(result.token,"顾客匿名链接");
 }
 
 async function generateOrderShare(orderId){
   const order=S.orders.find(x=>x.id===orderId);
   if(!order)return;
-  const result=await createPublicCustomerShare(order.artistCustomerId||null,order.id);
+
+  if(order.artistCustomerId){
+    await copyCustomerPersistentShare(order.artistCustomerId);
+    return;
+  }
+
+  const result=await createPublicCustomerShare(null,order.id);
   if(result?.error){alert(result.error);return}
-  const msg=await copyPublicShareLink(result.token,"订单查看链接");
-  alert(msg+"\n这个链接不用登录，只能查看这笔订单的公开进度。");
+  const msg=await copyPublicShareLink(result.token,"散客订单链接");
+  alert(msg+"\n这笔订单没有关联顾客，所以使用单独的免登录链接。");
 }
 
 async function openArtistCustomerModal(customerId=null){
@@ -1515,12 +1554,17 @@ async function openArtistCustomerModal(customerId=null){
   $("artistCustomerBalanceBox").classList.toggle("hidden",!customer);
   $("artistCustomerShareTools").classList.toggle("hidden",!customer);
   $("artistCustomerShareHint").textContent="";
+  $("artistCustomerShareUrl").textContent=customer?"正在读取…":"新建顾客后自动生成";
   $("artistCustomerBalanceValue").textContent=artistCustomerMoney(customer?artistCustomerBalances.get(customer.id)||0:0);
   $("artistCustomerAmountInput").value="";
   $("artistCustomerAmountNoteInput").value="";
   $("artistCustomerModalHint").textContent="";
   $("artistCustomerBalanceHint").textContent="";
   await renderArtistCustomerLedger(customer?.id||null);
+  if(customer){
+    const share=await ensureCustomerPersistentShare(customer.id);
+    $("artistCustomerShareUrl").textContent=share?.token?publicShareUrl(share.token):(share?.error||"暂时无法读取");
+  }
   $("artistCustomerModalBg").classList.add("show");
   setTimeout(()=>$("artistCustomerNameInput").focus(),50);
 }
@@ -1555,7 +1599,10 @@ async function saveArtistCustomer(){
   }
   $("artistCustomerModalHint").textContent="已保存 ✓";
   await loadArtistCustomers();
-  if(!editingArtistCustomerId)editingArtistCustomerId=result.data.id;
+  if(!editingArtistCustomerId){
+    editingArtistCustomerId=result.data.id;
+    await ensureCustomerPersistentShare(editingArtistCustomerId);
+  }
   setTimeout(closeArtistCustomerModal,450);
 }
 async function adjustArtistCustomerBalance(direction){
