@@ -38,7 +38,7 @@ input,select{width:100%;border:1px solid var(--line);background:#fffafd;color:va
 .tags{display:flex;gap:5px;flex-wrap:wrap}.tag{display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;background:var(--soft);color:var(--rose);font-size:9px;font-weight:800}.tag.good{background:#eef9f3;color:var(--good)}.tag.warn{background:#fff6e8;color:var(--warn)}.tag.gray{background:#f4f2f3;color:#80747a}
 .usergrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.cell{border-radius:12px;background:#fff8fb;padding:9px}.cell span{display:block;color:var(--muted);font-size:9px}.cell b{display:block;font-size:11px;margin-top:3px;word-break:break-word}
 .quickbuttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.quickbuttons button{min-height:32px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--rose);padding:0 10px;font-size:10px;font-weight:800}.quickbuttons .perm{background:#493e43;color:#fff;border-color:#493e43}
-.customgrant{display:grid;grid-template-columns:100px auto;gap:7px;margin-top:8px;max-width:260px}
+.customgrant{display:grid;grid-template-columns:100px auto;gap:7px;margin-top:8px;max-width:260px}.adminnote{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;margin-top:9px}.adminnote input{background:#fff}
 .formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.field label{font-size:10px;color:var(--muted);display:block;margin-bottom:5px}
 .output{margin-top:12px;border:1px dashed var(--pink);background:var(--soft);border-radius:14px;padding:13px}.code{font-size:14px;font-weight:850;word-break:break-all;margin:6px 0}
 .invite{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(4,minmax(80px,.7fr)) auto;gap:8px;align-items:center;border-top:1px solid #f7e2ea;padding:10px 0}.invite:first-child{border-top:0}.invite .main b{font-size:12px}.invite small{color:var(--muted);font-size:9px}
@@ -86,9 +86,9 @@ input,select{width:100%;border:1px solid var(--line);background:#fffafd;color:va
     <section class="panel active" id="panel-users">
       <div class="card">
         <h2>用户管理</h2>
-        <div class="meta">按邮箱或账号 ID 搜索。纯顾客账号不会显示充时间按钮，避免误操作。</div>
+        <div class="meta">可以按邮箱、UID、工作台名称或你自己写的备注搜索。纯顾客账号不会显示充时间按钮，避免误操作。</div>
         <div class="searchrow">
-          <input id="userSearch" placeholder="搜索邮箱 / User ID">
+          <input id="userSearch" placeholder="搜索邮箱 / UID / 工作台名称 / 备注">
           <button class="primary" id="searchBtn">搜索</button>
         </div>
         <div id="userList" class="list"><div class="empty">正在读取账号…</div></div>
@@ -247,14 +247,28 @@ function renderAccounts(){
       '<div class="customgrant"><input type="number" min="1" max="3650" placeholder="自定义天数" data-custom-days="'+esc(a.user_id)+'"><button class="ghost" type="button" data-custom-grant="'+esc(a.user_id)+'">充值</button></div>'
       :'<div class="meta" style="margin-top:10px">这是顾客账号，不提供美工使用期充值。</div>';
     return '<article class="user">'+
-      '<div class="userhead"><div><div class="email">'+esc(a.email||"无邮箱")+'</div><div class="uid">'+esc(a.user_id)+'</div></div><div class="tags"><span class="tag">'+esc(role)+'</span><span class="tag '+statusClass+'">'+status+'</span></div></div>'+
+      '<div class="userhead"><div><div class="email">'+esc(a.workspace_title||a.email||"未命名工作台")+'</div><div class="meta" style="margin-top:2px">'+esc(a.email||"无邮箱")+'</div><div class="uid">UID · '+esc(a.user_id)+'</div></div><div class="tags"><span class="tag">'+esc(role)+'</span><span class="tag '+statusClass+'">'+status+'</span></div></div>'+
       '<div class="usergrid">'+
+        '<div class="cell"><span>工作台名称</span><b>'+esc(a.workspace_title||"尚未设置")+'</b></div>'+
         '<div class="cell"><span>当前到期</span><b>'+esc(a.access_type==="permanent"?"永久":dt(a.valid_until))+'</b></div>'+
         '<div class="cell"><span>剩余</span><b>'+esc(a.access_type==="permanent"?"∞":a.valid_until?(left>=0?left+" 天":"已过期"):"—")+'</b></div>'+
         '<div class="cell"><span>最近登录</span><b>'+esc(dt(a.last_sign_in_at))+'</b></div>'+
-      '</div>'+grant+'</article>';
+      '</div>'+
+      '<div class="adminnote"><input maxlength="200" data-admin-note="'+esc(a.user_id)+'" value="'+esc(a.admin_note||"")+'" placeholder="备注：例如 小桃 / 某某美工 / 微信昵称"><button class="ghost" type="button" data-save-note="'+esc(a.user_id)+'">保存备注</button></div>'+
+      grant+'</article>';
   }).join("");
 
+  document.querySelectorAll("[data-save-note]").forEach(b=>b.onclick=async()=>{
+    const userId=b.dataset.saveNote;
+    const input=document.querySelector('[data-admin-note="'+CSS.escape(userId)+'"]');
+    b.disabled=true;
+    const {error}=await supabase.rpc("admin_save_account_note",{p_target_user_id:userId,p_note:input?.value||""});
+    b.disabled=false;
+    if(error){alert("备注保存失败："+error.message);return}
+    const row=accounts.find(x=>x.user_id===userId);
+    if(row)row.admin_note=input?.value.trim()||"";
+    toast("备注已保存 ✓");
+  });
   document.querySelectorAll("[data-grant-days]").forEach(b=>b.onclick=()=>grantDays(b.dataset.user,Number(b.dataset.grantDays)));
   document.querySelectorAll("[data-grant-permanent]").forEach(b=>b.onclick=()=>grantPermanent(b.dataset.user));
   document.querySelectorAll("[data-custom-grant]").forEach(b=>b.onclick=()=>{
