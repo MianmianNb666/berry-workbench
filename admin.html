@@ -25,7 +25,7 @@ button{cursor:pointer}
 .primary{border:0;background:linear-gradient(135deg,var(--pink),var(--deep));color:#fff}.ghost,.btn{border:1px solid var(--line);background:#fff;color:var(--rose);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.danger{border:1px solid #f1c6d2;background:#fff;color:var(--bad)}
 .hero{margin-top:14px;border:1px solid var(--line);border-radius:24px;padding:22px;background:linear-gradient(135deg,#fff,#fff0f5);box-shadow:var(--shadow)}
 .hero h1{margin:0;font-size:26px}.hero p{margin:7px 0 0;color:var(--muted);font-size:12px}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}.stat{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px}.stat span{font-size:10px;color:var(--muted)}.stat b{display:block;font-size:25px;margin-top:5px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}.stat{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px}.stat span{font-size:10px;color:var(--muted)}.stat b{display:block;font-size:25px;margin-top:5px}.system-switch{margin-top:12px;border:1px solid var(--line);border-radius:18px;padding:14px;background:#fff}.system-switch-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.system-switch-title{font-size:13px;font-weight:850}.system-state{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:#f4f2f3;color:#80747a;font-size:10px;font-weight:850}.system-state.open{background:#eef9f3;color:var(--good)}.system-state.paused{background:#fff0f3;color:var(--bad)}.system-switch .actions{margin-top:10px}
 .tabs{display:flex;gap:7px;overflow:auto;margin:15px 0 10px}.tab{min-width:max-content;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:12px;padding:9px 13px;font-size:11px;font-weight:760}.tab.active{background:#493e43;color:#fff;border-color:#493e43}
 .panel{display:none}.panel.active{display:block}
 .card{border:1px solid var(--line);border-radius:20px;background:#fff;padding:17px;margin-top:10px;box-shadow:0 8px 30px rgba(120,70,90,.04)}
@@ -74,6 +74,19 @@ input,select{width:100%;border:1px solid var(--line);background:#fffafd;color:va
         <div class="stat"><span>有效美工</span><b id="statActive">0</b></div>
         <div class="stat"><span>已到期</span><b id="statExpired">0</b></div>
         <div class="stat"><span>永久</span><b id="statPermanent">0</b></div>
+      </div>
+      <div class="system-switch">
+        <div class="system-switch-head">
+          <div>
+            <div class="system-switch-title">工作台总开关 🔐</div>
+            <div class="meta" style="margin-top:3px">控制所有普通美工端是否可以进入。Owner 自己不受影响。</div>
+          </div>
+          <span id="frontendSwitchState" class="system-state">读取中…</span>
+        </div>
+        <div class="actions">
+          <button id="openFrontendBtn" class="primary" type="button">✅ 全面开放</button>
+          <button id="pauseFrontendBtn" class="danger" type="button">🔒 全面暂停</button>
+        </div>
       </div>
     </section>
 
@@ -427,8 +440,43 @@ async function loadLogs(){
     '<div><span class="meta">'+esc(dt(r.created_at))+'</span></div>'+
     '</div>').join("");
 }
+function renderFrontendSwitch(open){
+  const state=$("frontendSwitchState");
+  if(!state)return;
+  state.textContent=open?"当前：已开放":"当前：已暂停";
+  state.className="system-state "+(open?"open":"paused");
+  $("openFrontendBtn").disabled=!!open;
+  $("pauseFrontendBtn").disabled=!open;
+}
+async function loadFrontendSwitch(){
+  const state=$("frontendSwitchState");
+  if(state){state.textContent="读取中…";state.className="system-state"}
+  const {data,error}=await supabase.rpc("client_frontend_open");
+  if(error){
+    if(state){state.textContent="总开关未安装";state.className="system-state paused"}
+    return false;
+  }
+  renderFrontendSwitch(data===true);
+  return data===true;
+}
+async function setFrontendSwitch(open){
+  if(!open){
+    const ok=confirm("确认全面暂停吗？\n\n普通美工账号会在刷新、重新打开，或最多约 15 秒内进入维护锁定页。你的 Owner 账号不受影响。");
+    if(!ok)return;
+  }
+  const openBtn=$("openFrontendBtn"),pauseBtn=$("pauseFrontendBtn");
+  openBtn.disabled=true;pauseBtn.disabled=true;
+  const {data,error}=await supabase.rpc("admin_set_client_frontend_open",{p_open:open});
+  if(error){
+    alert("切换失败："+error.message);
+    await loadFrontendSwitch();
+    return;
+  }
+  renderFrontendSwitch(data===true);
+  toast(open?"已全面开放 ✓":"已全面暂停 🔒");
+}
 async function refreshAll(){
-  await Promise.all([loadAccounts($("userSearch").value.trim()),loadInvites(),loadLogs()]);
+  await Promise.all([loadAccounts($("userSearch").value.trim()),loadInvites(),loadLogs(),loadFrontendSwitch()]);
 }
 
 $("loginForm").onsubmit=async e=>{
@@ -441,6 +489,8 @@ $("loginForm").onsubmit=async e=>{
 };
 $("logoutBtn").onclick=$("deniedLogoutBtn").onclick=async()=>{await supabase.auth.signOut();location.reload()};
 $("refreshBtn").onclick=refreshAll;
+$("openFrontendBtn").onclick=()=>setFrontendSwitch(true);
+$("pauseFrontendBtn").onclick=()=>setFrontendSwitch(false);
 $("searchBtn").onclick=()=>loadAccounts($("userSearch").value.trim());
 $("userSearch").addEventListener("keydown",e=>{if(e.key==="Enter")loadAccounts($("userSearch").value.trim())});
 $("invitePurpose").onchange=syncInviteForm;
