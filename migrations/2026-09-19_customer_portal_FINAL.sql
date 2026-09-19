@@ -1,17 +1,6 @@
 -- =========================================================
--- 莓桃工作台：顾客端 + 顾客码 + 多美工 + 余额 + 到期只读 FINAL
+-- 莓桃工作台：顾客端 + 顾客码 + 多美工 + 余额 + 到期只读 + 匿名入口 FINAL
 -- 运行位置：Supabase -> SQL Editor
---
--- 前提：已经运行过顾客端基础表 / workspaces / invite / push reminders 的既有迁移。
---
--- 最终规则：
--- 1) 一个美工一个专属顾客码。
--- 2) 一个顾客账号可绑定多个美工，但每位美工必须用各自顾客码单独解锁。
--- 3) 顾客只能看已解锁美工对应的顾客档案 / 余额 / 排单数据。
--- 4) 主账号保留自测兼容。
--- 5) 美工使用期到期后，不删除、不解绑，顾客端继续可看。
--- 6) 到期美工端进入只读：可看，不可新增 / 修改 / 删除。
--- 7) 续期后自动恢复写入。
 -- =========================================================
 
 -- 莓桃工作台：美工顾客档案 + 预算账本
@@ -777,9 +766,8 @@ grant execute on function public.rotate_customer_access_code() to authenticated;
 commit;
 
 
-
 -- =========================================================
--- PART 3 · 顾客免登录分享入口
+-- PART 3 · 正式顾客固定匿名链接 + 散客订单链接
 -- =========================================================
 
 -- 莓桃工作台：顾客免登录分享入口
@@ -809,6 +797,45 @@ create table if not exists public.customer_public_share_links (
 
 create index if not exists customer_public_share_artist_idx
   on public.customer_public_share_links(artist_user_id, created_at desc);
+
+
+-- 每个“正式顾客”只保留一个长期匿名入口；
+-- 每个散客订单也只保留一个订单入口。
+delete from public.customer_public_share_links a
+using public.customer_public_share_links b
+where a.artist_user_id = b.artist_user_id
+  and a.artist_customer_id = b.artist_customer_id
+  and a.order_id is null
+  and b.order_id is null
+  and a.revoked_at is null
+  and b.revoked_at is null
+  and (
+    a.created_at > b.created_at
+    or (a.created_at = b.created_at and a.token > b.token)
+  );
+
+delete from public.customer_public_share_links a
+using public.customer_public_share_links b
+where a.artist_user_id = b.artist_user_id
+  and a.order_id = b.order_id
+  and a.order_id is not null
+  and a.revoked_at is null
+  and b.revoked_at is null
+  and (
+    a.created_at > b.created_at
+    or (a.created_at = b.created_at and a.token > b.token)
+  );
+
+create unique index if not exists customer_public_share_one_per_customer
+  on public.customer_public_share_links(artist_user_id, artist_customer_id)
+  where artist_customer_id is not null
+    and order_id is null
+    and revoked_at is null;
+
+create unique index if not exists customer_public_share_one_per_order
+  on public.customer_public_share_links(artist_user_id, order_id)
+  where order_id is not null
+    and revoked_at is null;
 
 alter table public.customer_public_share_links enable row level security;
 
@@ -878,17 +905,14 @@ declare
   v_uid uuid := auth.uid();
   v_token text;
   v_orders jsonb;
+  v_order_customer_id text;
+  v_order_id text := nullif(trim(coalesce(p_order_id,'')), '');
 begin
   if v_uid is null then
     raise exception '请先登录';
   end if;
 
-  if not public.artist_write_access_active(v_uid) then
-    raise exception '当前美工账号已进入只读模式';
-  end if;
-
-  if p_artist_customer_id is null
-     and nullif(trim(coalesce(p_order_id,'')), '') is null then
+  if p_artist_customer_id is null and v_order_id is null then
     raise exception '请选择顾客或订单';
   end if;
 
@@ -902,19 +926,60 @@ begin
     raise exception '顾客档案不存在';
   end if;
 
-  if nullif(trim(coalesce(p_order_id,'')), '') is not null then
+  if v_order_id is not null then
     select coalesce(w.data -> 'orders', '[]'::jsonb)
       into v_orders
     from public.workspaces w
     where w.user_id = v_uid;
 
-    if not exists (
-      select 1
-      from jsonb_array_elements(coalesce(v_orders, '[]'::jsonb)) o
-      where o ->> 'id' = p_order_id
-    ) then
+    select o ->> 'artistCustomerId'
+      into v_order_customer_id
+    from jsonb_array_elements(coalesce(v_orders, '[]'::jsonb)) o
+    where o ->> 'id' = v_order_id
+    limit 1;
+
+    if not found then
       raise exception '订单不存在';
     end if;
+  end if;
+
+  -- 正式顾客：永远复用她自己的长期匿名链接。
+  if p_artist_customer_id is not null and v_order_id is null then
+    select s.token
+      into v_token
+    from public.customer_public_share_links s
+    where s.artist_user_id = v_uid
+      and s.artist_customer_id = p_artist_customer_id
+      and s.order_id is null
+      and s.revoked_at is null
+      and (s.expires_at is null or s.expires_at > now())
+    order by s.created_at
+    limit 1;
+
+    if v_token is not null then
+      return v_token;
+    end if;
+  end if;
+
+  -- 散客订单：同一订单也复用自己的订单链接。
+  if p_artist_customer_id is null and v_order_id is not null then
+    select s.token
+      into v_token
+    from public.customer_public_share_links s
+    where s.artist_user_id = v_uid
+      and s.order_id = v_order_id
+      and s.revoked_at is null
+      and (s.expires_at is null or s.expires_at > now())
+    order by s.created_at
+    limit 1;
+
+    if v_token is not null then
+      return v_token;
+    end if;
+  end if;
+
+  if not public.artist_write_access_active(v_uid) then
+    raise exception '当前美工账号已进入只读模式';
   end if;
 
   loop
@@ -930,11 +995,31 @@ begin
         v_token,
         v_uid,
         p_artist_customer_id,
-        nullif(trim(coalesce(p_order_id,'')), '')
+        v_order_id
       );
       exit;
     exception when unique_violation then
-      null;
+      -- 若是“同一顾客 / 同一订单”的唯一索引冲突，直接取已经存在的链接。
+      if p_artist_customer_id is not null and v_order_id is null then
+        select s.token into v_token
+        from public.customer_public_share_links s
+        where s.artist_user_id = v_uid
+          and s.artist_customer_id = p_artist_customer_id
+          and s.order_id is null
+          and s.revoked_at is null
+        order by s.created_at
+        limit 1;
+        if v_token is not null then return v_token; end if;
+      elsif p_artist_customer_id is null and v_order_id is not null then
+        select s.token into v_token
+        from public.customer_public_share_links s
+        where s.artist_user_id = v_uid
+          and s.order_id = v_order_id
+          and s.revoked_at is null
+        order by s.created_at
+        limit 1;
+        if v_token is not null then return v_token; end if;
+      end if;
     end;
   end loop;
 
@@ -944,6 +1029,84 @@ $$;
 
 revoke all on function public.create_customer_public_share(uuid,text) from public, anon;
 grant execute on function public.create_customer_public_share(uuid,text) to authenticated;
+
+
+-- 新建正式顾客时，自动准备她自己的长期匿名入口。
+create or replace function public.ensure_customer_public_share_after_insert()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $
+declare
+  v_token text;
+begin
+  if exists (
+    select 1
+    from public.customer_public_share_links s
+    where s.artist_user_id = new.artist_user_id
+      and s.artist_customer_id = new.id
+      and s.order_id is null
+      and s.revoked_at is null
+  ) then
+    return new;
+  end if;
+
+  loop
+    v_token := 'SH-' || upper(encode(extensions.gen_random_bytes(18), 'hex'));
+    begin
+      insert into public.customer_public_share_links(
+        token, artist_user_id, artist_customer_id, order_id
+      )
+      values (
+        v_token, new.artist_user_id, new.id, null
+      );
+      exit;
+    exception when unique_violation then
+      if exists (
+        select 1
+        from public.customer_public_share_links s
+        where s.artist_user_id = new.artist_user_id
+          and s.artist_customer_id = new.id
+          and s.order_id is null
+          and s.revoked_at is null
+      ) then
+        exit;
+      end if;
+    end;
+  end loop;
+
+  return new;
+end;
+$;
+
+drop trigger if exists trg_ensure_customer_public_share_after_insert
+on public.artist_customers;
+
+create trigger trg_ensure_customer_public_share_after_insert
+after insert on public.artist_customers
+for each row
+execute function public.ensure_customer_public_share_after_insert();
+
+-- 给已经存在的正式顾客补上长期匿名入口。
+insert into public.customer_public_share_links(
+  token, artist_user_id, artist_customer_id, order_id
+)
+select
+  'SH-' || upper(encode(extensions.gen_random_bytes(18), 'hex')),
+  c.artist_user_id,
+  c.id,
+  null
+from public.artist_customers c
+where not exists (
+  select 1
+  from public.customer_public_share_links s
+  where s.artist_user_id = c.artist_user_id
+    and s.artist_customer_id = c.id
+    and s.order_id is null
+    and s.revoked_at is null
+)
+on conflict do nothing;
 
 
 create or replace function public.get_customer_public_share(
@@ -1055,11 +1218,6 @@ grant execute on function public.get_customer_public_share(text) to anon, authen
 
 commit;
 
-
-
--- =========================================================
--- PART 4 · 顾客固定匿名链接
--- =========================================================
 
 -- 莓桃工作台：顾客固定匿名链接
 -- 规则：
@@ -1264,4 +1422,5 @@ revoke all on function public.create_customer_public_share(uuid,text) from publi
 grant execute on function public.create_customer_public_share(uuid,text) to authenticated;
 
 commit;
+
 
