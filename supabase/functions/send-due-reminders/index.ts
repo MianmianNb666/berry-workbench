@@ -85,6 +85,25 @@ export default {
     let noDevice = 0;
 
     for (const reminder of (reminders || []) as Reminder[]) {
+      let notificationTitle = "🍓 莓桃工作台";
+      try {
+        const { data: workspace } = await supabase
+          .from("workspaces")
+          .select("data")
+          .eq("user_id", reminder.user_id)
+          .maybeSingle();
+        const branding = workspace?.data as {
+          notificationName?: string;
+          title?: string;
+        } | null;
+        const customTitle = String(
+          branding?.notificationName || branding?.title || "莓桃工作台",
+        ).trim();
+        if (customTitle) notificationTitle = customTitle.slice(0, 50);
+      } catch (error) {
+        console.warn("Failed to load notification branding", reminder.user_id, error);
+      }
+
       const { data: subscriptions, error: subscriptionError } = await supabase
         .from("push_subscriptions")
         .select("endpoint,p256dh,auth")
@@ -117,7 +136,7 @@ export default {
           const payload = await buildPushPayload(
             {
               data: {
-                title: "🍓 莓桃工作台",
+                title: notificationTitle,
                 body: reminder.message,
                 tag: "berry-reminder-" + reminder.id,
                 url: "./",
