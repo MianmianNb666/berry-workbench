@@ -1005,7 +1005,10 @@ function bindPageButtons(){
       }
       if(b.dataset.page==="messages"){
         applyArtistBetaAccess().then(async()=>{
-          await loadArtistChatConversations();
+          await Promise.all([
+            loadArtistChatConversations(),
+            loadArtistFriendChatConversations()
+          ]);
         });
       }
       if(b.dataset.page==="friends"){
@@ -2326,6 +2329,13 @@ let artistChatConversations=[];
 let activeArtistChat=null;
 let artistChatChannel=null;
 let artistChatLoaded=false;
+let artistCustomerUnreadTotal=0;
+
+let artistFriendChatConversations=[];
+let activeArtistFriendChat=null;
+let artistFriendChatChannel=null;
+let artistFriendChatLoaded=false;
+let artistFriendUnreadTotal=0;
 
 function chatClock(value){
   if(!value)return "";
@@ -2338,13 +2348,60 @@ function artistChatCounterpartAvatar(customerId,label,rowAvatar=""){
   const customer=artistCustomers.find(x=>x.linked_customer_user_id===customerId);
   return customer?customerAvatarMarkup(customer):artistChatAvatarMarkup("",label);
 }
-function updateArtistChatUnread(){
-  const total=artistChatConversations.reduce((sum,x)=>sum+Number(x.unread_count||0),0);
+function updateArtistMessageNavUnread(){
+  const total=Number(artistCustomerUnreadTotal||0)+Number(artistFriendUnreadTotal||0);
   const badge=$("artistChatNavUnread");
   if(!badge)return;
   badge.textContent=total>99?"99+":String(total);
   badge.classList.toggle("hidden",total<=0);
 }
+function updateArtistChatUnread(){
+  artistCustomerUnreadTotal=artistChatConversations.reduce((sum,x)=>sum+Number(x.unread_count||0),0);
+  const badge=$("artistCustomerMessageUnread"),summary=$("artistCustomerMessageSummary");
+  if(badge){
+    badge.textContent=artistCustomerUnreadTotal>99?"99+":String(artistCustomerUnreadTotal);
+    badge.classList.toggle("hidden",artistCustomerUnreadTotal<=0);
+  }
+  if(summary)summary.textContent=artistCustomerUnreadTotal+" 条未读";
+  updateArtistMessageNavUnread();
+}
+function updateArtistFriendChatUnread(){
+  artistFriendUnreadTotal=artistFriendChatConversations.reduce((sum,x)=>sum+Number(x.unread_count||0),0);
+  const badge=$("artistFriendMessageUnread"),summary=$("artistFriendMessageSummary");
+  if(badge){
+    badge.textContent=artistFriendUnreadTotal>99?"99+":String(artistFriendUnreadTotal);
+    badge.classList.toggle("hidden",artistFriendUnreadTotal<=0);
+  }
+  if(summary)summary.textContent=artistFriendUnreadTotal+" 条未读";
+  updateArtistMessageNavUnread();
+}
+function setArtistMessageGroupCollapsed(kind,collapsed,save=true){
+  const body=$(kind==="friend"?"friendMessageBody":"customerMessageBody");
+  const toggle=$(kind==="friend"?"friendMessageToggle":"customerMessageToggle");
+  if(!body||!toggle)return;
+  body.classList.toggle("collapsed",!!collapsed);
+  toggle.setAttribute("aria-expanded",collapsed?"false":"true");
+  if(save&&user){
+    try{localStorage.setItem("berry-message-group-"+kind+":"+user.id,collapsed?"1":"0")}catch(_){}
+  }
+}
+function initArtistMessageGroupCollapse(){
+  ["customer","friend"].forEach(kind=>{
+    let collapsed=false;
+    if(user){
+      try{collapsed=localStorage.getItem("berry-message-group-"+kind+":"+user.id)==="1"}catch(_){}
+    }
+    setArtistMessageGroupCollapsed(kind,collapsed,false);
+  });
+}
+$("customerMessageToggle")?.addEventListener("click",()=>{
+  const expanded=$("customerMessageToggle").getAttribute("aria-expanded")==="true";
+  setArtistMessageGroupCollapsed("customer",expanded);
+});
+$("friendMessageToggle")?.addEventListener("click",()=>{
+  const expanded=$("friendMessageToggle").getAttribute("aria-expanded")==="true";
+  setArtistMessageGroupCollapsed("friend",expanded);
+});
 function renderArtistChatThreads(){
   const host=$("artistChatThreads");
   if(!host)return;
@@ -3133,6 +3190,9 @@ async function applySession(session){
     if(artistChatChannel){supabase.removeChannel(artistChatChannel);artistChatChannel=null}
     artistChatConversations=[];activeArtistChat=null;
     artistChatLoaded=false;
+    if(artistFriendChatChannel){supabase.removeChannel(artistFriendChatChannel);artistFriendChatChannel=null}
+    artistFriendChatConversations=[];activeArtistFriendChat=null;
+    artistFriendChatLoaded=false;artistCustomerUnreadTotal=0;artistFriendUnreadTotal=0;
     if(artistFriendsChannel){supabase.removeChannel(artistFriendsChannel);artistFriendsChannel=null}
     artistFriendships=[];artistFriendsLoaded=false;
     return;
@@ -3151,6 +3211,7 @@ async function applySession(session){
   }
 
   initCustomerCenterCollapse();
+  initArtistMessageGroupCollapse();
   $("accountEmail").textContent=user.email||"已登录";
   if($("settingsAccountEmail"))$("settingsAccountEmail").textContent=user.email||"当前账号";
   $("logoutBtn").style.display="block";
@@ -3178,7 +3239,7 @@ async function applySession(session){
   if(accessReadOnly)setSync("只读模式","err");
   await applyArtistBetaAccess();
   await loadArtistPortalProfile();
-  await loadArtistChatConversations();
+  await Promise.all([loadArtistChatConversations(),loadArtistFriendChatConversations()]);
   startCapacityHeartbeat();
   await loadProfileRenewalHistory();
   if(status?.has_access)maybeShowExpiryWarning(status);
