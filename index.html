@@ -111,6 +111,31 @@
   </div>
 </div>
 <div class="profile-card">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+    <div>
+      <h3 style="font-size:14px;margin:0">顾客端 👥</h3>
+      <div class="meta" style="margin-top:4px">把美工编号或个人链接发给顾客，她就可以查看你的顾客端页面。</div>
+    </div>
+    <span id="artistPortalStatus" class="access-badge">读取中…</span>
+  </div>
+  <div class="profile-grid">
+    <div class="profile-item" style="grid-column:1/-1">
+      <span>美工编号</span>
+      <b id="artistCode">--</b>
+    </div>
+    <div class="profile-item" style="grid-column:1/-1">
+      <span>美工个人链接</span>
+      <b id="artistCustomerLink" style="font-size:11px">--</b>
+    </div>
+  </div>
+  <div class="actions">
+    <button id="copyArtistCodeBtn" class="ghost" type="button">复制美工编号</button>
+    <button id="copyArtistLinkBtn" class="primary" type="button">复制顾客链接</button>
+    <a id="openArtistCustomerPageBtn" class="ghost" href="./customer.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">打开顾客页面</a>
+  </div>
+  <div class="meta" style="margin-top:8px">顾客登录后也可以直接输入你的美工编号进行绑定。</div>
+</div>
+<div class="profile-card">
   <div>
     <h3 style="font-size:14px;margin:0">左侧导航名称 ✏️</h3>
     <div class="meta" style="margin-top:4px">可以自定义左边固定栏目名称。图标保持不变，名称会跟随账号云同步。</div>
@@ -575,7 +600,7 @@ function bindPageButtons(){
       document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x===b));
       document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
       $("p-"+b.dataset.page)?.classList.add("active");
-      if(b.dataset.page==="profile")refreshAccountProfile();
+      if(b.dataset.page==="profile"){refreshAccountProfile();loadArtistPortalProfile();}
     };
   });
 }
@@ -1078,6 +1103,28 @@ $("copyDeveloperContactBtn").onclick=async()=>{
   }
 };
 
+$("copyArtistCodeBtn").onclick=async()=>{
+  const code=currentArtistProfile?.artist_code;
+  if(!code){await loadArtistPortalProfile();return}
+  try{
+    await navigator.clipboard.writeText(code);
+    const btn=$("copyArtistCodeBtn"),old=btn.textContent;
+    btn.textContent="已复制 ✓";
+    setTimeout(()=>btn.textContent=old,900);
+  }catch(_){prompt("复制美工编号：",code)}
+};
+$("copyArtistLinkBtn").onclick=async()=>{
+  const code=currentArtistProfile?.artist_code;
+  if(!code){await loadArtistPortalProfile();return}
+  const link=customerPageLink(code);
+  try{
+    await navigator.clipboard.writeText(link);
+    const btn=$("copyArtistLinkBtn"),old=btn.textContent;
+    btn.textContent="已复制 ✓";
+    setTimeout(()=>btn.textContent=old,900);
+  }catch(_){prompt("复制顾客链接：",link)}
+};
+
 $("copyUserIdBtn").onclick=async()=>{
   if(!user?.id)return;
   try{
@@ -1362,6 +1409,46 @@ function remainingAccessText(status){
   }
   return days+" 天";
 }
+let currentArtistProfile=null;
+function customerPageLink(code){
+  if(!code)return "";
+  return new URL("./customer.html?artist="+encodeURIComponent(code),location.href).href;
+}
+function renderArtistPortalProfile(profile){
+  currentArtistProfile=profile||null;
+  const code=profile?.artist_code||"--";
+  const link=profile?.artist_code?customerPageLink(profile.artist_code):"--";
+  if($("artistCode"))$("artistCode").textContent=code;
+  if($("artistCustomerLink"))$("artistCustomerLink").textContent=link;
+  if($("openArtistCustomerPageBtn"))$("openArtistCustomerPageBtn").href=profile?.artist_code?link:"./customer.html";
+  if($("artistPortalStatus")){
+    $("artistPortalStatus").textContent=profile?.artist_code?"已启用":"未初始化";
+    $("artistPortalStatus").className="access-badge "+(profile?.artist_code?"permanent":"expired");
+  }
+}
+async function loadArtistPortalProfile(){
+  if(!user)return;
+  try{
+    let {data,error}=await supabase.from("artist_profiles")
+      .select("artist_user_id,artist_code,public_name,privacy_mode")
+      .eq("artist_user_id",user.id)
+      .maybeSingle();
+    if(error)throw error;
+    if(!data){
+      const created=await supabase.from("artist_profiles")
+        .insert({artist_user_id:user.id,public_name:S.title||"莓桃美工"})
+        .select("artist_user_id,artist_code,public_name,privacy_mode")
+        .single();
+      if(created.error)throw created.error;
+      data=created.data;
+    }
+    renderArtistPortalProfile(data);
+  }catch(e){
+    console.error("artist portal profile:",e);
+    renderArtistPortalProfile(null);
+    if($("artistPortalStatus"))$("artistPortalStatus").textContent="读取失败";
+  }
+}
 function renderAccountProfile(status=currentAccessStatus){
   if(!user)return;
   currentAccessStatus=status||{};
@@ -1465,6 +1552,7 @@ async function applySession(session){
   $("renewView").classList.add("hidden");
   $("authGate").classList.add("hidden");
   await loadWorkspace();
+  await loadArtistPortalProfile();
   if("Notification" in window&&Notification.permission==="granted"){
     syncPushSubscriptionToCloud();
   }
