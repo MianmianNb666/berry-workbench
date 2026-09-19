@@ -65,7 +65,7 @@
 }
 </style></head>
 <body><div class="app"><div class="layout">
-<aside class="side"><div class="brand"><div class="logo" id="brandLogo"><span>🍓</span><img id="brandAvatar" alt="自定义头像"></div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><button class="active" data-page="desk" id="navDesk">🏠 工作台</button><button data-page="orders" id="navOrders">🧾 订单</button><button data-page="schedule" id="navSchedule">🗓️ 排单</button><button data-page="money" id="navMoney">💰 财务</button><button data-page="time" id="navTime">⏱️ 时间</button><button data-page="profile" id="navProfile">👤 我的</button><button data-page="settings" id="navSettings">⚙️ 设置</button><div id="customNav" class="custom-nav-wrap"></div><button id="addSectionBtn" class="custom-nav-add" type="button">＋ 添加分区</button></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><div class="note" id="sidebarAccessRemaining" style="margin-top:5px">使用期限：--</div><div class="avatar-actions"><button class="ghost" id="avatarBtn" type="button">🖼️ 自定义头像</button><button class="ghost" id="redeemOpenBtn" type="button">🎟️ 兑换邀请码</button><button class="avatar-reset" id="avatarResetBtn" type="button">恢复草莓头像</button><input id="avatarInput" type="file" accept="image/*" hidden></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。不同账号的数据会彼此分开。</p></aside>
+<aside class="side"><div class="brand"><div class="logo" id="brandLogo"><span>🍓</span><img id="brandAvatar" alt="自定义头像"></div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><button class="active" data-page="desk" id="navDesk">🏠 工作台</button><button data-page="orders" id="navOrders">🧾 订单</button><button data-page="schedule" id="navSchedule">🗓️ 排单</button><button data-page="money" id="navMoney">💰 财务</button><button data-page="time" id="navTime">⏱️ 时间</button><button data-page="profile" id="navProfile">👤 我的</button><div id="customNav" class="custom-nav-wrap"></div><button id="addSectionBtn" class="custom-nav-add" type="button">＋ 添加分区</button><button data-page="settings" id="navSettings">⚙️ 设置</button></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><div class="note" id="sidebarAccessRemaining" style="margin-top:5px">使用期限：--</div><div class="avatar-actions"><button class="ghost" id="avatarBtn" type="button">🖼️ 自定义头像</button><button class="ghost" id="redeemOpenBtn" type="button">🎟️ 兑换邀请码</button><button class="avatar-reset" id="avatarResetBtn" type="button">恢复草莓头像</button><input id="avatarInput" type="file" accept="image/*" hidden></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。不同账号的数据会彼此分开。</p></aside>
 <main class="main"><div class="top"><div><h1 id="greet">下午好，创作者！</h1><p id="dateText"></p><div id="topDeadlines" class="top-ddl"></div></div><button class="primary" id="newBtn">＋ 新增需求</button></div>
 <section class="summary"><div class="stat"><span>全部需求</span><b id="sAll">0</b></div><div class="stat"><span>进行中</span><b id="sDoing">0</b></div><div class="stat"><span>已逾期</span><b id="sLate">0</b></div><div class="stat"><span>已完成</span><b id="sDone">0</b></div></section>
 <section id="p-desk" class="panel active"><div class="work"><div class="tabs"><button class="chip active" data-filter="全部">全部</button><button class="chip" data-filter="进行中">进行中</button><button class="chip" data-filter="待处理">待处理</button><button class="chip" data-filter="待付款">待付款</button><button class="chip" data-filter="已完成">已完成</button></div><div class="search"><input id="search" placeholder="搜索需求、客户或备注..."></div><div id="deskOrders" class="orders"></div></div></section>
@@ -347,27 +347,28 @@ function applyTheme(){
 function applyNavOrder(){
   const defaults=["desk","orders","schedule","money","time","profile","settings"];
   const order=Array.isArray(S.navOrder)?S.navOrder:defaults;
-  const nav=document.querySelector(".nav"),anchor=$("customNav");
+  const nav=document.querySelector(".nav"),anchor=$("customNav"),addBtn=$("addSectionBtn"),settingsBtn=$("navSettings");
   if(!nav||!anchor)return;
-  const idMap={desk:"navDesk",orders:"navOrders",schedule:"navSchedule",money:"navMoney",time:"navTime",profile:"navProfile",settings:"navSettings"};
-  order.forEach(key=>{
+  const idMap={desk:"navDesk",orders:"navOrders",schedule:"navSchedule",money:"navMoney",time:"navTime",profile:"navProfile"};
+  order.filter(key=>key!=="settings").forEach(key=>{
     const el=$(idMap[key]);
     if(el)nav.insertBefore(el,anchor);
   });
+  if(addBtn&&settingsBtn)nav.insertBefore(settingsBtn,addBtn.nextSibling);
 }
 function renderNavOrderSettings(){
   const host=$("navOrderList");
   if(!host)return;
   const defaults={desk:"工作台",orders:"订单",schedule:"排单",money:"财务",time:"时间",profile:"我的",settings:"设置"};
   const emojis={desk:"🏠",orders:"🧾",schedule:"🗓️",money:"💰",time:"⏱️",profile:"👤",settings:"⚙️"};
-  const order=S.navOrder||Object.keys(defaults);
+  const order=(S.navOrder||Object.keys(defaults)).filter(key=>key!=="settings");
   host.innerHTML=order.map((key,index)=>
     '<div class="item"><div><b>'+emojis[key]+' '+esc(S.navLabels?.[key]||defaults[key])+'</b><small>第 '+(index+1)+' 位</small></div><div style="display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end">'+
     '<button class="ghost" type="button" data-fixed-nav-move="'+key+'" data-fixed-nav-action="up" style="min-height:32px">↑</button>'+
     '<button class="ghost" type="button" data-fixed-nav-move="'+key+'" data-fixed-nav-action="down" style="min-height:32px">↓</button>'+
     '<button class="ghost" type="button" data-fixed-nav-move="'+key+'" data-fixed-nav-action="top" style="min-height:32px">置顶</button>'+
     '</div></div>'
-  ).join("");
+  ).join("")+'<div class="meta" style="margin-top:8px">⚙️ 设置固定放在最后，避免手机版误触。</div>';
   host.querySelectorAll("[data-fixed-nav-move]").forEach(btn=>{
     btn.onclick=()=>{
       const key=btn.dataset.fixedNavMove,action=btn.dataset.fixedNavAction;
