@@ -768,13 +768,19 @@ async function loadBindings(){
     const detailButton=group
       ?'<button class="ghost" data-budget-artist="'+esc(id)+'">余额明细</button>'
       :'<button class="ghost" type="button" disabled style="opacity:.55">暂无余额档案</button>';
-    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(artist.public_name||"莓桃美工")+'</div><div class="code">'+esc(artist.artist_code)+'</div><div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">当前余额 '+budgetMoney(balance)+'</div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(artist.artist_code)+'">查看排单</a>'+detailButton+'</div></div>';
+    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(artist.public_name||"莓桃美工")+'</div><div class="code">'+esc(artist.artist_code)+'</div><div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">当前余额 '+budgetMoney(balance)+'</div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(artist.artist_code)+'">查看排单</a><button class="ghost" type="button" data-message-artist="'+esc(id)+'">💬 发消息</button>'+detailButton+'</div></div>';
   }).join("")||'<div class="empty">暂无美工资料。</div>';
 
   document.querySelectorAll("[data-budget-artist]").forEach(btn=>btn.onclick=()=>{
     const group=recordByArtist.get(btn.dataset.budgetArtist);
     const artist=artistMap.get(btn.dataset.budgetArtist);
     if(group)openCustomerBudgetDetails(group,artist);
+  });
+  document.querySelectorAll("[data-message-artist]").forEach(btn=>btn.onclick=async()=>{
+    setCustomerView("messages");
+    await loadCustomerChatConversations();
+    const row=customerChatConversations.find(x=>x.artist_user_id===btn.dataset.messageArtist);
+    if(row)openCustomerChat(row);
   });
 }
 
@@ -1038,7 +1044,9 @@ async function applySession(session){
     $("welcomeText").textContent="查看已解锁美工为你记录的排单、进度和预计完成时间。";
 
     await loadCustomerPreferences();
+    await loadMyCustomerChatProfile();
     await loadBindings();
+    await loadCustomerChatConversations();
 
     if(artistCode){
       $("customerNav").classList.add("hidden");
@@ -1051,6 +1059,8 @@ async function applySession(session){
       setCustomerView(preferred);
     }
   }else{
+    if(customerChatChannel){supabase.removeChannel(customerChatChannel);customerChatChannel=null}
+    customerChatConversations=[];activeCustomerChat=null;customerChatAvatar="";
     $("logoutBtn").classList.add("hidden");
     $("customerNav").classList.add("hidden");
     $("customerAccountBar").classList.add("hidden");
