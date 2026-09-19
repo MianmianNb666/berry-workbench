@@ -41,7 +41,7 @@ input,select{width:100%;border:1px solid var(--line);background:#fffafd;color:va
 .customgrant{display:grid;grid-template-columns:100px auto;gap:7px;margin-top:8px;max-width:260px}.adminnote{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;margin-top:9px}.adminnote input{background:#fff}
 .formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.field label{font-size:10px;color:var(--muted);display:block;margin-bottom:5px}
 .output{margin-top:12px;border:1px dashed var(--pink);background:var(--soft);border-radius:14px;padding:13px}.code{font-size:14px;font-weight:850;word-break:break-all;margin:6px 0}
-.invite{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(4,minmax(80px,.7fr)) auto;gap:8px;align-items:center;border-top:1px solid #f7e2ea;padding:10px 0}.invite:first-child{border-top:0}.invite .main b{font-size:12px}.invite small{color:var(--muted);font-size:9px}
+.invite-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.invite-box{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fffafd}.invite-box h3{font-size:13px;margin:0 0 4px}.invite{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(70px,.7fr)) auto;gap:8px;align-items:center;border-top:1px solid #f7e2ea;padding:10px 0}.invite:first-child{border-top:0}.invite .main b{font-size:12px}.invite small{color:var(--muted);font-size:9px}
 .log{display:grid;grid-template-columns:minmax(0,1.5fr) .7fr .8fr .9fr;gap:8px;border-top:1px solid #f7e2ea;padding:10px 0;font-size:10px}.log:first-child{border-top:0}
 .empty{padding:25px;text-align:center;color:var(--muted);font-size:11px;border:1px dashed var(--line);border-radius:14px}
 .gate{min-height:80vh;display:grid;place-items:center}.gatecard{width:min(410px,100%);background:#fff;border:1px solid var(--line);border-radius:23px;padding:22px;box-shadow:var(--shadow)}.gatecard h1{margin:0;font-size:21px}.stack{display:grid;gap:9px;margin-top:15px}.hint{font-size:11px;color:var(--muted);min-height:18px}.badtext{color:var(--bad)}
@@ -49,7 +49,7 @@ input,select{width:100%;border:1px solid var(--line);background:#fffafd;color:va
 @media(max-width:760px){
  .wrap{padding:10px 9px 45px}.topbar{top:5px}.brand small{display:none}.hero{padding:17px}.hero h1{font-size:22px}
  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.usergrid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}
- .invite{grid-template-columns:1fr 1fr}.invite .main{grid-column:1/-1}.log{grid-template-columns:1fr 1fr}.log>*:first-child{grid-column:1/-1}
+ .invite-columns{grid-template-columns:1fr}.invite{grid-template-columns:1fr 1fr}.invite .main{grid-column:1/-1}.log{grid-template-columns:1fr 1fr}.log>*:first-child{grid-column:1/-1}
  .searchrow{grid-template-columns:1fr}.customgrant{grid-template-columns:1fr auto;max-width:none}
 }
 </style>
@@ -80,7 +80,7 @@ input,select{width:100%;border:1px solid var(--line);background:#fffafd;color:va
     <div class="tabs">
       <button class="tab active" data-panel="users">👤 用户管理</button>
       <button class="tab" data-panel="invites">🎟️ 邀请码</button>
-      <button class="tab" data-panel="logs">🧾 充值记录</button>
+      <button class="tab" data-panel="logs">🧾 加时记录</button>
     </div>
 
     <section class="panel active" id="panel-users">
@@ -116,15 +116,26 @@ input,select{width:100%;border:1px solid var(--line);background:#fffafd;color:va
       </div>
       <div class="card">
         <h2>邀请码记录</h2>
-        <div class="meta">历史记录只显示用途、时长和使用次数。出于安全设计，数据库不保存邀请码明文。</div>
-        <div id="inviteList" style="margin-top:10px"><div class="empty">正在读取…</div></div>
+        <div class="meta">左边是当前可以继续使用的，右边是已经停用、过期或使用次数已满的。</div>
+        <div class="invite-columns">
+          <div class="invite-box">
+            <h3>✅ 可以使用</h3>
+            <div class="meta">当前仍有效的邀请码</div>
+            <div id="inviteActiveList"><div class="empty">正在读取…</div></div>
+          </div>
+          <div class="invite-box">
+            <h3>⛔ 已停用</h3>
+            <div class="meta">已停用 / 已过期 / 次数已满</div>
+            <div id="inviteInactiveList"><div class="empty">正在读取…</div></div>
+          </div>
+        </div>
       </div>
     </section>
 
     <section class="panel" id="panel-logs">
       <div class="card">
-        <h2>后台充值记录</h2>
-        <div class="meta">这里记录从本管理端直接给账号增加时间或设为永久的操作。</div>
+        <h2>使用时间调整记录</h2>
+        <div class="meta">这里记录的是“工作台使用期”的增加和永久授权，不是付款流水，也不需要连接银行卡。</div>
         <div id="logList" style="margin-top:10px"><div class="empty">正在读取…</div></div>
       </div>
     </section>
@@ -244,7 +255,7 @@ function renderAccounts(){
     const grant=canGrant(a)?'<div class="quickbuttons" data-grant-box="'+esc(a.user_id)+'">'+
       [7,30,90,365].map(d=>'<button type="button" data-grant-days="'+d+'" data-user="'+esc(a.user_id)+'">＋'+d+'天</button>').join("")+
       '<button type="button" class="perm" data-grant-permanent data-user="'+esc(a.user_id)+'">设为永久</button></div>'+
-      '<div class="customgrant"><input type="number" min="1" max="3650" placeholder="自定义天数" data-custom-days="'+esc(a.user_id)+'"><button class="ghost" type="button" data-custom-grant="'+esc(a.user_id)+'">充值</button></div>'
+      '<div class="customgrant"><input type="number" min="1" max="3650" placeholder="自定义天数" data-custom-days="'+esc(a.user_id)+'"><button class="ghost" type="button" data-custom-grant="'+esc(a.user_id)+'">加时</button></div>'
       :'<div class="meta" style="margin-top:10px">这是顾客账号，不提供美工使用期充值。</div>';
     return '<article class="user">'+
       '<div class="userhead"><div><div class="email">'+esc(a.workspace_title||a.email||"未命名工作台")+'</div><div class="meta" style="margin-top:2px">'+esc(a.email||"无邮箱")+'</div><div class="uid">UID · '+esc(a.user_id)+'</div></div><div class="tags"><span class="tag">'+esc(role)+'</span><span class="tag '+statusClass+'">'+status+'</span></div></div>'+
@@ -282,7 +293,7 @@ async function grantDays(userId,days){
   const a=accounts.find(x=>x.user_id===userId);
   if(!confirm("给 "+(a?.email||userId)+" 增加 "+days+" 天使用期？"))return;
   const {data,error}=await supabase.rpc("admin_grant_access",{p_target_user_id:userId,p_days:days,p_permanent:false});
-  if(error){alert("充值失败："+error.message);return}
+  if(error){alert("增加时间失败："+error.message);return}
   if(data?.reason==="ALREADY_PERMANENT"){toast("这个账号已经是永久");return}
   toast("已增加 "+days+" 天 ✓");
   await Promise.all([loadAccounts($("userSearch").value.trim()),loadLogs()]);
@@ -330,25 +341,37 @@ async function createInvite(){
   await loadInvites();
 }
 async function loadInvites(){
-  $("inviteList").innerHTML='<div class="empty">正在读取…</div>';
+  $("inviteActiveList").innerHTML='<div class="empty">正在读取…</div>';
+  $("inviteInactiveList").innerHTML='<div class="empty">正在读取…</div>';
   const {data,error}=await supabase.rpc("admin_list_invites");
-  if(error){$("inviteList").innerHTML='<div class="empty badtext">读取失败：'+esc(error.message)+'</div>';return}
+  if(error){
+    const msg='<div class="empty badtext">读取失败：'+esc(error.message)+'</div>';
+    $("inviteActiveList").innerHTML=msg;
+    $("inviteInactiveList").innerHTML=msg;
+    return;
+  }
   const rows=data||[];
-  if(!rows.length){$("inviteList").innerHTML='<div class="empty">还没有邀请码。</div>';return}
-  $("inviteList").innerHTML=rows.map(i=>{
+  const now=new Date();
+  const isUsable=i=>{
+    const notExpired=!i.expires_at||new Date(i.expires_at)>now;
+    const hasUses=i.max_uses==null||Number(i.used_count||0)<Number(i.max_uses);
+    return !!i.is_active&&notExpired&&hasUses;
+  };
+  const rowHtml=i=>{
     const grant=i.grant_type==="permanent"?"永久":(i.duration_days||0)+"天";
     const mode=i.use_mode==="multi"?"多人":"单次";
     const usage=i.max_uses==null?(i.used_count+" / ∞"):(i.used_count+" / "+i.max_uses);
-    const active=i.is_active && (!i.expires_at||new Date(i.expires_at)>new Date());
     return '<div class="invite">'+
-      '<div class="main"><b>'+esc(i.label||"未备注")+'</b><br><small>'+esc(dt(i.created_at))+'</small></div>'+
-      '<div><span class="tag">'+(i.purpose==="signup"?"注册":"续期")+'</span></div>'+
+      '<div class="main"><b>'+esc(i.label||"未备注")+'</b><br><small>'+esc(dt(i.created_at))+' · '+(i.purpose==="signup"?"注册":"续期")+'</small></div>'+
       '<div><b style="font-size:11px">'+esc(grant)+'</b><br><small>'+mode+'</small></div>'+
       '<div><b style="font-size:11px">'+esc(usage)+'</b><br><small>已用 / 上限</small></div>'+
-      '<div><span class="tag '+(active?"good":"gray")+'">'+(active?"启用":"停用")+'</span></div>'+
       '<button class="'+(i.is_active?"danger":"ghost")+'" data-toggle-invite="'+esc(i.id)+'" data-next="'+(!i.is_active)+'">'+(i.is_active?"停用":"启用")+'</button>'+
       '</div>';
-  }).join("");
+  };
+  const activeRows=rows.filter(isUsable);
+  const inactiveRows=rows.filter(i=>!isUsable(i));
+  $("inviteActiveList").innerHTML=activeRows.length?activeRows.map(rowHtml).join(""):'<div class="empty">暂无可用邀请码</div>';
+  $("inviteInactiveList").innerHTML=inactiveRows.length?inactiveRows.map(rowHtml).join(""):'<div class="empty">暂无已停用邀请码</div>';
   document.querySelectorAll("[data-toggle-invite]").forEach(b=>b.onclick=async()=>{
     const active=b.dataset.next==="true";
     const {error}=await supabase.rpc("admin_set_invite_active",{p_invite_id:b.dataset.toggleInvite,p_active:active});
