@@ -1,12 +1,14 @@
--- 莓桃工作台：当前数据库完整结构备份
--- 文件用途：新建 / 灾备时参考当前正式数据库结构。
--- 重要：这是“完整结构备份”，不要在正在使用的生产库里整份盲目重复执行。
+-- 莓桃工作台：核心数据库结构备份
+-- 文件用途：仅用于基础结构参考 / 灾备，不代表 9 月 20 日以后全部功能迁移。
+-- 新建完整环境时，还需要按日期运行 migrations/，最后运行：
+-- migrations/2026-09-20_final_permission_lockdown.sql
+-- 重要：不要在正在使用的生产库里整份盲目重复执行。
 -- 若只是日常修改数据库，请使用单独的增量 SQL。
 -- 本文件不包含任何真实邀请码、密码、邮箱密钥或 service_role key。
 -- 最后整理：2026-09-19
 -- 已支持：一次性邀请码 + 多账号通用邀请码（每账号仅可使用一次）
 
-create extension if not exists pgcrypto;
+create extension if not exists pgcrypto with schema extensions;
 
 -- =========================================================
 -- 1. 工作台数据
@@ -87,7 +89,7 @@ revoke all on table public.invite_codes from anon, authenticated;
 
 create table if not exists public.invite_redemptions (
   id uuid primary key default gen_random_uuid(),
-  invite_id uuid not null unique references public.invite_codes(id) on delete restrict,
+  invite_id uuid not null references public.invite_codes(id) on delete restrict,
   user_id uuid not null references auth.users(id) on delete cascade,
   purpose text not null
     check (purpose in ('signup','renewal')),
@@ -198,8 +200,8 @@ create or replace function public.handle_new_user_access()
 returns trigger
 language plpgsql
 security definer
-set search_path = public, auth
-as $$
+set search_path = public, auth, extensions
+as $
 declare
   v_code text;
   v_hash text;
@@ -212,7 +214,7 @@ begin
     raise exception '注册需要有效邀请码';
   end if;
 
-  v_hash := encode(digest(v_code, 'sha256'), 'hex');
+  v_hash := encode(extensions.digest(v_code, 'sha256'), 'hex');
 
   update public.invite_codes
   set used_at = now(),
