@@ -42,11 +42,14 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
       <h1>我的排单 🍓</h1>
       <p id="welcomeText">登录后可以绑定多个美工，在一个页面查看自己在不同美工那里的排单。</p>
       <div id="customerAccountBar" class="hidden" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
-        <div><div class="meta">当前登录账号</div><b id="customerAccountEmail" style="font-size:12px"></b></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="ghost" id="openBindModalBtn" type="button">＋ 绑定美工</button>
-          <button class="danger" id="logoutBtn2" type="button">退出登录</button>
+        <div>
+          <div class="meta">当前登录账号</div>
+          <b id="customerAccountEmail" style="font-size:12px"></b>
+          <div style="margin-top:8px">
+            <button class="ghost" id="openBindModalBtn" type="button">＋ 绑定美工</button>
+          </div>
         </div>
+        <button class="danger" id="logoutBtn2" type="button">退出登录</button>
       </div>
     </section>
 
