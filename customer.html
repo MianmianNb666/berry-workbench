@@ -7,7 +7,7 @@
 <title>莓桃顾客端</title>
 <style>
 :root{--rose:#e9789d;--rose2:#f4a7bf;--bg:#fff8fb;--panel:#fff;--soft:#fff0f5;--line:#f2dce4;--text:#45383d;--muted:#927d85;--ok:#5d9b72;--warn:#c89542;--danger:#c95e69}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:var(--text);background:linear-gradient(180deg,#fff7fa,#fffdfd)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:var(--text);background:var(--bg)}
 button,input{font:inherit}button{cursor:pointer}
 .wrap{width:min(980px,100%);margin:0 auto;padding:18px 16px 44px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
@@ -17,7 +17,7 @@ button,input{font:inherit}button{cursor:pointer}
 .hero{padding:22px;border:1px solid var(--line);background:rgba(255,255,255,.84);border-radius:24px;box-shadow:0 18px 55px rgba(125,76,95,.08)}
 .hero h1{font-size:25px;margin:0}.hero p{color:var(--muted);font-size:12px;line-height:1.7;margin:8px 0 0}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px}.card h2,.card h3{margin:0}.card h2{font-size:17px}.card h3{font-size:14px}.meta{color:var(--muted);font-size:11px;line-height:1.6}.stack{display:grid;gap:9px;margin-top:12px}
-input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:0 12px;color:var(--text);outline:none}input:focus{border-color:var(--rose2);box-shadow:0 0 0 3px rgba(233,120,157,.10)}
+input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:0 12px;color:var(--text);outline:none}input:focus{border-color:var(--rose2);box-shadow:0 0 0 3px rgba(233,120,157,.10)}
 .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.actions>*{flex:1 1 120px}
 .artist-list{display:grid;gap:10px;margin-top:12px}.artist{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}.artist-main{min-width:0}.artist-name{font-weight:850}.code{font-size:10px;color:var(--muted);margin-top:4px}.artist-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.artist-actions button,.artist-actions a{min-height:34px;padding:0 10px;font-size:11px}
 .badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;background:var(--soft);color:var(--rose)}.badge.private{background:#f4f1f2;color:#76666c}
@@ -26,8 +26,8 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
 .portal-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}.portal-switch a,.portal-switch span{display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:10px;font-size:12px;font-weight:800;text-decoration:none;color:var(--muted)}.portal-switch .active{background:var(--panel);color:var(--rose);box-shadow:0 3px 10px rgba(125,76,95,.08)}
 .authcard h2{font-size:22px;color:var(--rose);margin:0}.authcard p{font-size:12px;line-height:1.65;color:var(--muted)}.authcard label{display:block;font-size:11px;color:var(--muted);margin-top:10px}.authactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.authhint{min-height:20px;margin-top:10px;color:var(--rose);font-size:11px;line-height:1.5}.authlink{border:0;background:transparent;color:var(--rose);padding:10px 0 0;text-decoration:underline;text-underline-offset:3px;font-size:12px}.maintenance{position:fixed;inset:0;z-index:60;background:rgba(255,247,250,.97);backdrop-filter:blur(12px);display:grid;place-items:center;padding:18px}.maintenance.hidden{display:none}.maintenance-card{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:24px;text-align:center;box-shadow:0 25px 70px rgba(125,76,95,.14)}.maintenance-card .berry{font-size:42px}.maintenance-card h2{margin:8px 0 6px;color:var(--rose);font-size:22px}.maintenance-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
 .lookup{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}.lookup-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}.hidden{display:none!important}
-.artist-page{margin-top:14px}.artist-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.schedule{margin-top:12px}.modalbg{position:fixed;inset:0;z-index:55;background:rgba(70,45,55,.22);display:none;place-items:center;padding:18px}.modalbg.show{display:grid}.modal{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 25px 70px rgba(125,76,95,.16)}.modalhead{display:flex;align-items:center;justify-content:space-between;gap:10px}.modalhead h2{margin:0;font-size:18px}
-@media(max-width:680px){.wrap{padding:12px 10px 34px}.grid{grid-template-columns:1fr}.hero{padding:17px;border-radius:20px}.hero h1{font-size:22px}.topbar{align-items:flex-start}.artist{align-items:flex-start;flex-direction:column}.artist-actions{width:100%;justify-content:stretch}.artist-actions>*{flex:1}.lookup-row{grid-template-columns:1fr}.lookup-row button{width:100%}}
+.customer-nav{display:flex;gap:8px;flex-wrap:wrap;margin:-4px 0 14px}.customer-nav button{min-height:38px}.customer-nav button.active{background:var(--rose);border-color:var(--rose);color:#fff}.customer-view.hidden{display:none}.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.color-setting{border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--panel)}.color-setting label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}.color-setting input[type="color"]{width:50px;height:38px;min-height:38px;padding:2px;cursor:pointer}.artist-page{margin-top:14px}.artist-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.schedule{margin-top:12px}.modalbg{position:fixed;inset:0;z-index:55;background:rgba(70,45,55,.22);display:none;place-items:center;padding:18px}.modalbg.show{display:grid}.modal{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 25px 70px rgba(125,76,95,.16)}.modalhead{display:flex;align-items:center;justify-content:space-between;gap:10px}.modalhead h2{margin:0;font-size:18px}
+@media(max-width:680px){.wrap{padding:12px 10px 34px}.grid,.settings-grid{grid-template-columns:1fr}.hero{padding:17px;border-radius:20px}.hero h1{font-size:22px}.topbar{align-items:flex-start}.artist{align-items:flex-start;flex-direction:column}.artist-actions{width:100%;justify-content:stretch}.artist-actions>*{flex:1}.lookup-row{grid-template-columns:1fr}.lookup-row button{width:100%}}
 </style>
 </head>
 <body>
@@ -37,10 +37,28 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><a class="linkbtn" href="./index.html">🎨 美工端</a><button class="danger hidden" id="logoutBtn">退出登录</button></div>
   </div>
 
-  <div id="dashboard">
+  <div id="customerNav" class="customer-nav hidden">
+    <button class="ghost active" type="button" data-customer-view="dashboard">🍓 我的排单</button>
+    <button class="ghost" type="button" data-customer-view="customerProfile">👤 我的</button>
+    <button class="ghost" type="button" data-customer-view="customerSettings">⚙️ 设置</button>
+  </div>
+
+  <div id="dashboard" class="customer-view">
     <section class="hero">
       <h1>我的排单 🍓</h1>
-      <p id="welcomeText">登录后可以绑定多个美工，在一个页面查看自己在不同美工那里的排单。</p>
+      <p id="welcomeText">登录后可以查看自己在不同美工那里的排位、状态和预计完成时间。</p>
+    </section>
+    <section class="card" style="margin-top:14px">
+      <h2>订单进度</h2>
+      <div class="meta">订单和排单数据接入后，会集中显示在这里。</div>
+      <div class="empty" style="margin-top:12px">目前还没有可显示的排单。</div>
+    </section>
+  </div>
+
+  <section id="customerProfile" class="customer-view hidden">
+    <section class="hero">
+      <h1>我的 👤</h1>
+      <p>管理顾客账号和已经绑定的美工。</p>
       <div id="customerAccountBar" class="hidden" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
         <div>
           <div class="meta">当前登录账号</div>
@@ -52,15 +70,37 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
         <button class="danger" id="logoutBtn2" type="button">退出登录</button>
       </div>
     </section>
+    <section class="card" style="margin-top:14px">
+      <h2>我的美工</h2>
+      <div class="meta">绑定入口收在“我的”里，不占用排单首页。</div>
+      <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
+    </section>
+  </section>
 
-    <div style="margin-top:14px">
-      <section class="card">
-        <h2>我的美工</h2>
-        <div class="meta">这里集中显示已经绑定的美工。新增绑定放到“我的”里的小入口，不再占一整块页面。</div>
-        <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
-      </section>
-    </div>
-  </div>
+  <section id="customerSettings" class="customer-view hidden">
+    <section class="hero">
+      <h1>设置 ⚙️</h1>
+      <p>顾客端的颜色会跟随当前账号保存。</p>
+    </section>
+    <section class="card" style="margin-top:14px">
+      <h2>界面配色 🎨</h2>
+      <div class="meta">可以自己改主色、背景、卡片和文字颜色。</div>
+      <div class="settings-grid">
+        <div class="color-setting"><label>主色 <input id="customerAccentColor" type="color" value="#e9789d"></label></div>
+        <div class="color-setting"><label>背景 <input id="customerBgColor" type="color" value="#fff8fb"></label></div>
+        <div class="color-setting"><label>卡片 <input id="customerPanelColor" type="color" value="#ffffff"></label></div>
+        <div class="color-setting"><label>文字 <input id="customerTextColor" type="color" value="#45383d"></label></div>
+      </div>
+      <div class="actions">
+        <button class="ghost" type="button" data-customer-theme="berry">🍓 莓果</button>
+        <button class="ghost" type="button" data-customer-theme="mint">🌿 薄荷</button>
+        <button class="ghost" type="button" data-customer-theme="lavender">🪻 薰衣草</button>
+        <button class="ghost" type="button" data-customer-theme="blue">🫧 蓝调</button>
+        <button class="ghost" id="resetCustomerThemeBtn" type="button">恢复默认</button>
+      </div>
+      <div id="customerThemeHint" class="meta" style="margin-top:8px"></div>
+    </section>
+  </section>
 
   <section id="artistPage" class="artist-page hidden">
     <button class="ghost" id="backBtn">← 返回我的美工</button>
@@ -156,6 +196,90 @@ async function isOwner(){
   return !!user?.id && (await sha256Hex(user.id))===OWNER_USER_ID_HASH;
 }
 
+const DEFAULT_CUSTOMER_PREFS={accent:"#e9789d",bg:"#fff8fb",panel:"#ffffff",text_color:"#45383d"};
+const CUSTOMER_THEME_PRESETS={
+  berry:{accent:"#e9789d",bg:"#fff8fb",panel:"#ffffff",text_color:"#45383d"},
+  mint:{accent:"#79bfa6",bg:"#f7fcfa",panel:"#ffffff",text_color:"#34453f"},
+  lavender:{accent:"#aa91d4",bg:"#fbf9ff",panel:"#ffffff",text_color:"#433b4d"},
+  blue:{accent:"#78aee8",bg:"#f7fbff",panel:"#ffffff",text_color:"#334250"}
+};
+let customerPrefs={...DEFAULT_CUSTOMER_PREFS};
+let customerPrefTimer=null;
+function rgba(hex,a){
+  const h=String(hex||"").replace("#","");
+  if(!/^[0-9a-f]{6}$/i.test(h))return "rgba(233,120,157,"+a+")";
+  const n=parseInt(h,16);
+  return "rgba("+((n>>16)&255)+","+((n>>8)&255)+","+(n&255)+","+a+")";
+}
+function applyCustomerTheme(){
+  const r=document.documentElement.style;
+  r.setProperty("--rose",customerPrefs.accent);
+  r.setProperty("--rose2",customerPrefs.accent);
+  r.setProperty("--bg",customerPrefs.bg);
+  r.setProperty("--panel",customerPrefs.panel);
+  r.setProperty("--text",customerPrefs.text_color);
+  r.setProperty("--soft",rgba(customerPrefs.accent,.10));
+  r.setProperty("--line",rgba(customerPrefs.accent,.26));
+  ["customerAccentColor","customerBgColor","customerPanelColor","customerTextColor"].forEach((id,i)=>{
+    const el=$(id); if(el) el.value=[customerPrefs.accent,customerPrefs.bg,customerPrefs.panel,customerPrefs.text_color][i];
+  });
+}
+async function loadCustomerPreferences(){
+  if(!user){customerPrefs={...DEFAULT_CUSTOMER_PREFS};applyCustomerTheme();return}
+  const localKey="berry-customer-prefs-"+user.id;
+  try{
+    const cached=JSON.parse(localStorage.getItem(localKey)||"null");
+    if(cached)customerPrefs={...DEFAULT_CUSTOMER_PREFS,...cached};
+  }catch(_){}
+  applyCustomerTheme();
+  const {data,error}=await supabase.from("customer_preferences").select("accent,bg,panel,text_color").eq("user_id",user.id).maybeSingle();
+  if(error){console.warn("customer preferences:",error.message);return}
+  if(data){
+    customerPrefs={...DEFAULT_CUSTOMER_PREFS,...data};
+  }else{
+    const created=await supabase.from("customer_preferences").insert({user_id:user.id,...customerPrefs}).select("accent,bg,panel,text_color").single();
+    if(created.data)customerPrefs={...DEFAULT_CUSTOMER_PREFS,...created.data};
+  }
+  localStorage.setItem(localKey,JSON.stringify(customerPrefs));
+  applyCustomerTheme();
+}
+function saveCustomerPreferences(){
+  if(!user)return;
+  const localKey="berry-customer-prefs-"+user.id;
+  localStorage.setItem(localKey,JSON.stringify(customerPrefs));
+  applyCustomerTheme();
+  clearTimeout(customerPrefTimer);
+  customerPrefTimer=setTimeout(async()=>{
+    const {error}=await supabase.from("customer_preferences").upsert({user_id:user.id,...customerPrefs,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+    if($("customerThemeHint"))$("customerThemeHint").textContent=error?"云端保存失败，请先运行最新 SQL。":"已保存到当前顾客账号 ✓";
+  },300);
+}
+function setCustomerView(view){
+  const id=view==="profile"?"customerProfile":view==="settings"?"customerSettings":"dashboard";
+  document.querySelectorAll(".customer-view").forEach(x=>x.classList.toggle("hidden",x.id!==id));
+  document.querySelectorAll("[data-customer-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.customerView===id));
+  if(user)localStorage.setItem("berry-customer-view-"+user.id,view);
+}
+document.querySelectorAll("[data-customer-view]").forEach(btn=>{
+  btn.onclick=()=>{
+    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerSettings"?"settings":"dashboard";
+    const u=new URL(location.href);u.searchParams.delete("artist");u.searchParams.set("view",view);history.replaceState(null,"",u);
+    $("artistPage").classList.add("hidden");$("customerNav").classList.remove("hidden");setCustomerView(view);
+  };
+});
+["customerAccentColor","customerBgColor","customerPanelColor","customerTextColor"].forEach((id,i)=>{
+  $(id).addEventListener("input",()=>{
+    const key=["accent","bg","panel","text_color"][i];
+    customerPrefs[key]=$(id).value;
+    saveCustomerPreferences();
+  });
+});
+document.querySelectorAll("[data-customer-theme]").forEach(btn=>btn.onclick=()=>{
+  customerPrefs={...CUSTOMER_THEME_PRESETS[btn.dataset.customerTheme]};
+  saveCustomerPreferences();
+});
+$("resetCustomerThemeBtn").onclick=()=>{customerPrefs={...DEFAULT_CUSTOMER_PREFS};saveCustomerPreferences()};
+
 function openArtist(code){
   const c=normCode(code);
   if(!c)return;
@@ -165,7 +289,7 @@ function openArtist(code){
 }
 $("lookupBtn").onclick=()=>openArtist($("lookupCode").value);
 $("lookupCode").addEventListener("keydown",e=>{if(e.key==="Enter")openArtist(e.currentTarget.value)});
-$("backBtn").onclick=()=>{const u=new URL(location.href);u.searchParams.delete("artist");location.href=u.pathname+u.search};
+$("backBtn").onclick=()=>{const u=new URL(location.href);u.searchParams.delete("artist");u.searchParams.set("view","profile");location.href=u.pathname+u.search};
 
 async function ensureCustomerRole(){
   if(!user)return;
@@ -361,6 +485,7 @@ async function applySession(session){
     $("dashboard").classList.remove("hidden");
     $("artistPage").classList.add("hidden");
     $("logoutBtn").classList.add("hidden");
+    $("customerNav").classList.add("hidden");
     $("customerAccountBar").classList.add("hidden");
     $("customerAccountEmail").textContent="";
     $("authGate").classList.add("hidden");
@@ -377,12 +502,23 @@ async function applySession(session){
   if(user){
     $("authGate").classList.add("hidden");
     $("logoutBtn").classList.remove("hidden");
+    $("customerNav").classList.remove("hidden");
     $("customerAccountBar").classList.remove("hidden");
     $("customerAccountEmail").textContent=user.email||"顾客";
-    $("welcomeText").textContent=(user.email||"顾客")+" · 可以同时绑定多个美工查看自己的排单。";
+    $("welcomeText").textContent=(user.email||"顾客")+" · 可以同时查看不同美工下属于自己的排单。";
     $("bindSelfTestBtn").classList.toggle("hidden",!(await isOwner()));
     await ensureCustomerRole();
-    if(artistCode)await loadArtistPublic(artistCode); else await loadBindings();
+    await loadCustomerPreferences();
+    await loadBindings();
+    if(artistCode){
+      $("customerNav").classList.add("hidden");
+      await loadArtistPublic(artistCode);
+    }else{
+      $("artistPage").classList.add("hidden");
+      const requested=new URL(location.href).searchParams.get("view");
+      const remembered=localStorage.getItem("berry-customer-view-"+user.id);
+      setCustomerView(requested||remembered||"dashboard");
+    }
   }else{
     $("logoutBtn").classList.add("hidden");
     $("customerAccountBar").classList.add("hidden");
