@@ -71,10 +71,11 @@
   .modal{border-radius:18px;padding:14px}
   input,select,textarea{font-size:16px}
 }
+.access-readonly-banner{display:none;margin:0 0 14px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--soft);align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.access-readonly-banner.show{display:flex}.access-readonly-banner b{font-size:13px}.access-readonly-banner .meta{margin-top:3px}.access-readonly button:disabled,.access-readonly input:disabled,.access-readonly select:disabled,.access-readonly textarea:disabled{opacity:.48;cursor:not-allowed}
 </style></head>
 <body><div class="app"><div class="layout">
 <aside class="side"><div class="brand"><div class="logo" id="brandLogo"><span>🍓</span><img id="brandAvatar" alt="自定义头像"></div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><div id="navScroll" class="nav-scroll"><button class="active" data-page="desk" id="navDesk">🏠 工作台</button><button data-page="orders" id="navOrders">🧾 订单</button><button data-page="schedule" id="navSchedule">🗓️ 排单</button><button data-page="money" id="navMoney">💰 财务</button><button data-page="time" id="navTime">⏱️ 时间</button><button data-page="customers" id="navCustomers" class="hidden">👥 顾客</button><button data-page="profile" id="navProfile" class="nav-heart">我的</button><button data-page="settings" id="navSettings">⚙️ 设置</button><div id="customNav" class="custom-nav-wrap"></div></div><div class="nav-bottom"><button id="addSectionBtn" class="custom-nav-add" type="button">＋ 添加分区</button></div></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><div class="note" id="sidebarAccessRemaining" style="margin-top:5px">使用期限：--</div><div class="avatar-actions"><button class="ghost" id="avatarBtn" type="button">🖼️ 自定义头像</button><button class="ghost" id="redeemOpenBtn" type="button">🎟️ 兑换邀请码</button><button class="avatar-reset" id="avatarResetBtn" type="button">恢复草莓头像</button><input id="avatarInput" type="file" accept="image/*" hidden></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。不同账号的数据会彼此分开。</p></aside>
-<main class="main"><div class="top"><div><h1 id="greet">下午好，创作者！</h1><p id="dateText"></p><div id="topDeadlines" class="top-ddl"></div></div><button class="primary" id="newBtn">＋ 新增需求</button></div>
+<main class="main"><div id="accessReadOnlyBanner" class="access-readonly-banner"><div><b>🔒 使用期已结束 · 当前为只读模式</b><div class="meta">你的数据和顾客端都不会消失。现在可以继续查看，但不能新增、修改或删除内容。</div></div><button id="readOnlyRenewBtn" class="primary" type="button">🎟️ 立即续期</button></div><div class="top"><div><h1 id="greet">下午好，创作者！</h1><p id="dateText"></p><div id="topDeadlines" class="top-ddl"></div></div><button class="primary" id="newBtn">＋ 新增需求</button></div>
 <section class="summary"><div class="stat"><span>全部需求</span><b id="sAll">0</b></div><div class="stat"><span>进行中</span><b id="sDoing">0</b></div><div class="stat"><span>已逾期</span><b id="sLate">0</b></div><div class="stat"><span>已完成</span><b id="sDone">0</b></div></section>
 <section id="p-desk" class="panel active"><div class="work"><div class="tabs"><button class="chip active" data-filter="全部">全部</button><button class="chip" data-filter="进行中">进行中</button><button class="chip" data-filter="待处理">待处理</button><button class="chip" data-filter="待付款">待付款</button><button class="chip" data-filter="已完成">已完成</button></div><div class="search"><input id="search" placeholder="搜索需求、客户或备注..."></div><div id="deskOrders" class="orders"></div></div></section>
 <section id="p-orders" class="panel"><div class="work"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:17px;margin:0">全部订单</h2><button class="primary" id="newBtn2">＋ 新建订单</button></div><div id="allOrders" class="orders"></div></div></section>
@@ -353,7 +354,9 @@
     </div>
   </div>
 </div></div>
-<div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div><div id="authGate" class="authbg"><div class="authcard"><div class="portal-switch"><span class="active">🎨 美工端</span><a href="./customer.html">👤 顾客端</a></div><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div class="meta" style="margin-top:6px;text-align:center">为避免频繁发送，密码重置邮件每小时最多发送 2 次，请确认邮箱填写正确后再点击。</div><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
+<div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div>
+<div id="accessExpiryModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>使用期快到啦 🎟️</h2><div class="meta" id="accessExpiryModalMeta">还有 2 天到期。</div></div><button class="ghost" id="closeAccessExpiryModal" type="button">×</button></div><p class="meta" style="font-size:12px;line-height:1.8;margin:14px 0">到期后不会删除任何数据，顾客也仍然可以查看你的顾客端；但美工端会进入只读模式，不能新增、修改或删除内容。</p><div class="actions" style="justify-content:flex-end"><button class="ghost" id="laterAccessExpiryBtn" type="button">稍后再说</button><button class="primary" id="renewFromExpiryBtn" type="button">现在续期</button></div></div></div>
+<div id="authGate" class="authbg"><div class="authcard"><div class="portal-switch"><span class="active">🎨 美工端</span><a href="./customer.html">👤 顾客端</a></div><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div class="meta" style="margin-top:6px;text-align:center">为避免频繁发送，密码重置邮件每小时最多发送 2 次，请确认邮箱填写正确后再点击。</div><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -366,7 +369,7 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true
 
 const $=id=>document.getElementById(id);
 const OLD_KEY="berry-workbench-v2";
-let S={orders:[],times:[],title:"莓桃工作台",avatar:"",appIcon:"",appIconToken:"",notificationName:"莓桃工作台",displayName:"创作者",welcomeText:"今天也要轻轻松松收工 ♡",footerText:"♡ 莓桃工作台 · 自动云同步 + 本地缓存",stylePreset:"custom",passwordChangedAt:"",theme:{accent:"#f292b2",bg:"#fff9fb",panel:"#ffffff",text:"#45383d"},customSections:[],navLabels:{desk:"工作台",orders:"订单",schedule:"排单",money:"财务",time:"时间",profile:"我的",settings:"设置"},navOrder:["desk","orders","schedule","money","time","profile","settings"],mobileNavMode:"top"},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false,currentAccessStatus=null;
+let S={orders:[],times:[],title:"莓桃工作台",avatar:"",appIcon:"",appIconToken:"",notificationName:"莓桃工作台",displayName:"创作者",welcomeText:"今天也要轻轻松松收工 ♡",footerText:"♡ 莓桃工作台 · 自动云同步 + 本地缓存",stylePreset:"custom",passwordChangedAt:"",theme:{accent:"#f292b2",bg:"#fff9fb",panel:"#ffffff",text:"#45383d"},customSections:[],navLabels:{desk:"工作台",orders:"订单",schedule:"排单",money:"财务",time:"时间",profile:"我的",settings:"设置"},navOrder:["desk","orders","schedule","money","time","profile","settings"],mobileNavMode:"top"},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false,currentAccessStatus=null,accessReadOnly=false;
 let deferredInstallPrompt=null;
 let swRegistration=null;
 let dynamicManifestUrl="";
@@ -589,6 +592,7 @@ function applyPersonalText(){
 function dayLeft(x){return Math.ceil((new Date(x+"T00:00:00")-new Date(T+"T00:00:00"))/86400000)}
 
 function persist(){
+  if(accessReadOnly)return;
   localWrite();
   if(!user||isApplyingRemote)return;
   setSync("保存中…","busy");
@@ -596,7 +600,7 @@ function persist(){
   saveTimer=setTimeout(saveCloud,450);
 }
 async function saveCloud(){
-  if(!user)return;
+  if(!user||accessReadOnly)return;
   const {error}=await supabase.from("workspaces").upsert({
     user_id:user.id,
     data:S,
@@ -1784,6 +1788,14 @@ function openRedeemModal(){
 function closeRedeemModal(){
   $("redeemModalBg").classList.remove("show");
 }
+function closeAccessExpiryModal(){
+  $("accessExpiryModalBg")?.classList.remove("show");
+}
+$("readOnlyRenewBtn").onclick=openRedeemModal;
+$("closeAccessExpiryModal").onclick=closeAccessExpiryModal;
+$("laterAccessExpiryBtn").onclick=closeAccessExpiryModal;
+$("renewFromExpiryBtn").onclick=()=>{closeAccessExpiryModal();openRedeemModal();};
+$("accessExpiryModalBg").addEventListener("click",e=>{if(e.target===$("accessExpiryModalBg"))closeAccessExpiryModal()});
 async function redeemFromModal(){
   const code=$("redeemCode").value.trim().toUpperCase();
   if(!code){$("redeemModalHint").textContent="请输入邀请码。";return}
@@ -1804,7 +1816,9 @@ async function redeemFromModal(){
   }
   $("redeemCode").value="";
   await refreshAccountProfile();
-  setTimeout(closeRedeemModal,1200);
+  const {data:{session}}=await supabase.auth.getSession();
+  await applySession(session);
+  setTimeout(closeRedeemModal,900);
 }
 
 function showLoginView(){
@@ -1868,6 +1882,10 @@ async function loadArtistPortalProfile(){
       .eq("artist_user_id",user.id)
       .maybeSingle();
     if(error)throw error;
+    if(!data&&accessReadOnly){
+      renderArtistPortalProfile(null,"");
+      return;
+    }
     if(!data){
       const created=await supabase.from("artist_profiles")
         .insert({artist_user_id:user.id,public_name:S.title||"莓桃美工"})
@@ -1887,7 +1905,7 @@ async function loadArtistPortalProfile(){
       console.warn("customer access code:",access.error.message);
     }else if(access.data?.access_code){
       accessCode=access.data.access_code;
-    }else{
+    }else if(!accessReadOnly){
       const rotated=await supabase.rpc("rotate_customer_access_code");
       if(!rotated.error&&rotated.data)accessCode=rotated.data;
     }
@@ -1929,6 +1947,55 @@ async function refreshAccountProfile(){
     console.error(e);
     if($("profileAccessBadge"))$("profileAccessBadge").textContent="读取失败";
   }
+}
+function setAccessReadOnly(on,status={}){
+  accessReadOnly=!!on;
+  document.body.classList.toggle("access-readonly",accessReadOnly);
+  $("accessReadOnlyBanner")?.classList.toggle("show",accessReadOnly);
+
+  const allowedIds=new Set([
+    "search","logoutBtn","settingsLogoutBtn","redeemOpenBtn","settingsRedeemBtn",
+    "redeemCode","redeemModalBtn","cancelRedeemModal","closeRedeemModal",
+    "readOnlyRenewBtn","closeAccessExpiryModal","laterAccessExpiryBtn","renewFromExpiryBtn",
+    "exportJson","exportCsv","copyUserIdBtn","copyDeveloperContactBtn",
+    "copyArtistCodeBtn","copyArtistLinkBtn","openArtistCustomerPageBtn"
+  ]);
+
+  document.querySelectorAll("button,input,select,textarea").forEach(el=>{
+    const allowed=
+      allowedIds.has(el.id) ||
+      el.matches("[data-page],.chip") ||
+      el.closest("#authGate") ||
+      el.closest("#redeemModalBg") ||
+      el.closest("#accessExpiryModalBg") ||
+      el.classList.contains("custom-nav-delete")===false && el.matches("[data-page]");
+    if(accessReadOnly&&!allowed){
+      if(!el.disabled)el.dataset.accessLocked="1";
+      el.disabled=true;
+    }else if(!accessReadOnly&&el.dataset.accessLocked==="1"){
+      el.disabled=false;
+      delete el.dataset.accessLocked;
+    }
+  });
+
+  if(accessReadOnly){
+    setSync("只读模式","err");
+    if(status?.valid_until&&$("sidebarAccessRemaining"))$("sidebarAccessRemaining").textContent="使用期限：已到期";
+  }
+}
+function maybeShowExpiryWarning(status={}){
+  if(!user||status.access_type==="permanent"||!status.valid_until||!status.has_access)return;
+  const ms=new Date(status.valid_until).getTime()-Date.now();
+  if(ms<=0||ms>2*86400000)return;
+  const dayKey=new Date().toISOString().slice(0,10);
+  const expiryKey=String(status.valid_until).slice(0,10);
+  const key="berry-expiry-warning:"+user.id+":"+expiryKey+":"+dayKey;
+  if(localStorage.getItem(key)==="1")return;
+  localStorage.setItem(key,"1");
+  const hours=Math.max(1,Math.ceil(ms/3600000));
+  const text=hours>24?"大约还有 "+Math.ceil(hours/24)+" 天到期。":"大约还有 "+hours+" 小时到期。";
+  if($("accessExpiryModalMeta"))$("accessExpiryModalMeta").textContent=text+" 到期后美工端会变成只读，但顾客端仍可正常查看。";
+  $("accessExpiryModalBg")?.classList.add("show");
 }
 function showRenewView(status={}){
   $("loginView").classList.add("hidden");
@@ -1991,20 +2058,16 @@ async function applySession(session){
     return;
   }
 
-  if(!status?.has_access){
-    if(channel){supabase.removeChannel(channel);channel=null}
-    setSync("使用期已结束","err");
-    showRenewView(status);
-    return;
-  }
-
   $("loginView").classList.remove("hidden");
   $("renewView").classList.add("hidden");
   $("authGate").classList.add("hidden");
+
+  setAccessReadOnly(!status?.has_access,status);
   await loadWorkspace();
   const betaOwner=await applyArtistBetaAccess();
   if(betaOwner)await loadArtistPortalProfile();
-  if("Notification" in window&&Notification.permission==="granted"){
+  if(status?.has_access)maybeShowExpiryWarning(status);
+  if(status?.has_access&&"Notification" in window&&Notification.permission==="granted"){
     syncPushSubscriptionToCloud();
   }
 }
