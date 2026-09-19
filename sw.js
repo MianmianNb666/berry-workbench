@@ -1,4 +1,4 @@
-const CACHE_NAME = "berry-workbench-pwa-v39";
+const CACHE_NAME = "berry-workbench-pwa-v40";
 const APP_SHELL = [
   "./",
   "./index.html",
