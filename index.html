@@ -83,6 +83,19 @@
     <div class="profile-item" style="grid-column:1/-1"><span>账号 ID</span><b id="profileUserId">--</b><button id="copyUserIdBtn" class="copy-mini" type="button">复制账号 ID</button></div>
   </div>
 </div>
+<div class="profile-card">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+    <div>
+      <h3 style="font-size:14px;margin:0">开发者联系 💌</h3>
+      <div class="meta" style="margin-top:4px">需要反馈、建议或帮助时，可以复制联系方式添加。</div>
+    </div>
+    <button id="copyDeveloperContactBtn" class="ghost" type="button">复制添加</button>
+  </div>
+  <div class="profile-item" style="margin-top:12px">
+    <span>开发者联系方式</span>
+    <b id="developerContact">i-Sooong</b>
+  </div>
+</div>
 <div style="margin-top:14px;border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--panel)">
   <h3 style="font-size:14px;margin:0 0 8px">密码管理 🔐</h3>
   <div class="meta">为了安全，本站不会保存或显示历史密码。登录页支持“显示密码”，并可使用浏览器 / 手机自带的密码保存和自动填充。</div>
@@ -619,6 +632,18 @@ $("settingsResetAvatarBtn").onclick=()=>{
   persist();
 };
 $("settingsLogoutBtn").onclick=()=>supabase.auth.signOut();
+$("copyDeveloperContactBtn").onclick=async()=>{
+  const contact="i-Sooong";
+  try{
+    await navigator.clipboard.writeText(contact);
+    const btn=$("copyDeveloperContactBtn"),old=btn.textContent;
+    btn.textContent="已复制 ✓";
+    setTimeout(()=>btn.textContent=old,1000);
+  }catch(_){
+    prompt("复制开发者联系方式：",contact);
+  }
+};
+
 $("copyUserIdBtn").onclick=async()=>{
   if(!user?.id)return;
   try{
