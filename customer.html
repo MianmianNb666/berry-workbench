@@ -92,7 +92,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
         <div>
           <div class="meta">当前登录账号</div>
           <b id="customerAccountEmail" style="font-size:12px"></b>
-          <div class="meta" style="margin-top:7px">每位美工都有自己的顾客码。拿到谁的码，就能解锁谁的顾客端内容。</div>
+          <div class="meta" style="margin-top:7px">美工可以给你她的通用顾客码，也可以提前建立你的档案并生成顾客专属码。两种都可以完成绑定。</div>
           <div style="margin-top:8px"><button class="ghost" id="openBindModalBtn" type="button">＋ 添加美工</button></div>
         </div>
         <button class="danger" id="logoutBtn2" type="button">退出登录</button>
@@ -110,7 +110,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
     </section>
     <section class="card" style="margin-top:14px">
       <h2>我的美工</h2>
-      <div class="meta">可以绑定多个美工；每个美工都必须用她自己的顾客码单独解锁。</div>
+      <div class="meta">可以绑定多个美工。每位美工都可以用她的通用顾客码，或给你生成的顾客专属码来解锁。</div>
       <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
     </section>
   </section>
@@ -225,8 +225,8 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
   <div class="maintenance-card">
     <div class="berry">🎟️</div>
     <h2>需要顾客码</h2>
-    <p>这个顾客账号还没有解锁任何美工。先输入任意一位美工发给你的专属顾客码；以后还可以继续添加其他美工。</p>
-    <input id="accessGateCode" autocomplete="off" autocapitalize="characters" placeholder="GC-XXXXXXXXXXXX" style="margin-top:10px">
+    <p>这个顾客账号还没有解锁任何美工。可以输入美工的通用顾客码，也可以输入美工提前给你生成的顾客专属码。</p>
+    <input id="accessGateCode" autocomplete="off" autocapitalize="characters" placeholder="GC-... 或 CC-..." style="margin-top:10px">
     <div id="accessGateHint" class="authhint"></div>
     <div class="actions" style="margin-top:10px">
       <button class="primary" id="claimAccessCodeBtn" type="button">使用顾客码进入</button>
@@ -251,11 +251,11 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
     <div class="portal-switch"><a href="./index.html">🎨 美工端</a><span class="active">👤 顾客端</span></div>
     <div id="loginView">
       <h2>登录顾客端</h2>
-      <p>顾客端采用美工专属顾客码。第一次注册至少需要一位美工的顾客码；以后拿到其他美工码，还可以继续添加更多美工。</p>
+      <p>第一次进入顾客端时，可以使用美工提供的「美工顾客码」，也可以使用她提前为你建立档案后生成的「顾客专属码」。专属码会直接绑定到对应美工和你的那份顾客档案。</p>
       <form id="authForm">
         <label>邮箱<input id="email" type="email" autocomplete="username" placeholder="name@example.com"></label>
         <label>密码<input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"></label>
-        <label>顾客码 <span style="font-size:10px;color:var(--muted)">第一次注册必填；已有账号也可填新美工码</span><input id="customerAccessCode" autocomplete="off" autocapitalize="characters" placeholder="GC-XXXXXXXXXXXX"></label>
+        <label>顾客码 / 专属码 <span style="font-size:10px;color:var(--muted)">第一次注册必填；已有账号也可以继续添加其他美工</span><input id="customerAccessCode" autocomplete="off" autocapitalize="characters" placeholder="GC-... 或 CC-..."></label>
         <div class="authactions">
           <button class="primary" type="submit">登录</button>
           <button class="ghost" id="signupBtn" type="button">第一次使用 · 注册</button>
@@ -737,7 +737,7 @@ async function loadBindings(){
 
   const artistIds=[...new Set((accessRows||[]).map(x=>x.artist_user_id))];
   if(!artistIds.length){
-    $("artistList").innerHTML='<div class="empty">还没有解锁美工。点“＋ 添加美工”，输入对方给你的顾客码就可以啦 🍓</div>';
+    $("artistList").innerHTML='<div class="empty">还没有解锁美工。点“＋ 添加美工”，输入对方给你的顾客码或专属码就可以啦 🍓</div>';
     return;
   }
 
@@ -850,7 +850,9 @@ async function claimCustomerAccess(code,hintEl){
     return false;
   }
   if(!data?.success){
-    hintEl.textContent="顾客码无效或已经失效。";
+    hintEl.textContent=data?.reason==="CODE_ALREADY_CLAIMED"
+      ?"这个顾客专属码已经绑定其他账号。"
+      :"顾客码无效或已经失效。";
     return false;
   }
   sessionStorage.removeItem("berry-pending-customer-code");
@@ -926,7 +928,7 @@ async function signup(){
   const email=$("email").value.trim(),password=$("password").value;
   const code=normCode($("customerAccessCode").value||new URL(location.href).searchParams.get("code"));
   if(!email||password.length<6){$("authHint").textContent="请输入邮箱和至少 6 位密码。";return}
-  if(!code){$("authHint").textContent="第一次注册顾客端必须填写美工提供的顾客码。";return}
+  if(!code){$("authHint").textContent="第一次注册顾客端必须填写美工顾客码或顾客专属码。";return}
   sessionStorage.setItem("berry-pending-customer-code",code);
   $("authHint").textContent="正在注册顾客账号…";
   const redirectTo=location.origin+location.pathname+"?code="+encodeURIComponent(code);
@@ -937,7 +939,7 @@ async function signup(){
   if(error){
     console.error(error);
     $("authHint").textContent=(error.message||"").toLowerCase().includes("database")
-      ?"注册失败：顾客码无效或已失效。"
+      ?"注册失败：顾客码无效、已失效，或这个顾客专属码已经绑定其他账号。"
       :"注册失败："+error.message;
     return;
   }
