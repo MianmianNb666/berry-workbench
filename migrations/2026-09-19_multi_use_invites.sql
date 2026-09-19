@@ -71,6 +71,9 @@ where use_mode = 'single'
 alter table public.invite_redemptions
   drop constraint if exists invite_redemptions_invite_id_key;
 
+alter table public.invite_redemptions
+  drop constraint if exists one_redemption_per_invite;
+
 create unique index if not exists invite_redemptions_invite_user_unique
   on public.invite_redemptions(invite_id, user_id);
 
