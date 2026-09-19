@@ -505,7 +505,7 @@ async function applySession(session){
     $("customerNav").classList.remove("hidden");
     $("customerAccountBar").classList.remove("hidden");
     $("customerAccountEmail").textContent=user.email||"顾客";
-    $("welcomeText").textContent=(user.email||"顾客")+" · 可以同时查看不同美工下属于自己的排单。";
+    $("welcomeText").textContent="可以同时查看不同美工下属于自己的排单。";
     $("bindSelfTestBtn").classList.toggle("hidden",!(await isOwner()));
     await ensureCustomerRole();
     await loadCustomerPreferences();
