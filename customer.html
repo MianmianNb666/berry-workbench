@@ -283,7 +283,11 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const normCode=v=>String(v||"").trim().toUpperCase();
-let user=null;\nlet customerChatAvatar="";\nlet customerChatConversations=[];\nlet activeCustomerChat=null;\nlet customerChatChannel=null;
+let user=null;
+let customerChatAvatar="";
+let customerChatConversations=[];
+let activeCustomerChat=null;
+let customerChatChannel=null;
 const CUSTOMER_PORTAL_MAINTENANCE=true;
 const OWNER_USER_ID_HASH="f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8";
 async function sha256Hex(text){
