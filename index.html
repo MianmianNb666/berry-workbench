@@ -53,6 +53,17 @@
   .tabs::-webkit-scrollbar{display:none}
   .chip{flex:0 0 auto;min-height:38px;padding:0 11px}
   .orders{grid-template-columns:1fr}
+  body.mobile-nav-top .app{padding:8px 8px 104px}
+  body.mobile-nav-top .layout{display:block;border-left:1px solid var(--line);border-right:1px solid var(--line);border-radius:18px 18px 0 0;padding:0 6px;min-height:calc(100dvh - 8px)}
+  body.mobile-nav-top .side{margin:0 -6px 12px;border-radius:18px 18px 14px 14px;position:sticky;top:0;z-index:30;box-shadow:0 5px 14px rgba(167,83,112,.06)}
+  body.mobile-nav-top .nav{background:var(--panel)}
+  body.mobile-nav-top .main{padding-bottom:8px}
+  body.mobile-nav-top .right{position:fixed;left:8px;right:8px;bottom:8px;z-index:40;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:8px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--panel) 94%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(167,83,112,.12);overflow:visible}
+  body.mobile-nav-top .right .card{min-width:0;min-height:0;padding:10px;border-radius:14px}
+  body.mobile-nav-top .right .card h3{font-size:11px;margin:0 0 6px}
+  body.mobile-nav-top .right .mini{padding:8px;font-size:10px;line-height:1.45}
+  body.mobile-nav-top .right #sideIncome{font-size:14px}
+  body.mobile-nav-top .right #assistant{max-height:42px;overflow:auto}
   .right{display:flex;gap:8px;overflow-x:auto;margin-top:12px;padding-bottom:4px}
   .right .card{flex:0 0 220px;min-height:118px}
   .formgrid{grid-template-columns:1fr}
