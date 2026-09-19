@@ -67,6 +67,15 @@
     <button class="danger" id="settingsLogoutBtn" type="button">退出登录</button>
   </div>
 </div>
+<div style="margin-top:14px;border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--panel)">
+  <h3 style="font-size:14px;margin:0 0 8px">密码管理 🔐</h3>
+  <div class="meta">为了安全，本站不会保存或显示历史密码。登录页支持“显示密码”，并可使用浏览器 / 手机自带的密码保存和自动填充。</div>
+  <div class="meta" id="passwordChangedAt" style="margin-top:6px">最近修改：暂无记录</div>
+  <div class="actions">
+    <button class="primary" id="openChangePasswordBtn" type="button">修改登录密码</button>
+    <button class="ghost" id="settingsResetPasswordBtn" type="button">发送重置邮件</button>
+  </div>
+</div>
 <div style="margin-top:16px;border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--panel)">
   <h3 style="font-size:14px;margin:0 0 12px">个人显示 ✨</h3>
   <div class="formgrid">
@@ -90,7 +99,7 @@
 <p class="note" id="footerText">♡ 粉白个人接单工作台 · 自动云同步 + 本地缓存</p></main>
 <aside class="right"><div class="card"><h3>🎨 收支概览</h3><div class="mini"><b id="sideIncome">¥0</b><br><span id="sideDone">已完成 0 单</span></div></div><div class="card"><h3>💬 小助手</h3><div class="mini" id="assistant">今天还没有单子。</div></div></aside>
 </div></div>
-<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<select id="oCat"><option>米画师</option><option>私人约稿</option><option>其他平台</option><option>商稿</option></select></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
+<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<select id="oCat"><option>米画师</option><option>私人约稿</option><option>其他平台</option><option>商稿</option></select></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -100,14 +109,14 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true
 
 const $=id=>document.getElementById(id);
 const OLD_KEY="berry-workbench-v2";
-let S={orders:[],times:[],title:"莓桃工作台",avatar:"",displayName:"创作者",welcomeText:"今天也要轻轻松松收工 ♡",footerText:"♡ 莓桃工作台 · 自动云同步 + 本地缓存",stylePreset:"custom",theme:{accent:"#f292b2",bg:"#fff9fb",panel:"#ffffff",text:"#45383d"},customSections:[]},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false;
+let S={orders:[],times:[],title:"莓桃工作台",avatar:"",displayName:"创作者",welcomeText:"今天也要轻轻松松收工 ♡",footerText:"♡ 莓桃工作台 · 自动云同步 + 本地缓存",stylePreset:"custom",passwordChangedAt:"",theme:{accent:"#f292b2",bg:"#fff9fb",panel:"#ffffff",text:"#45383d"},customSections:[]},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false;
 
 const today=()=>{let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const T=today();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=n=>"¥"+(Number(n)||0).toFixed(2);
 const human=m=>{m=Math.max(0,Math.round(m||0));return m>=60?Math.floor(m/60)+"h "+m%60+"m":m+"m"};
-const normalize=x=>({orders:Array.isArray(x?.orders)?x.orders:[],times:Array.isArray(x?.times)?x.times:[],title:(x?.title||"莓桃工作台").slice(0,30),avatar:(typeof x?.avatar==="string"&&x.avatar.startsWith("data:image/")&&x.avatar.length<300000)?x.avatar:"",displayName:String(x?.displayName||"创作者").slice(0,20),welcomeText:String(x?.welcomeText||"今天也要轻轻松松收工 ♡").slice(0,80),footerText:String(x?.footerText||"♡ 莓桃工作台 · 自动云同步 + 本地缓存").slice(0,100),stylePreset:["cute","simple","boss","custom"].includes(x?.stylePreset)?x.stylePreset:"custom",theme:{accent:/^#[0-9a-f]{6}$/i.test(x?.theme?.accent||"")?x.theme.accent:"#f292b2",bg:/^#[0-9a-f]{6}$/i.test(x?.theme?.bg||"")?x.theme.bg:"#fff9fb",panel:/^#[0-9a-f]{6}$/i.test(x?.theme?.panel||"")?x.theme.panel:"#ffffff",text:/^#[0-9a-f]{6}$/i.test(x?.theme?.text||"")?x.theme.text:"#45383d"},customSections:Array.isArray(x?.customSections)?x.customSections.filter(s=>s&&typeof s.id==="string").slice(0,20).map(s=>({id:s.id,name:String(s.name||"未命名分区").slice(0,20),emoji:String(s.emoji||"🌸").slice(0,4),content:String(s.content||"").slice(0,20000)})):[]});
+const normalize=x=>({orders:Array.isArray(x?.orders)?x.orders:[],times:Array.isArray(x?.times)?x.times:[],title:(x?.title||"莓桃工作台").slice(0,30),avatar:(typeof x?.avatar==="string"&&x.avatar.startsWith("data:image/")&&x.avatar.length<300000)?x.avatar:"",displayName:String(x?.displayName||"创作者").slice(0,20),welcomeText:String(x?.welcomeText||"今天也要轻轻松松收工 ♡").slice(0,80),footerText:String(x?.footerText||"♡ 莓桃工作台 · 自动云同步 + 本地缓存").slice(0,100),stylePreset:["cute","simple","boss","custom"].includes(x?.stylePreset)?x.stylePreset:"custom",passwordChangedAt:typeof x?.passwordChangedAt==="string"?x.passwordChangedAt:"",theme:{accent:/^#[0-9a-f]{6}$/i.test(x?.theme?.accent||"")?x.theme.accent:"#f292b2",bg:/^#[0-9a-f]{6}$/i.test(x?.theme?.bg||"")?x.theme.bg:"#fff9fb",panel:/^#[0-9a-f]{6}$/i.test(x?.theme?.panel||"")?x.theme.panel:"#ffffff",text:/^#[0-9a-f]{6}$/i.test(x?.theme?.text||"")?x.theme.text:"#45383d"},customSections:Array.isArray(x?.customSections)?x.customSections.filter(s=>s&&typeof s.id==="string").slice(0,20).map(s=>({id:s.id,name:String(s.name||"未命名分区").slice(0,20),emoji:String(s.emoji||"🌸").slice(0,4),content:String(s.content||"").slice(0,20000)})):[]});
 const cacheKey=()=>user?"berry-workbench-cloud-cache:"+user.id:OLD_KEY;
 
 function setSync(text,kind=""){
@@ -165,6 +174,11 @@ function applyPersonalText(){
   if($("displayNameInput"))$("displayNameInput").value=S.displayName||"";
   if($("welcomeTextInput"))$("welcomeTextInput").value=S.welcomeText||"";
   if($("footerTextInput"))$("footerTextInput").value=S.footerText||"";
+  if($("passwordChangedAt")){
+    $("passwordChangedAt").textContent=S.passwordChangedAt
+      ?"最近修改："+formatAccessDate(S.passwordChangedAt)
+      :"最近修改：暂无记录";
+  }
 }
 function dayLeft(x){return Math.ceil((new Date(x+"T00:00:00")-new Date(T+"T00:00:00"))/86400000)}
 
@@ -573,6 +587,15 @@ $("redeemCode").addEventListener("keydown",e=>{if(e.key==="Enter")redeemFromModa
 $("redeemModalBg").addEventListener("click",e=>{if(e.target===$("redeemModalBg"))closeRedeemModal()});
 $("settingsAvatarBtn").onclick=()=>$("avatarInput").click();
 $("settingsRedeemBtn").onclick=openRedeemModal;
+$("openChangePasswordBtn").onclick=openChangePasswordModal;
+$("settingsResetPasswordBtn").onclick=sendSettingsPasswordReset;
+$("closeChangePasswordModal").onclick=closeChangePasswordModal;
+$("cancelChangePasswordModal").onclick=closeChangePasswordModal;
+$("saveSettingsPasswordBtn").onclick=saveSettingsPassword;
+$("toggleSettingsNewPassword").onclick=()=>togglePasswordInput("settingsNewPassword","toggleSettingsNewPassword");
+$("toggleSettingsNewPassword2").onclick=()=>togglePasswordInput("settingsNewPassword2","toggleSettingsNewPassword2");
+$("settingsNewPassword2").addEventListener("keydown",e=>{if(e.key==="Enter")saveSettingsPassword()});
+$("changePasswordModalBg").addEventListener("click",e=>{if(e.target===$("changePasswordModalBg"))closeChangePasswordModal()});
 $("settingsResetAvatarBtn").onclick=()=>{
   if(!S.avatar)return;
   S.avatar="";
@@ -582,6 +605,49 @@ $("settingsResetAvatarBtn").onclick=()=>{
 $("settingsLogoutBtn").onclick=()=>supabase.auth.signOut();
 
 
+
+function openChangePasswordModal(){
+  $("settingsNewPassword").value="";
+  $("settingsNewPassword2").value="";
+  $("changePasswordHint").textContent="";
+  $("changePasswordModalBg").classList.add("show");
+  setTimeout(()=>$("settingsNewPassword").focus(),50);
+}
+function closeChangePasswordModal(){
+  $("changePasswordModalBg").classList.remove("show");
+}
+function togglePasswordInput(inputId,buttonId){
+  const input=$(inputId),btn=$(buttonId);
+  const showing=input.type==="text";
+  input.type=showing?"password":"text";
+  btn.textContent=showing?"显示":"隐藏";
+}
+async function saveSettingsPassword(){
+  const p1=$("settingsNewPassword").value,p2=$("settingsNewPassword2").value;
+  if(p1.length<6){$("changePasswordHint").textContent="新密码至少 6 位。";return}
+  if(p1!==p2){$("changePasswordHint").textContent="两次输入的密码不一致。";return}
+  $("changePasswordHint").textContent="正在修改密码…";
+  const {error}=await supabase.auth.updateUser({password:p1});
+  if(error){$("changePasswordHint").textContent="修改失败："+error.message;return}
+  S.passwordChangedAt=new Date().toISOString();
+  applyPersonalText();
+  persist();
+  $("changePasswordHint").textContent="✅ 密码修改成功。";
+  setTimeout(closeChangePasswordModal,900);
+}
+async function sendSettingsPasswordReset(){
+  if(!user?.email)return;
+  const btn=$("settingsResetPasswordBtn"),old=btn.textContent;
+  btn.textContent="正在发送…";btn.disabled=true;
+  const redirectTo=location.origin+location.pathname;
+  const {error}=await supabase.auth.resetPasswordForEmail(user.email,{redirectTo});
+  btn.disabled=false;btn.textContent=old;
+  if(error){
+    alert(error.message?.toLowerCase().includes("rate limit")?"发送太频繁了，请稍等一会儿再试。":"发送失败："+error.message);
+    return;
+  }
+  alert("重置邮件已发送到 "+user.email);
+}
 
 function openRedeemModal(){
   $("redeemCode").value="";
