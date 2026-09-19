@@ -12,10 +12,10 @@
 <section id="p-schedule" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">排单表</h2><div id="scheduleList" class="list"></div></div></section>
 <section id="p-money" class="panel"><div class="work"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="font-size:17px;margin:0">财务汇总</h2><div><button class="ghost" id="exportJson">导出备份</button><button class="ghost" id="importBtn">导入备份</button><button class="ghost" id="exportCsv">导出CSV</button><input id="importFile" type="file" accept=".json" hidden></div></div><section class="summary" style="margin-top:12px"><div class="stat"><span>累计收入</span><b id="mTotal">¥0</b></div><div class="stat"><span>已完成收入</span><b id="mDone">¥0</b></div><div class="stat"><span>待收款</span><b id="mWait">¥0</b></div><div class="stat"><span>订单数</span><b id="mNum">0</b></div></section><div id="moneyList" class="list" style="margin-top:12px"></div></div></section>
 <section id="p-time" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">制作计时</h2><div class="timer"><div><input id="timerTask" placeholder="现在在做什么"><div class="actions"><button class="primary" id="startTimer">开始计时</button><button class="ghost" id="stopTimer" disabled>结束并保存</button></div></div><div id="clock" class="clock">00:00:00</div></div><h2 style="font-size:17px">时间记录 <span id="todayTime" class="tag">今日 0m</span></h2><div id="timeList" class="list"></div></div></section>
-<p class="note">♡ 粉白个人接单工作台 · 自动保存到当前浏览器</p></main>
+<p class="note">♡ 粉白个人接单工作台 · 自动云同步 + 本地缓存</p></main>
 <aside class="right"><div class="card"><h3>🎨 收支概览</h3><div class="mini"><b id="sideIncome">¥0</b><br><span id="sideDone">已完成 0 单</span></div></div><div class="card"><h3>💬 小助手</h3><div class="mini" id="assistant">今天还没有单子。</div></div><div class="card"><h3>📅 Deadline</h3><div id="deadlines"></div></div></aside>
 </div></div>
-<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<select id="oCat"><option>米画师</option><option>私人约稿</option><option>其他平台</option><option>商稿</option></select></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" style="margin-bottom:12px">🍓</div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。邀请码只在第一次注册时需要，之后登录不用。</p><label>邮箱<input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com"></label><label>密码<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="button">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div></div></div>
+<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<select id="oCat"><option>米画师</option><option>私人约稿</option><option>其他平台</option><option>商稿</option></select></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" style="margin-bottom:12px">🍓</div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><label>邮箱<input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com"></label><label>密码<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="button">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -197,6 +197,7 @@ async function sendPasswordReset(){
 }
 function showResetView(){
   $("loginView").classList.add("hidden");
+  $("renewView").classList.add("hidden");
   $("resetView").classList.remove("hidden");
   $("authGate").classList.remove("hidden");
   setTimeout(()=>$("newPassword").focus(),50);
@@ -216,20 +217,99 @@ async function saveNewPassword(){
   },500);
 }
 $("loginBtn").onclick=doLogin;$("signupBtn").onclick=doSignup;$("forgotBtn").onclick=sendPasswordReset;$("savePasswordBtn").onclick=saveNewPassword;
+$("renewBtn").onclick=redeemRenewal;$("renewLogoutBtn").onclick=()=>supabase.auth.signOut();
 $("authPassword").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()});
 $("newPassword2").addEventListener("keydown",e=>{if(e.key==="Enter")saveNewPassword()});
+$("renewCode").addEventListener("keydown",e=>{if(e.key==="Enter")redeemRenewal()});
 $("logoutBtn").onclick=()=>supabase.auth.signOut();
+
+
+function showLoginView(){
+  $("loginView").classList.remove("hidden");
+  $("resetView").classList.add("hidden");
+  $("renewView").classList.add("hidden");
+  $("authGate").classList.remove("hidden");
+}
+function formatAccessDate(value){
+  if(!value)return "";
+  try{
+    return new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(value));
+  }catch(_){return value}
+}
+async function getAccessStatus(){
+  const {data,error}=await supabase.rpc("get_access_status");
+  if(error)throw error;
+  return data||{};
+}
+function showRenewView(status={}){
+  $("loginView").classList.add("hidden");
+  $("resetView").classList.add("hidden");
+  $("renewView").classList.remove("hidden");
+  $("authGate").classList.remove("hidden");
+  const when=status.valid_until?("你的使用期已于 "+formatAccessDate(status.valid_until)+" 到期。"):"当前账号还没有有效使用权限。";
+  $("renewText").textContent=when+" 工作台数据仍然完整保留，输入新的续期邀请码即可恢复使用。";
+  $("renewHint").textContent="";
+  setTimeout(()=>$("renewCode").focus(),50);
+}
+async function redeemRenewal(){
+  const code=$("renewCode").value.trim().toUpperCase();
+  if(!code){$("renewHint").textContent="请输入续期邀请码。";return}
+  $("renewHint").textContent="正在兑换续期码…";
+  const {data,error}=await supabase.rpc("redeem_renewal_code",{p_code:code});
+  if(error){$("renewHint").textContent="兑换失败："+error.message;return}
+  if(!data?.success){
+    const reason=data?.reason;
+    $("renewHint").textContent=reason==="ALREADY_PERMANENT"
+      ?"这个账号已经是永久使用权限。"
+      :"邀请码无效、已经使用或已经过期。";
+    return;
+  }
+  if(data.access_type==="permanent"){
+    $("renewHint").textContent="🎀 激活成功，当前账号已获得永久使用权限。";
+  }else{
+    $("renewHint").textContent="🎟️ 续期成功，已增加 "+(data.added_days||"")+" 天。";
+  }
+  $("renewCode").value="";
+  setTimeout(async()=>{
+    const {data:{session}}=await supabase.auth.getSession();
+    await applySession(session);
+  },450);
+}
 
 async function applySession(session){
   user=session?.user||null;
   if(!user){
-    $("authGate").classList.remove("hidden");
+    showLoginView();
     $("accountEmail").textContent="未登录";$("logoutBtn").style.display="none";setSync("等待登录","");
     if(channel){supabase.removeChannel(channel);channel=null}
     return;
   }
+
+  $("accountEmail").textContent=user.email||"已登录";
+  $("logoutBtn").style.display="block";
+  setSync("检查使用期限…","busy");
+
+  let status;
+  try{
+    status=await getAccessStatus();
+  }catch(e){
+    console.error(e);
+    showLoginView();
+    $("authHint").textContent="无法检查使用期限，请稍后刷新重试。";
+    setSync("权限检查失败","err");
+    return;
+  }
+
+  if(!status?.has_access){
+    if(channel){supabase.removeChannel(channel);channel=null}
+    setSync("使用期已结束","err");
+    showRenewView(status);
+    return;
+  }
+
+  $("loginView").classList.remove("hidden");
+  $("renewView").classList.add("hidden");
   $("authGate").classList.add("hidden");
-  $("accountEmail").textContent=user.email||"已登录";$("logoutBtn").style.display="block";
   await loadWorkspace();
 }
 
