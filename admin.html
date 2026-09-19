@@ -259,7 +259,7 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
             </div>
             <div class="capacity-meter"><div id="capacityRealtimeFill" class="capacity-fill"></div><i class="capacity-redline"></i></div>
             <div class="capacity-foot"><span>当前估算</span><span>200 连接</span></div>
-            <div class="capacity-note" id="capacityRealtimeMeta">由已打开的美工端 / 顾客端心跳估算，和 Supabase 平台瞬时统计可能有轻微差异。</div>
+            <div class="capacity-note" id="capacityRealtimeMeta">由已打开的美工端 / 顾客端心跳估算活跃客户端连接数，和 Supabase 平台瞬时统计可能有轻微差异。</div>
           </div>
 
           <div class="capacity-box">
@@ -670,13 +670,14 @@ async function loadCapacity(){
   const today=Number(data?.today_chat_messages||0);
   const month=Number(data?.month_chat_messages||0);
   const sessions=Number(data?.active_sessions||0);
+  const channels=Number(data?.realtime_channels_estimate||0);
 
   const pUsers=paintCapacity("capacityUsers",users,50000,users.toLocaleString("zh-CN"));
   const pDb=paintCapacity("capacityDb",dbBytes,500*1024*1024,formatBytes(dbBytes));
   const pRt=paintCapacity("capacityRealtime",rt,200,rt.toLocaleString("zh-CN")+" / 200");
   const pMsg=paintCapacity("capacityMessages",today,2000000/30,today.toLocaleString("zh-CN"));
 
-  $("capacityRealtimeMeta").textContent="当前活跃页面约 "+sessions+" 个，按页面实际开启的 Realtime channel 数估算为 "+rt+" 个连接。";
+  $("capacityRealtimeMeta").textContent="当前活跃客户端约 "+sessions+" 个，合计订阅约 "+channels+" 个 channel。多个 channel 可以共用同一条 Realtime 连接。";
   $("capacityMessagesMeta").textContent="今天聊天消息 "+today.toLocaleString("zh-CN")+" 条，本月累计 "+month.toLocaleString("zh-CN")+" 条。日参考值按 2,000,000 / 30 计算。";
   $("capacityMeasuredAt").textContent="最近统计："+dt(data?.measured_at);
 
