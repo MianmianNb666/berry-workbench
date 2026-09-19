@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#fff6fa"><title>莓桃工作台</title>
 <style>
-:root{--bg:#fff9fb;--panel:#fff;--soft:#fff0f5;--pink:#f292b2;--deep:#d96f95;--rose:#a75370;--text:#45383d;--muted:#9b858d;--line:#f0dfe5}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:ui-rounded,"SF Pro Rounded","PingFang SC",system-ui,sans-serif}.app{max-width:1450px;margin:auto;padding:14px}.layout{display:grid;grid-template-columns:180px minmax(0,1fr) 240px;gap:14px}.side,.card,.work{background:#fff;border:1px solid var(--line);border-radius:22px}.side{padding:14px;position:sticky;top:12px;background:linear-gradient(#fff2f7,#fffafb)}.brand{display:flex;gap:10px;align-items:center;padding:4px 4px 16px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#ffd7e5,#f5a6c0);display:grid;place-items:center}.brand strong{color:var(--rose)}.brand small{display:block;color:var(--muted);font-size:11px}.nav{display:grid;gap:7px}.nav button,.chip,.ghost,.primary,.danger{border-radius:13px;min-height:42px;font-weight:750}.nav button{border:1px solid transparent;background:transparent;text-align:left;color:var(--muted);padding:0 11px}.nav button.active{background:#fff;color:var(--rose);border-color:var(--line)}.main{min-width:0;display:grid;gap:13px}.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.top h1{margin:0;font-size:24px}.top p{margin:4px 0 0;color:var(--muted);font-size:12px}.primary{border:0;background:linear-gradient(135deg,#f5a6c0,#eb82a7);color:#fff;padding:0 15px}.ghost{border:1px solid var(--line);background:#fff;color:var(--rose);padding:0 12px}.danger{border:1px solid #f2ccd5;background:#fff;color:#bf677e;padding:0 10px}.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}.stat b{display:block;font-size:28px;margin-top:8px}.stat span{font-size:12px;color:var(--muted)}.work{padding:15px;min-height:420px}.tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.chip{border:1px solid var(--line);background:#fff;color:var(--muted);padding:0 12px}.chip.active{background:#473e42;color:#fff}.search{margin-bottom:12px}input,select,textarea{width:100%;border:1px solid var(--line);background:#fffbfd;border-radius:12px;padding:10px 11px;font-size:16px;color:var(--text)}.orders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.order{border:1px solid var(--line);border-radius:17px;padding:13px;background:linear-gradient(#fff,#fffafd)}.order h3{margin:0;font-size:15px}.meta{color:var(--muted);font-size:11px;margin-top:4px}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--soft);color:var(--deep);font-size:10px;margin:8px 5px 8px 0}.money{font-size:20px;font-weight:850}.row{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:11px;color:var(--muted)}.row select{width:auto;padding:5px 7px;font-size:11px}.empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:16px;padding:36px;text-align:center;color:var(--muted);background:#fffafd}.panel{display:none}.panel.active{display:block}.right{display:grid;gap:10px}.card{padding:14px}.card h3{font-size:13px;margin:0 0 10px}.mini{background:#fff8fb;border-radius:13px;padding:10px;font-size:12px;line-height:1.6}.dead{padding:9px;border-radius:12px;background:#fffafb;margin-top:7px}.dead b{font-size:12px}.dead small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.formgrid label{font-size:11px;color:var(--muted)}.formgrid label>*{margin-top:5px}.list{display:grid;gap:8px}.item{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px}.item small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.timer{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:linear-gradient(135deg,#fff0f5,#fff);border:1px solid var(--line);border-radius:18px;padding:16px}.clock{font-size:32px;font-weight:850;color:var(--deep);font-variant-numeric:tabular-nums}.modalbg{position:fixed;inset:0;background:rgba(70,45,55,.22);display:none;place-items:start center;padding:55px 14px;z-index:50;overflow:auto}.modalbg.show{display:grid}.modal{width:min(540px,100%);background:#fff;border-radius:22px;border:1px solid var(--line);padding:17px}.modalhead{display:flex;justify-content:space-between;align-items:center}.modalhead h2{margin:0;font-size:18px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.note{font-size:10px;color:var(--muted)}@media(max-width:1000px){.layout{grid-template-columns:160px 1fr}.right{grid-column:2;grid-template-columns:repeat(3,1fr)}}@media(max-width:720px){.layout{grid-template-columns:1fr}.side{position:static}.nav{grid-template-columns:repeat(5,1fr)}.nav button{text-align:center;padding:0;font-size:0}.nav button::first-letter{font-size:16px}.summary{grid-template-columns:repeat(2,1fr)}.orders{grid-template-columns:1fr}.right{grid-column:auto;grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.timer{grid-template-columns:1fr}.top h1{font-size:20px}}
+:root{--bg:#fff9fb;--panel:#fff;--soft:#fff0f5;--pink:#f292b2;--deep:#d96f95;--rose:#a75370;--text:#45383d;--muted:#9b858d;--line:#f0dfe5}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:ui-rounded,"SF Pro Rounded","PingFang SC",system-ui,sans-serif}.app{max-width:1450px;margin:auto;padding:14px}.layout{display:grid;grid-template-columns:180px minmax(0,1fr) 240px;gap:14px}.side,.card,.work{background:#fff;border:1px solid var(--line);border-radius:22px}.side{padding:14px;position:sticky;top:12px;background:linear-gradient(#fff2f7,#fffafb)}.brand{display:flex;gap:10px;align-items:center;padding:4px 4px 16px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#ffd7e5,#f5a6c0);display:grid;place-items:center}.brand strong{color:var(--rose)}.brand small{display:block;color:var(--muted);font-size:11px}.nav{display:grid;gap:7px}.nav button,.chip,.ghost,.primary,.danger{border-radius:13px;min-height:42px;font-weight:750}.nav button{border:1px solid transparent;background:transparent;text-align:left;color:var(--muted);padding:0 11px}.nav button.active{background:#fff;color:var(--rose);border-color:var(--line)}.main{min-width:0;display:grid;gap:13px}.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.top h1{margin:0;font-size:24px}.top p{margin:4px 0 0;color:var(--muted);font-size:12px}.primary{border:0;background:linear-gradient(135deg,#f5a6c0,#eb82a7);color:#fff;padding:0 15px}.ghost{border:1px solid var(--line);background:#fff;color:var(--rose);padding:0 12px}.danger{border:1px solid #f2ccd5;background:#fff;color:#bf677e;padding:0 10px}.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}.stat b{display:block;font-size:28px;margin-top:8px}.stat span{font-size:12px;color:var(--muted)}.work{padding:15px;min-height:420px}.tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.chip{border:1px solid var(--line);background:#fff;color:var(--muted);padding:0 12px}.chip.active{background:#473e42;color:#fff}.search{margin-bottom:12px}input,select,textarea{width:100%;border:1px solid var(--line);background:#fffbfd;border-radius:12px;padding:10px 11px;font-size:16px;color:var(--text)}.orders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.order{border:1px solid var(--line);border-radius:17px;padding:13px;background:linear-gradient(#fff,#fffafd)}.order h3{margin:0;font-size:15px}.meta{color:var(--muted);font-size:11px;margin-top:4px}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--soft);color:var(--deep);font-size:10px;margin:8px 5px 8px 0}.money{font-size:20px;font-weight:850}.row{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:11px;color:var(--muted)}.row select{width:auto;padding:5px 7px;font-size:11px}.empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:16px;padding:36px;text-align:center;color:var(--muted);background:#fffafd}.panel{display:none}.panel.active{display:block}.right{display:grid;gap:10px}.card{padding:14px}.card h3{font-size:13px;margin:0 0 10px}.mini{background:#fff8fb;border-radius:13px;padding:10px;font-size:12px;line-height:1.6}.dead{padding:9px;border-radius:12px;background:#fffafb;margin-top:7px}.dead b{font-size:12px}.dead small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.formgrid label{font-size:11px;color:var(--muted)}.formgrid label>*{margin-top:5px}.list{display:grid;gap:8px}.item{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px}.item small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.timer{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:linear-gradient(135deg,#fff0f5,#fff);border:1px solid var(--line);border-radius:18px;padding:16px}.clock{font-size:32px;font-weight:850;color:var(--deep);font-variant-numeric:tabular-nums}.modalbg{position:fixed;inset:0;background:rgba(70,45,55,.22);display:none;place-items:start center;padding:55px 14px;z-index:50;overflow:auto}.modalbg.show{display:grid}.modal{width:min(540px,100%);background:#fff;border-radius:22px;border:1px solid var(--line);padding:17px}.modalhead{display:flex;justify-content:space-between;align-items:center}.modalhead h2{margin:0;font-size:18px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.note{font-size:10px;color:var(--muted)}.accountbox{margin-top:16px;padding:10px;border:1px solid var(--line);border-radius:14px;background:#fff}.syncdot{display:flex;align-items:center;gap:6px;margin-top:5px;color:var(--muted);font-size:10px}.syncdot span:first-child{width:8px;height:8px;border-radius:50%;background:#c9bfc3}.syncdot.ok span:first-child{background:#73b48b}.syncdot.busy span:first-child{background:#d4b45e}.syncdot.err span:first-child{background:#cf7e87}.authbg{position:fixed;inset:0;z-index:80;background:rgba(255,246,250,.92);backdrop-filter:blur(10px);display:grid;place-items:center;padding:18px}.authbg.hidden{display:none}.authcard{width:min(420px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 25px 70px rgba(125,76,95,.14)}.authcard h2{margin:0;color:var(--rose);font-size:22px}.authcard p{color:var(--muted);font-size:12px;line-height:1.65}.authcard label{display:block;font-size:11px;color:var(--muted);margin-top:10px}.authhint{min-height:20px;margin-top:10px;font-size:11px;color:var(--rose);line-height:1.5}.authactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}@media(max-width:1000px){.layout{grid-template-columns:160px 1fr}.right{grid-column:2;grid-template-columns:repeat(3,1fr)}}@media(max-width:720px){.layout{grid-template-columns:1fr}.side{position:static}.nav{grid-template-columns:repeat(5,1fr)}.nav button{text-align:center;padding:0;font-size:0}.nav button::first-letter{font-size:16px}.summary{grid-template-columns:repeat(2,1fr)}.orders{grid-template-columns:1fr}.right{grid-column:auto;grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.timer{grid-template-columns:1fr}.top h1{font-size:20px}}
 </style></head>
 <body><div class="app"><div class="layout">
-<aside class="side"><div class="brand"><div class="logo">🍓</div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><button class="active" data-page="desk">🏠 工作台</button><button data-page="orders">🧾 订单</button><button data-page="schedule">🗓️ 排单</button><button data-page="money">💰 财务</button><button data-page="time">⏱️ 时间</button></nav><p class="note">数据自动保存在当前浏览器。换设备前可导出备份。</p></aside>
+<aside class="side"><div class="brand"><div class="logo">🍓</div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><button class="active" data-page="desk">🏠 工作台</button><button data-page="orders">🧾 订单</button><button data-page="schedule">🗓️ 排单</button><button data-page="money">💰 财务</button><button data-page="time">⏱️ 时间</button></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。你和朋友用不同账号，数据会彼此分开。</p></aside>
 <main class="main"><div class="top"><div><h1 id="greet">下午好，创作者！</h1><p id="dateText"></p></div><button class="primary" id="newBtn">＋ 新增需求</button></div>
 <section class="summary"><div class="stat"><span>全部需求</span><b id="sAll">0</b></div><div class="stat"><span>进行中</span><b id="sDoing">0</b></div><div class="stat"><span>已逾期</span><b id="sLate">0</b></div><div class="stat"><span>已完成</span><b id="sDone">0</b></div></section>
 <section id="p-desk" class="panel active"><div class="work"><div class="tabs"><button class="chip active" data-filter="全部">全部</button><button class="chip" data-filter="进行中">进行中</button><button class="chip" data-filter="待处理">待处理</button><button class="chip" data-filter="待付款">待付款</button><button class="chip" data-filter="已完成">已完成</button></div><div class="search"><input id="search" placeholder="搜索需求、客户或备注..."></div><div id="deskOrders" class="orders"></div></div></section>
@@ -15,23 +15,183 @@
 <p class="note">♡ 粉白个人接单工作台 · 自动保存到当前浏览器</p></main>
 <aside class="right"><div class="card"><h3>🎨 收支概览</h3><div class="mini"><b id="sideIncome">¥0</b><br><span id="sideDone">已完成 0 单</span></div></div><div class="card"><h3>💬 小助手</h3><div class="mini" id="assistant">今天还没有单子。</div></div><div class="card"><h3>📅 Deadline</h3><div id="deadlines"></div></div></aside>
 </div></div>
-<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<select id="oCat"><option>米画师</option><option>私人约稿</option><option>其他平台</option><option>商稿</option></select></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div>
-<script>
-(()=>{const $=id=>document.getElementById(id),KEY="berry-workbench-v2";let S={orders:[],times:[],title:"莓桃工作台"},filter="全部",ts=null,timer=null;
-const today=()=>{let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};const T=today(),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),money=n=>"¥"+(Number(n)||0).toFixed(2),human=m=>{m=Math.max(0,Math.round(m||0));return m>=60?Math.floor(m/60)+"h "+m%60+"m":m+"m"};
-function save(){localStorage.setItem(KEY,JSON.stringify(S))}function load(){try{let x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.orders)&&Array.isArray(x.times))S=x}catch(e){}if(!S.title)S.title="莓桃工作台"}function dayLeft(x){return Math.ceil((new Date(x+"T00:00:00")-new Date(T+"T00:00:00"))/86400000)}
+<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<select id="oCat"><option>米画师</option><option>私人约稿</option><option>其他平台</option><option>商稿</option></select></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" style="margin-bottom:12px">🍓</div><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad 会自动同步。朋友用她自己的邮箱注册，数据会完全分开。</p><label>邮箱<input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com"></label><label>密码<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"></label><div class="authactions"><button id="loginBtn" class="primary" type="button">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div><div id="authHint" class="authhint">正在连接云端…</div></div></div>
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const SUPABASE_URL="https://cwzeknrjetwbczqgmdit.supabase.co";
+const SUPABASE_KEY="sb_publishable_kI3ZY_VCFSHIn1sVm1xJ1Q_b9zZAGV2";
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+
+const $=id=>document.getElementById(id);
+const OLD_KEY="berry-workbench-v2";
+let S={orders:[],times:[],title:"莓桃工作台"},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false;
+
+const today=()=>{let d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const T=today();
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money=n=>"¥"+(Number(n)||0).toFixed(2);
+const human=m=>{m=Math.max(0,Math.round(m||0));return m>=60?Math.floor(m/60)+"h "+m%60+"m":m+"m"};
+const normalize=x=>({orders:Array.isArray(x?.orders)?x.orders:[],times:Array.isArray(x?.times)?x.times:[],title:(x?.title||"莓桃工作台").slice(0,30)});
+const cacheKey=()=>user?"berry-workbench-cloud-cache:"+user.id:OLD_KEY;
+
+function setSync(text,kind=""){
+  $("syncStatus").textContent=text;
+  const box=$("syncDot").parentElement?$("syncDot"):null;
+  $("syncDot").className="syncdot "+kind;
+}
+function localRead(key){
+  try{return normalize(JSON.parse(localStorage.getItem(key)))}catch(e){return normalize(null)}
+}
+function localWrite(){try{localStorage.setItem(cacheKey(),JSON.stringify(S))}catch(e){}}
 function applyTitle(){$("workspaceTitle").textContent=S.title;document.title=S.title}
+function dayLeft(x){return Math.ceil((new Date(x+"T00:00:00")-new Date(T+"T00:00:00"))/86400000)}
+
+function persist(){
+  localWrite();
+  if(!user||isApplyingRemote)return;
+  setSync("保存中…","busy");
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(saveCloud,450);
+}
+async function saveCloud(){
+  if(!user)return;
+  const {error}=await supabase.from("workspaces").upsert({
+    user_id:user.id,
+    data:S,
+    updated_at:new Date().toISOString()
+  },{onConflict:"user_id"});
+  if(error){console.error(error);setSync("同步失败","err")}
+  else setSync("已同步","ok");
+}
+async function loadWorkspace(){
+  if(!user)return;
+  setSync("读取云端…","busy");
+  const {data,error}=await supabase.from("workspaces").select("data").eq("user_id",user.id).maybeSingle();
+  if(error){
+    console.error(error);
+    S=localRead(cacheKey());
+    applyTitle();render();
+    setSync("数据库未初始化","err");
+    $("assistant").textContent="云数据库还没初始化。请先运行仓库里的 supabase_setup.sql，然后刷新页面。";
+    return;
+  }
+  if(data?.data){
+    S=normalize(data.data);
+  }else{
+    let seed=normalize(null);
+    const old=localRead(OLD_KEY);
+    const hasOld=old.orders.length||old.times.length||old.title!=="莓桃工作台";
+    if(hasOld&&confirm("检测到这个浏览器里有旧版工作台数据。要把它导入到当前登录账号吗？")) seed=old;
+    S=seed;
+    await saveCloud();
+  }
+  localWrite();applyTitle();render();setSync("已同步","ok");
+  subscribeRealtime();
+}
+function subscribeRealtime(){
+  if(channel){supabase.removeChannel(channel);channel=null}
+  channel=supabase.channel("workspace-"+user.id)
+    .on("postgres_changes",{event:"*",schema:"public",table:"workspaces",filter:"user_id=eq."+user.id},payload=>{
+      const remote=payload.new?.data;
+      if(!remote)return;
+      isApplyingRemote=true;
+      S=normalize(remote);localWrite();applyTitle();render();
+      isApplyingRemote=false;
+      setSync("已同步","ok");
+    }).subscribe();
+}
+
 function card(o){let d=dayLeft(o.due);return '<article class="order"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||"未填客户")+' · '+esc(o.cat||"未分类")+'</div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div><div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="danger" data-del="'+o.id+'">删除</button></div></article>'}
-function render(){let q=$("search").value.trim().toLowerCase(),os=S.orders,show=os.filter(o=>(filter==="全部"||o.status===filter)&&(!q||[o.name,o.client,o.note,o.cat].join(" ").toLowerCase().includes(q))).slice().reverse();$("deskOrders").innerHTML=show.length?show.map(card).join(""):'<div class="empty">🌷 还没有符合条件的订单</div>';$("allOrders").innerHTML=os.length?os.slice().reverse().map(card).join(""):'<div class="empty">还没有订单。</div>';
-let all=os.length,doing=os.filter(o=>o.status==="进行中").length,done=os.filter(o=>o.status==="已完成").length,late=os.filter(o=>o.status!=="已完成"&&o.due&&dayLeft(o.due)<0).length;$("sAll").textContent=all;$("sDoing").textContent=doing;$("sDone").textContent=done;$("sLate").textContent=late;
-let total=os.reduce((a,o)=>a+Number(o.money||0),0),dm=os.filter(o=>o.status==="已完成").reduce((a,o)=>a+Number(o.money||0),0),wm=os.filter(o=>o.status==="待付款").reduce((a,o)=>a+Number(o.money||0),0);$("mTotal").textContent=money(total);$("mDone").textContent=money(dm);$("mWait").textContent=money(wm);$("mNum").textContent=all;$("sideIncome").textContent=money(total);$("sideDone").textContent="已完成 "+done+" 单";$("assistant").textContent=all?("进行中 "+doing+" 单，待处理 "+os.filter(o=>o.status==="待处理").length+" 单，逾期 "+late+" 单。"):"今天还没有单子。";
-let ds=os.filter(o=>o.status!=="已完成"&&o.due).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,5);$("deadlines").innerHTML=ds.length?ds.map(o=>'<div class="dead"><b>'+esc(o.name)+'</b><small>'+esc(o.due)+'</small></div>').join(""):'<div class="dead"><b>暂无 deadline</b></div>';$("scheduleList").innerHTML=ds.length?ds.map(o=>'<div class="item"><div><b>'+esc(o.name)+'</b><small>'+esc(o.client||"未填客户")+'</small></div><div>'+esc(o.due)+'</div></div>').join(""):'<div class="empty">暂时没有排单。</div>';$("moneyList").innerHTML=os.length?os.slice().reverse().map(o=>'<div class="item"><div><b>'+esc(o.name)+'</b><small>'+esc(o.status)+'</small></div><b>'+money(o.money)+'</b></div>').join(""):'<div class="empty">暂无收入记录。</div>';bind();renderTimes();save()}
-function bind(){document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{S.orders=S.orders.filter(o=>o.id!==b.dataset.del);render()});document.querySelectorAll("[data-status]").forEach(s=>s.onchange=()=>{let o=S.orders.find(x=>x.id===s.dataset.status);if(o){o.status=s.value;if(s.value==="已完成")o.progress=100}render()})}
-function renderTimes(){let tm=S.times.filter(x=>x.date===T).reduce((a,b)=>a+b.min,0);$("todayTime").textContent="今日 "+human(tm);$("timeList").innerHTML=S.times.length?S.times.slice().reverse().map(x=>'<div class="item"><div><b>'+esc(x.task)+'</b><small>'+x.date+'</small></div><div><b>'+human(x.min)+'</b> <button class="danger" data-tdel="'+x.id+'">删除</button></div></div>').join(""):'<div class="empty">还没有时间记录。</div>';document.querySelectorAll("[data-tdel]").forEach(b=>b.onclick=()=>{S.times=S.times.filter(x=>x.id!==b.dataset.tdel);renderTimes();save()})}
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));$("p-"+b.dataset.page).classList.add("active")});document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));render()});$("search").oninput=render;
-const mb=$("modalbg"),open=()=>mb.classList.add("show"),close=()=>mb.classList.remove("show");$("newBtn").onclick=open;$("newBtn2").onclick=open;$("closeModal").onclick=close;$("cancelModal").onclick=close;$("oStart").value=T;$("oDue").value=T;$("orderForm").onsubmit=e=>{e.preventDefault();S.orders.push({id:String(Date.now()),name:$("oName").value.trim(),client:$("oClient").value.trim(),money:+$("oMoney").value||0,status:$("oStatus").value,start:$("oStart").value,due:$("oDue").value,cat:$("oCat").value,progress:Math.max(0,Math.min(100,+$("oProgress").value||0)),note:$("oNote").value.trim()});e.target.reset();$("oStart").value=T;$("oDue").value=T;$("oProgress").value=0;close();render()};
-$("rename").onclick=()=>{let n=prompt("给你的工作台起个名字：",S.title);if(n&&n.trim()){S.title=n.trim().slice(0,30);applyTitle();save()}};
-function tick(){let sec=Math.floor((Date.now()-ts)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;$("clock").textContent=[h,m,s].map(x=>String(x).padStart(2,"0")).join(":")}$("startTimer").onclick=()=>{if(ts)return;ts=Date.now();$("startTimer").disabled=true;$("stopTimer").disabled=false;tick();timer=setInterval(tick,1000)};$("stopTimer").onclick=()=>{if(!ts)return;S.times.push({id:String(Date.now()),task:$("timerTask").value.trim()||"未命名事项",date:T,min:Math.max(1,Math.round((Date.now()-ts)/60000))});clearInterval(timer);ts=null;$("clock").textContent="00:00:00";$("timerTask").value="";$("startTimer").disabled=false;$("stopTimer").disabled=true;renderTimes();save()};
-function dl(name,text,type){let a=document.createElement("a"),u=URL.createObjectURL(new Blob([text],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}$("exportJson").onclick=()=>dl("workbench-backup.json",JSON.stringify(S,null,2),"application/json");$("importBtn").onclick=()=>$("importFile").click();$("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(Array.isArray(x.orders)&&Array.isArray(x.times)){S=x;if(!S.title)S.title="莓桃工作台";applyTitle();render()}}catch(_){alert("备份文件无法识别")}};$("exportCsv").onclick=()=>{let rows=[["需求","客户","金额","状态","开始","截止","分类","进度","备注"],...S.orders.map(o=>[o.name,o.client,o.money,o.status,o.start,o.due,o.cat,o.progress,o.note])];dl("orders.csv","\ufeff"+rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv;charset=utf-8")};
-let now=new Date(),h=now.getHours();$("greet").textContent=(h<11?"早上好":h<14?"中午好":h<18?"下午好":"晚上好")+"，创作者！";$("dateText").textContent=new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(now)+" · 今天也要轻轻松松收工 ♡";load();applyTitle();render()})();
+
+function render(){
+  let q=$("search").value.trim().toLowerCase(),os=S.orders,show=os.filter(o=>(filter==="全部"||o.status===filter)&&(!q||[o.name,o.client,o.note,o.cat].join(" ").toLowerCase().includes(q))).slice().reverse();
+  $("deskOrders").innerHTML=show.length?show.map(card).join(""):'<div class="empty">🌷 还没有符合条件的订单</div>';
+  $("allOrders").innerHTML=os.length?os.slice().reverse().map(card).join(""):'<div class="empty">还没有订单。</div>';
+  let all=os.length,doing=os.filter(o=>o.status==="进行中").length,done=os.filter(o=>o.status==="已完成").length,late=os.filter(o=>o.status!=="已完成"&&o.due&&dayLeft(o.due)<0).length;
+  $("sAll").textContent=all;$("sDoing").textContent=doing;$("sDone").textContent=done;$("sLate").textContent=late;
+  let total=os.reduce((a,o)=>a+Number(o.money||0),0),dm=os.filter(o=>o.status==="已完成").reduce((a,o)=>a+Number(o.money||0),0),wm=os.filter(o=>o.status==="待付款").reduce((a,o)=>a+Number(o.money||0),0);
+  $("mTotal").textContent=money(total);$("mDone").textContent=money(dm);$("mWait").textContent=money(wm);$("mNum").textContent=all;$("sideIncome").textContent=money(total);$("sideDone").textContent="已完成 "+done+" 单";
+  $("assistant").textContent=all?("进行中 "+doing+" 单，待处理 "+os.filter(o=>o.status==="待处理").length+" 单，逾期 "+late+" 单。"):"今天还没有单子。";
+  let ds=os.filter(o=>o.status!=="已完成"&&o.due).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,5);
+  $("deadlines").innerHTML=ds.length?ds.map(o=>'<div class="dead"><b>'+esc(o.name)+'</b><small>'+esc(o.due)+'</small></div>').join(""):'<div class="dead"><b>暂无 deadline</b></div>';
+  $("scheduleList").innerHTML=ds.length?ds.map(o=>'<div class="item"><div><b>'+esc(o.name)+'</b><small>'+esc(o.client||"未填客户")+'</small></div><div>'+esc(o.due)+'</div></div>').join(""):'<div class="empty">暂时没有排单。</div>';
+  $("moneyList").innerHTML=os.length?os.slice().reverse().map(o=>'<div class="item"><div><b>'+esc(o.name)+'</b><small>'+esc(o.status)+'</small></div><b>'+money(o.money)+'</b></div>').join(""):'<div class="empty">暂无收入记录。</div>';
+  bind();renderTimes();
+}
+function bind(){
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{S.orders=S.orders.filter(o=>o.id!==b.dataset.del);render();persist()});
+  document.querySelectorAll("[data-status]").forEach(s=>s.onchange=()=>{let o=S.orders.find(x=>x.id===s.dataset.status);if(o){o.status=s.value;if(s.value==="已完成")o.progress=100}render();persist()});
+}
+function renderTimes(){
+  let tm=S.times.filter(x=>x.date===T).reduce((a,b)=>a+b.min,0);
+  $("todayTime").textContent="今日 "+human(tm);
+  $("timeList").innerHTML=S.times.length?S.times.slice().reverse().map(x=>'<div class="item"><div><b>'+esc(x.task)+'</b><small>'+x.date+'</small></div><div><b>'+human(x.min)+'</b> <button class="danger" data-tdel="'+x.id+'">删除</button></div></div>').join(""):'<div class="empty">还没有时间记录。</div>';
+  document.querySelectorAll("[data-tdel]").forEach(b=>b.onclick=()=>{S.times=S.times.filter(x=>x.id!==b.dataset.tdel);renderTimes();persist()});
+}
+
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));$("p-"+b.dataset.page).classList.add("active")});
+document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));render()});
+$("search").oninput=render;
+
+const mb=$("modalbg"),open=()=>mb.classList.add("show"),close=()=>mb.classList.remove("show");
+$("newBtn").onclick=open;$("newBtn2").onclick=open;$("closeModal").onclick=close;$("cancelModal").onclick=close;
+$("oStart").value=T;$("oDue").value=T;
+$("orderForm").onsubmit=e=>{e.preventDefault();S.orders.push({id:String(Date.now()),name:$("oName").value.trim(),client:$("oClient").value.trim(),money:+$("oMoney").value||0,status:$("oStatus").value,start:$("oStart").value,due:$("oDue").value,cat:$("oCat").value,progress:Math.max(0,Math.min(100,+$("oProgress").value||0)),note:$("oNote").value.trim()});e.target.reset();$("oStart").value=T;$("oDue").value=T;$("oProgress").value=0;close();render();persist()};
+
+$("rename").onclick=()=>{let n=prompt("给你的工作台起个名字：",S.title);if(n&&n.trim()){S.title=n.trim().slice(0,30);applyTitle();persist()}};
+
+function tick(){let sec=Math.floor((Date.now()-ts)/1000),h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;$("clock").textContent=[h,m,s].map(x=>String(x).padStart(2,"0")).join(":")}
+$("startTimer").onclick=()=>{if(ts)return;ts=Date.now();$("startTimer").disabled=true;$("stopTimer").disabled=false;tick();timer=setInterval(tick,1000)};
+$("stopTimer").onclick=()=>{if(!ts)return;S.times.push({id:String(Date.now()),task:$("timerTask").value.trim()||"未命名事项",date:T,min:Math.max(1,Math.round((Date.now()-ts)/60000))});clearInterval(timer);ts=null;$("clock").textContent="00:00:00";$("timerTask").value="";$("startTimer").disabled=false;$("stopTimer").disabled=true;renderTimes();persist()};
+
+function dl(name,text,type){let a=document.createElement("a"),u=URL.createObjectURL(new Blob([text],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}
+$("exportJson").onclick=()=>dl("workbench-backup.json",JSON.stringify(S,null,2),"application/json");
+$("importBtn").onclick=()=>$("importFile").click();
+$("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(Array.isArray(x.orders)&&Array.isArray(x.times)){S=normalize(x);applyTitle();render();persist()}}catch(_){alert("备份文件无法识别")}};
+$("exportCsv").onclick=()=>{let rows=[["需求","客户","金额","状态","开始","截止","分类","进度","备注"],...S.orders.map(o=>[o.name,o.client,o.money,o.status,o.start,o.due,o.cat,o.progress,o.note])];dl("orders.csv","\ufeff"+rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv;charset=utf-8")};
+
+async function doLogin(){
+  const email=$("authEmail").value.trim(),password=$("authPassword").value;
+  if(!email||password.length<6){$("authHint").textContent="请输入邮箱和至少 6 位密码。";return}
+  $("authHint").textContent="正在登录…";
+  const {error}=await supabase.auth.signInWithPassword({email,password});
+  $("authHint").textContent=error?("登录失败："+error.message):"登录成功，正在读取工作台…";
+}
+async function doSignup(){
+  const email=$("authEmail").value.trim(),password=$("authPassword").value;
+  if(!email||password.length<6){$("authHint").textContent="请输入邮箱和至少 6 位密码。";return}
+  $("authHint").textContent="正在注册…";
+  const redirectTo=location.origin+location.pathname;
+  const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:redirectTo}});
+  if(error){$("authHint").textContent="注册失败："+error.message;return}
+  if(data.session)$("authHint").textContent="注册成功，正在进入工作台…";
+  else $("authHint").textContent="注册成功。请去邮箱点确认链接，再回来登录。";
+}
+$("loginBtn").onclick=doLogin;$("signupBtn").onclick=doSignup;
+$("authPassword").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()});
+$("logoutBtn").onclick=()=>supabase.auth.signOut();
+
+async function applySession(session){
+  user=session?.user||null;
+  if(!user){
+    $("authGate").classList.remove("hidden");
+    $("accountEmail").textContent="未登录";$("logoutBtn").style.display="none";setSync("等待登录","");
+    if(channel){supabase.removeChannel(channel);channel=null}
+    return;
+  }
+  $("authGate").classList.add("hidden");
+  $("accountEmail").textContent=user.email||"已登录";$("logoutBtn").style.display="block";
+  await loadWorkspace();
+}
+
+let now=new Date(),hour=now.getHours();
+$("greet").textContent=(hour<11?"早上好":hour<14?"中午好":hour<18?"下午好":"晚上好")+"，创作者！";
+$("dateText").textContent=new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(now)+" · 今天也要轻轻松松收工 ♡";
+
+const {data:{session}}=await supabase.auth.getSession();
+await applySession(session);
+supabase.auth.onAuthStateChange(async (event,newSession)=>{
+  if(event==="SIGNED_IN"||event==="SIGNED_OUT"||event==="TOKEN_REFRESHED") await applySession(newSession);
+});
 </script></body></html>
