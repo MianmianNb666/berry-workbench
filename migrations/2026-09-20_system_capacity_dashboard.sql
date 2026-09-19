@@ -81,7 +81,7 @@ declare
   v_registered bigint := 0;
   v_database_bytes bigint := 0;
   v_active_sessions bigint := 0;
-  v_realtime_connections bigint := 0;
+  v_realtime_channels bigint := 0;
   v_today_messages bigint := 0;
   v_month_messages bigint := 0;
   v_day_start timestamptz;
@@ -107,7 +107,7 @@ begin
     coalesce(sum(realtime_channels),0)
   into
     v_active_sessions,
-    v_realtime_connections
+    v_realtime_channels
   from public.client_presence
   where last_seen >= now() - interval '90 seconds';
 
@@ -135,7 +135,8 @@ begin
     'registered_users', v_registered,
     'database_bytes', v_database_bytes,
     'active_sessions', v_active_sessions,
-    'realtime_connections_estimate', v_realtime_connections,
+    'realtime_connections_estimate', v_active_sessions,
+    'realtime_channels_estimate', v_realtime_channels,
     'today_chat_messages', v_today_messages,
     'month_chat_messages', v_month_messages,
     'measured_at', now()
