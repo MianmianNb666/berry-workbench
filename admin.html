@@ -49,7 +49,7 @@ input,select{width:100%;border:1px solid var(--line);background:#fffafd;color:va
 @media(max-width:760px){
  .wrap{padding:10px 9px 45px}.topbar{top:5px}.brand small{display:none}.hero{padding:17px}.hero h1{font-size:22px}
  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}.usergrid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}
- .invite-columns{grid-template-columns:1fr}.invite{grid-template-columns:1fr 1fr}.invite .main{grid-column:1/-1}.log{grid-template-columns:1fr 1fr}.log>*:first-child{grid-column:1/-1}
+ .invite-columns{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:7px}.invite-box{padding:9px;min-width:0}.invite{grid-template-columns:1fr;gap:5px;padding:9px 0}.invite .main{grid-column:auto}.invite button{width:100%;min-height:30px;padding:0 6px}.invite-box h3{font-size:12px}.invite-box .meta{font-size:9px}.log{grid-template-columns:1fr 1fr}.log>*:first-child{grid-column:1/-1}
  .searchrow{grid-template-columns:1fr}.customgrant{grid-template-columns:1fr auto;max-width:none}
 }
 </style>
