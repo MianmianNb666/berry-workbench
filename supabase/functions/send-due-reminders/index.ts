@@ -43,6 +43,55 @@ type StoredSubscription = {
 
 export default {
   async fetch(req: Request): Promise<Response> {
+    const requestUrl = new URL(req.url);
+
+    if (req.method === "GET" && requestUrl.searchParams.get("icon") === "1") {
+      const uid = requestUrl.searchParams.get("uid") || "";
+      const token = requestUrl.searchParams.get("token") || "";
+      if (!uid || !token) return new Response("Not found", { status: 404 });
+
+      const { data: workspace, error: workspaceError } = await supabase
+        .from("workspaces")
+        .select("data")
+        .eq("user_id", uid)
+        .maybeSingle();
+
+      if (workspaceError || !workspace?.data) {
+        return new Response("Not found", { status: 404 });
+      }
+
+      const data = workspace.data as {
+        appIcon?: string;
+        appIconToken?: string;
+      };
+
+      if (!data.appIconToken || data.appIconToken !== token || !data.appIcon) {
+        return new Response("Not found", { status: 404 });
+      }
+
+      const match = data.appIcon.match(
+        /^data:(image\/(?:jpeg|png|webp));base64,(.+)$/s,
+      );
+      if (!match) return new Response("Invalid icon", { status: 415 });
+
+      try {
+        const binary = atob(match[2]);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+        return new Response(bytes, {
+          status: 200,
+          headers: {
+            "content-type": match[1],
+            "cache-control": "public, max-age=31536000, immutable",
+            "x-content-type-options": "nosniff",
+          },
+        });
+      } catch {
+        return new Response("Invalid icon", { status: 415 });
+      }
+    }
+
     if (req.method !== "POST") {
       return new Response("Method not allowed", { status: 405 });
     }
