@@ -75,6 +75,11 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
       <div class="meta">绑定入口收在“我的”里，不占用排单首页。</div>
       <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
     </section>
+    <section class="card" style="margin-top:14px">
+      <h2>我的预算 💰</h2>
+      <div class="meta">美工增加或减少预算后，这里会同步显示当前余额和每一笔明细。顾客端只能查看，不能修改。</div>
+      <div id="customerBudgetList" class="artist-list"><div class="empty">正在读取…</div></div>
+    </section>
   </section>
 
   <section id="customerSettings" class="customer-view hidden">
@@ -112,6 +117,21 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
       <div id="scheduleList" class="schedule"><div class="empty">暂无可查看的排单。</div></div>
     </div>
   </section>
+</div>
+
+<div id="customerBudgetModalBg" class="modalbg">
+  <div class="modal">
+    <div class="modalhead">
+      <div>
+        <h2 id="customerBudgetModalTitle">预算明细 💰</h2>
+        <div class="meta" id="customerBudgetModalBalance">当前余额 ¥0.00</div>
+      </div>
+      <button class="ghost" id="closeCustomerBudgetModalBtn" type="button">×</button>
+    </div>
+    <div id="customerBudgetHistory" class="artist-list" style="margin-top:12px">
+      <div class="empty">暂无明细。</div>
+    </div>
+  </div>
 </div>
 
 <div id="bindModalBg" class="modalbg">
@@ -259,6 +279,7 @@ function setCustomerView(view){
   document.querySelectorAll(".customer-view").forEach(x=>x.classList.toggle("hidden",x.id!==id));
   document.querySelectorAll("[data-customer-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.customerView===id));
   if(user)localStorage.setItem("berry-customer-view-"+user.id,view);
+  if(user&&view==="profile"){loadBindings();loadCustomerBudgets();}
 }
 document.querySelectorAll("[data-customer-view]").forEach(btn=>{
   btn.onclick=()=>{
@@ -356,8 +377,67 @@ async function loadBindings(){
     if(!confirm("确定从“我的美工”里移除吗？"))return;
     const {error}=await supabase.from("customer_artist_bindings").delete()
       .eq("customer_user_id",user.id).eq("artist_user_id",btn.dataset.unbind);
-    if(error)alert("移除失败："+error.message); else loadBindings();
+    if(error)alert("移除失败："+error.message); else {loadBindings();loadCustomerBudgets();}
   });
+}
+
+const budgetByArtist=new Map();
+function budgetMoney(v){
+  return "¥"+Number(v||0).toLocaleString("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function budgetDate(value){
+  try{
+    return new Intl.DateTimeFormat("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(value));
+  }catch(_){return value||""}
+}
+async function loadCustomerBudgets(){
+  if(!user)return;
+  $("customerBudgetList").innerHTML='<div class="empty">正在读取…</div>';
+  const {data:entries,error}=await supabase.from("customer_budget_entries")
+    .select("id,artist_user_id,amount,note,created_at")
+    .eq("customer_user_id",user.id)
+    .order("created_at",{ascending:false});
+  if(error){
+    console.warn("customer budget:",error.message);
+    $("customerBudgetList").innerHTML='<div class="empty">预算功能还没有完成数据库升级。</div>';
+    return;
+  }
+  budgetByArtist.clear();
+  for(const entry of (entries||[])){
+    if(!budgetByArtist.has(entry.artist_user_id))budgetByArtist.set(entry.artist_user_id,{balance:0,entries:[]});
+    const group=budgetByArtist.get(entry.artist_user_id);
+    group.balance+=Number(entry.amount||0);
+    group.entries.push(entry);
+  }
+  const artistIds=[...budgetByArtist.keys()];
+  if(!artistIds.length){
+    $("customerBudgetList").innerHTML='<div class="empty">还没有预算记录。</div>';
+    return;
+  }
+  const {data:artists}=await supabase.from("artist_profiles")
+    .select("artist_user_id,artist_code,public_name")
+    .in("artist_user_id",artistIds);
+  const names=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
+  $("customerBudgetList").innerHTML=artistIds.map(id=>{
+    const a=names.get(id);
+    const g=budgetByArtist.get(id);
+    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(a?.public_name||"美工")+'</div><div class="code">'+esc(a?.artist_code||"")+'</div></div><div class="artist-actions"><b style="align-self:center">'+budgetMoney(g.balance)+'</b><button class="ghost" data-budget-artist="'+esc(id)+'">查看明细</button></div></div>';
+  }).join("");
+  document.querySelectorAll("[data-budget-artist]").forEach(btn=>btn.onclick=()=>openCustomerBudgetDetails(btn.dataset.budgetArtist,names.get(btn.dataset.budgetArtist)));
+}
+function openCustomerBudgetDetails(artistId,artist){
+  const group=budgetByArtist.get(artistId);
+  if(!group)return;
+  $("customerBudgetModalTitle").textContent=(artist?.public_name||"美工")+" · 预算明细 💰";
+  $("customerBudgetModalBalance").textContent="当前余额 "+budgetMoney(group.balance);
+  $("customerBudgetHistory").innerHTML=group.entries.length?group.entries.map(x=>{
+    const n=Number(x.amount||0);
+    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+(n>0?"+":"−")+budgetMoney(Math.abs(n))+'</div><div class="code">'+esc(x.note||"预算调整")+' · '+esc(budgetDate(x.created_at))+'</div></div><span class="badge '+(n<0?"private":"")+'">'+(n>0?"增加":"减少")+'</span></div>';
+  }).join(""):'<div class="empty">暂无明细。</div>';
+  $("customerBudgetModalBg").classList.add("show");
+}
+function closeCustomerBudgetDetails(){
+  $("customerBudgetModalBg").classList.remove("show");
 }
 
 async function bindArtist(){
@@ -382,6 +462,7 @@ async function bindArtist(){
   $("bindCode").value="";
   $("bindHint").textContent="✅ 已绑定 "+(artist.public_name||"这个美工");
   loadBindings();
+  loadCustomerBudgets();
   setTimeout(closeBindModal,700);
 }
 async function bindOwnArtistForTest(){
@@ -404,6 +485,7 @@ async function bindOwnArtistForTest(){
   }
   $("bindHint").textContent="✅ 已绑定自己的美工身份（仅主用户测试）";
   loadBindings();
+  loadCustomerBudgets();
   setTimeout(closeBindModal,700);
 }
 function openBindModal(){
@@ -415,6 +497,8 @@ function openBindModal(){
 function closeBindModal(){
   $("bindModalBg").classList.remove("show");
 }
+$("closeCustomerBudgetModalBtn").onclick=closeCustomerBudgetDetails;
+$("customerBudgetModalBg").addEventListener("click",e=>{if(e.target===$("customerBudgetModalBg"))closeCustomerBudgetDetails()});
 $("openBindModalBtn").onclick=openBindModal;
 $("closeBindModalBtn").onclick=closeBindModal;
 $("bindModalBg").addEventListener("click",e=>{if(e.target===$("bindModalBg"))closeBindModal()});
@@ -510,6 +594,7 @@ async function applySession(session){
     await ensureCustomerRole();
     await loadCustomerPreferences();
     await loadBindings();
+    await loadCustomerBudgets();
     if(artistCode){
       $("customerNav").classList.add("hidden");
       await loadArtistPublic(artistCode);
