@@ -132,6 +132,17 @@
     <div class="profile-item" style="grid-column:1/-1"><span>账号 ID</span><b id="profileUserId">--</b><button id="copyUserIdBtn" class="copy-mini" type="button">复制账号 ID</button></div>
   </div>
 </div>
+<div id="ownerQuickPortalsCard" class="profile-card hidden">
+  <div>
+    <h3 style="font-size:14px;margin:0">我的快捷入口 🚪</h3>
+    <div class="meta" style="margin-top:4px">Owner 账号可以在这里快速切换页面。</div>
+  </div>
+  <div class="actions" style="margin-top:10px">
+    <a href="./index.html" class="ghost" style="text-decoration:none;display:inline-flex;align-items:center">🏠 工作台</a>
+    <a href="./index.html" class="ghost" style="text-decoration:none;display:inline-flex;align-items:center">🎨 美工台</a>
+    <a href="./customer.html" target="_blank" rel="noopener" class="ghost" style="text-decoration:none;display:inline-flex;align-items:center">👤 顾客台</a>
+  </div>
+</div>
 <div id="adminPortalCard" class="profile-card hidden">
   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
     <div>
@@ -423,6 +434,7 @@ async function applyArtistBetaAccess(){
   if($("artistCustomerBetaCard"))$("artistCustomerBetaCard").classList.toggle("hidden",!allowed);
   if($("artistCustomerBetaLocked"))$("artistCustomerBetaLocked").classList.toggle("hidden",allowed);
   if($("adminPortalCard"))$("adminPortalCard").classList.toggle("hidden",!allowed);
+  if($("ownerQuickPortalsCard"))$("ownerQuickPortalsCard").classList.toggle("hidden",!allowed);
   if($("navCustomers"))$("navCustomers").classList.toggle("hidden",!allowed);
   if(!allowed&&$("p-customers")?.classList.contains("active"))document.querySelector('[data-page="desk"]')?.click();
   return allowed;
