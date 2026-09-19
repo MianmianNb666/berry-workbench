@@ -15,7 +15,7 @@
 <p class="note">♡ 粉白个人接单工作台 · 自动保存到当前浏览器</p></main>
 <aside class="right"><div class="card"><h3>🎨 收支概览</h3><div class="mini"><b id="sideIncome">¥0</b><br><span id="sideDone">已完成 0 单</span></div></div><div class="card"><h3>💬 小助手</h3><div class="mini" id="assistant">今天还没有单子。</div></div><div class="card"><h3>📅 Deadline</h3><div id="deadlines"></div></div></aside>
 </div></div>
-<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<select id="oCat"><option>米画师</option><option>私人约稿</option><option>其他平台</option><option>商稿</option></select></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" style="margin-bottom:12px">🍓</div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad 会自动同步。朋友用她自己的邮箱注册，数据会完全分开。</p><label>邮箱<input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com"></label><label>密码<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"></label><div class="authactions"><button id="loginBtn" class="primary" type="button">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div></div></div>
+<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<select id="oCat"><option>米画师</option><option>私人约稿</option><option>其他平台</option><option>商稿</option></select></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" style="margin-bottom:12px">🍓</div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad 会自动同步。朋友用她自己的邮箱注册，数据会完全分开。邀请码只在第一次注册时需要，之后登录不用。</p><label>邮箱<input id="authEmail" type="email" autocomplete="email" placeholder="name@example.com"></label><label>密码<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="button">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div></div></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -159,14 +159,27 @@ async function doLogin(){
   $("authHint").textContent=error?("登录失败："+error.message):"登录成功，正在读取工作台…";
 }
 async function doSignup(){
-  const email=$("authEmail").value.trim(),password=$("authPassword").value;
+  const email=$("authEmail").value.trim(),password=$("authPassword").value,invite=$("inviteCode").value.trim().toUpperCase();
   if(!email||password.length<6){$("authHint").textContent="请输入邮箱和至少 6 位密码。";return}
-  $("authHint").textContent="正在注册…";
+  if(!invite){$("authHint").textContent="第一次注册需要邀请码。";$("inviteCode").focus();return}
+  $("authHint").textContent="正在验证邀请码并注册…";
   const redirectTo=location.origin+location.pathname;
-  const {data,error}=await supabase.auth.signUp({email,password,options:{emailRedirectTo:redirectTo}});
-  if(error){$("authHint").textContent="注册失败："+error.message;return}
+  const {data,error}=await supabase.auth.signUp({
+    email,
+    password,
+    options:{
+      emailRedirectTo:redirectTo,
+      data:{invite_code:invite}
+    }
+  });
+  if(error){
+    const m=(error.message||"").toLowerCase();
+    if(m.includes("invite")||m.includes("邀请码")) $("authHint").textContent="注册失败：邀请码无效、已使用或已过期。";
+    else $("authHint").textContent="注册失败："+error.message;
+    return;
+  }
   if(data.session)$("authHint").textContent="注册成功，正在进入工作台…";
-  else $("authHint").textContent="注册成功。请去邮箱点确认链接，再回来登录。";
+  else $("authHint").textContent="注册成功。";
 }
 async function sendPasswordReset(){
   const email=$("authEmail").value.trim();
