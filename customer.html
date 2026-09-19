@@ -485,26 +485,31 @@ async function bindArtist(){
 
 async function bindOwnArtistForTest(){
   if(!user || !(await isOwner()))return;
-  $("bindHint").textContent="正在绑定你的美工身份…";
-  const {data:artist,error}=await supabase.from("artist_profiles")
-    .select("artist_user_id,artist_code,public_name")
+  $("bindHint").textContent="正在打开你的美工测试权限…";
+  const {data:row,error}=await supabase.from("artist_customer_access_codes")
+    .select("access_code")
     .eq("artist_user_id",user.id)
     .maybeSingle();
-  if(error){$("bindHint").textContent="读取自己的美工资料失败："+error.message;return}
-  if(!artist){$("bindHint").textContent="还没有生成你的美工资料，请先打开美工端 → 我的。";return}
-  const {error:bindError}=await supabase.from("customer_artist_bindings").insert({
-    customer_user_id:user.id,artist_user_id:user.id
-  });
-  if(bindError){
-    if((bindError.code||"")==="23505")$("bindHint").textContent="你的美工身份已经绑定过啦。";
-    else if((bindError.message||"").toLowerCase().includes("check constraint"))$("bindHint").textContent="还差一步：请先运行“主用户自绑测试补丁”SQL。";
-    else $("bindHint").textContent="绑定失败："+bindError.message;
+  if(error){
+    $("bindHint").textContent="还差一步：请先运行最新版顾客码 SQL。";
     return;
   }
-  $("bindHint").textContent="✅ 已绑定自己的美工身份（仅主用户测试）";
-  loadBindings();
-  setTimeout(closeBindModal,700);
+  let code=row?.access_code||"";
+  if(!code){
+    const rotated=await supabase.rpc("rotate_customer_access_code");
+    if(rotated.error){
+      $("bindHint").textContent="生成测试顾客码失败："+rotated.error.message;
+      return;
+    }
+    code=rotated.data||"";
+  }
+  const ok=await claimCustomerAccess(code,$("bindHint"));
+  if(ok){
+    $("bindHint").textContent="✅ 已开启你的美工自测权限";
+    setTimeout(closeBindModal,550);
+  }
 }
+
 function openBindModal(){
   $("bindHint").textContent="";
   $("bindCode").value="";
@@ -626,7 +631,7 @@ async function applySession(session){
     $("authGate").classList.add("hidden");
     $("logoutBtn").classList.remove("hidden");
     $("customerAccountEmail").textContent=user.email||"顾客";
-    $("bindSelfTestBtn").classList.add("hidden");
+    $("bindSelfTestBtn").classList.toggle("hidden",!(await isOwner()));
     await ensureCustomerRole();
 
     const pending=normCode(urlCustomerCode||sessionStorage.getItem("berry-pending-customer-code")||$("customerAccessCode").value);
@@ -638,10 +643,33 @@ async function applySession(session){
       }
     }
 
-    const {data:accessRows,error:accessError}=await supabase.from("customer_portal_access")
+    let {data:accessRows,error:accessError}=await supabase.from("customer_portal_access")
       .select("artist_user_id,granted_at")
       .eq("customer_user_id",user.id)
       .order("granted_at",{ascending:true});
+
+    if(!accessError && !(accessRows||[]).length && await isOwner()){
+      const {data:ownCode}=await supabase.from("artist_customer_access_codes")
+        .select("access_code")
+        .eq("artist_user_id",user.id)
+        .maybeSingle();
+      let code=ownCode?.access_code||"";
+      if(!code){
+        const rotated=await supabase.rpc("rotate_customer_access_code");
+        if(!rotated.error)code=rotated.data||"";
+      }
+      if(code){
+        const claimed=await supabase.rpc("claim_customer_access_code",{p_code:code});
+        if(!claimed.error&&claimed.data?.success){
+          const refreshed=await supabase.from("customer_portal_access")
+            .select("artist_user_id,granted_at")
+            .eq("customer_user_id",user.id)
+            .order("granted_at",{ascending:true});
+          accessRows=refreshed.data||[];
+          accessError=refreshed.error||null;
+        }
+      }
+    }
 
     if(accessError||!(accessRows||[]).length){
       $("customerNav").classList.add("hidden");
@@ -680,7 +708,7 @@ async function applySession(session){
     $("customerAccountBar").classList.add("hidden");
     $("customerCodeGate").classList.add("hidden");
     $("customerAccountEmail").textContent="";
-    $("bindSelfTestBtn").classList.add("hidden");
+    $("bindSelfTestBtn").classList.toggle("hidden",!(await isOwner()));
     if(CUSTOMER_PORTAL_MAINTENANCE){
       $("authGate").classList.add("hidden");
       $("maintenanceGate").classList.remove("hidden");
