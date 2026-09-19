@@ -34,13 +34,17 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
 <div class="wrap" id="app">
   <div class="topbar">
     <div class="brand"><div class="logo">🍓</div><div><b>莓桃顾客端</b><small>查看自己的排单与进度</small></div></div>
-    <div style="display:flex;gap:8px;align-items:center"><a class="linkbtn" href="./index.html">🎨 美工端</a><button class="ghost hidden" id="logoutBtn">退出</button></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><a class="linkbtn" href="./index.html">🎨 美工端</a><button class="danger hidden" id="logoutBtn">退出登录</button></div>
   </div>
 
   <div id="dashboard">
     <section class="hero">
       <h1>我的排单 🍓</h1>
       <p id="welcomeText">登录后可以绑定多个美工，在一个页面查看自己在不同美工那里的排单。</p>
+      <div id="customerAccountBar" class="hidden" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+        <div><div class="meta">当前登录账号</div><b id="customerAccountEmail" style="font-size:12px"></b></div>
+        <button class="danger" id="logoutBtn2" type="button">退出登录</button>
+      </div>
     </section>
 
     <div class="grid">
@@ -261,7 +265,9 @@ async function savePassword(){
 }
 $("authForm").onsubmit=e=>{e.preventDefault();login()};
 $("signupBtn").onclick=signup;$("forgotBtn").onclick=forgot;$("savePasswordBtn").onclick=savePassword;
-$("logoutBtn").onclick=()=>supabase.auth.signOut();
+const logout=()=>supabase.auth.signOut();
+$("logoutBtn").onclick=logout;
+$("logoutBtn2").onclick=logout;
 
 async function applySession(session){
   user=session?.user||null;
@@ -269,11 +275,15 @@ async function applySession(session){
   if(user){
     $("authGate").classList.add("hidden");
     $("logoutBtn").classList.remove("hidden");
+    $("customerAccountBar").classList.remove("hidden");
+    $("customerAccountEmail").textContent=user.email||"顾客";
     $("welcomeText").textContent=(user.email||"顾客")+" · 可以同时绑定多个美工查看自己的排单。";
     await ensureCustomerRole();
     if(artistCode)await loadArtistPublic(artistCode); else await loadBindings();
   }else{
     $("logoutBtn").classList.add("hidden");
+    $("customerAccountBar").classList.add("hidden");
+    $("customerAccountEmail").textContent="";
     if(artistCode){
       $("authGate").classList.add("hidden");
       await loadArtistPublic(artistCode);
