@@ -26,7 +26,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
 .portal-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}.portal-switch a,.portal-switch span{display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:10px;font-size:12px;font-weight:800;text-decoration:none;color:var(--muted)}.portal-switch .active{background:var(--panel);color:var(--rose);box-shadow:0 3px 10px rgba(125,76,95,.08)}
 .authcard h2{font-size:22px;color:var(--rose);margin:0}.authcard p{font-size:12px;line-height:1.65;color:var(--muted)}.authcard label{display:block;font-size:11px;color:var(--muted);margin-top:10px}.authactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.authhint{min-height:20px;margin-top:10px;color:var(--rose);font-size:11px;line-height:1.5}.authlink{border:0;background:transparent;color:var(--rose);padding:10px 0 0;text-decoration:underline;text-underline-offset:3px;font-size:12px}.maintenance{position:fixed;inset:0;z-index:60;background:rgba(255,247,250,.97);backdrop-filter:blur(12px);display:grid;place-items:center;padding:18px}.maintenance.hidden{display:none}.maintenance-card{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:24px;text-align:center;box-shadow:0 25px 70px rgba(125,76,95,.14)}.maintenance-card .berry{font-size:42px}.maintenance-card h2{margin:8px 0 6px;color:var(--rose);font-size:22px}.maintenance-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
 .lookup{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}.lookup-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}.hidden{display:none!important}
-.artist-page{margin-top:14px}.artist-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.schedule{margin-top:12px}
+.artist-page{margin-top:14px}.artist-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.schedule{margin-top:12px}.modalbg{position:fixed;inset:0;z-index:55;background:rgba(70,45,55,.22);display:none;place-items:center;padding:18px}.modalbg.show{display:grid}.modal{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 25px 70px rgba(125,76,95,.16)}.modalhead{display:flex;align-items:center;justify-content:space-between;gap:10px}.modalhead h2{margin:0;font-size:18px}
 @media(max-width:680px){.wrap{padding:12px 10px 34px}.grid{grid-template-columns:1fr}.hero{padding:17px;border-radius:20px}.hero h1{font-size:22px}.topbar{align-items:flex-start}.artist{align-items:flex-start;flex-direction:column}.artist-actions{width:100%;justify-content:stretch}.artist-actions>*{flex:1}.lookup-row{grid-template-columns:1fr}.lookup-row button{width:100%}}
 </style>
 </head>
@@ -43,25 +43,18 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
       <p id="welcomeText">登录后可以绑定多个美工，在一个页面查看自己在不同美工那里的排单。</p>
       <div id="customerAccountBar" class="hidden" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
         <div><div class="meta">当前登录账号</div><b id="customerAccountEmail" style="font-size:12px"></b></div>
-        <button class="danger" id="logoutBtn2" type="button">退出登录</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="ghost" id="openBindModalBtn" type="button">＋ 绑定美工</button>
+          <button class="danger" id="logoutBtn2" type="button">退出登录</button>
+        </div>
       </div>
     </section>
 
-    <div class="grid">
+    <div style="margin-top:14px">
       <section class="card">
         <h2>我的美工</h2>
-        <div class="meta">绑定后会一直保留，不需要每次重新输入编号。</div>
+        <div class="meta">这里集中显示已经绑定的美工。新增绑定放到“我的”里的小入口，不再占一整块页面。</div>
         <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
-      </section>
-      <section class="card">
-        <h2>＋ 添加美工</h2>
-        <div class="meta">输入美工发给你的编号，例如 MT-12AB34CD56。</div>
-        <div class="stack">
-          <input id="bindCode" autocomplete="off" autocapitalize="characters" placeholder="输入美工编号">
-          <button class="primary" id="bindBtn">绑定美工</button>
-          <button class="ghost hidden" id="bindSelfTestBtn" type="button">🧪 绑定我的美工身份（测试）</button>
-          <div id="bindHint" class="authhint"></div>
-        </div>
       </section>
     </div>
   </div>
@@ -76,6 +69,24 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
       <div id="scheduleList" class="schedule"><div class="empty">暂无可查看的排单。</div></div>
     </div>
   </section>
+</div>
+
+<div id="bindModalBg" class="modalbg">
+  <div class="modal">
+    <div class="modalhead">
+      <div>
+        <h2>绑定美工 🍓</h2>
+        <div class="meta" style="margin-top:4px">输入美工发给你的编号，例如 MT-12AB34CD56。</div>
+      </div>
+      <button class="ghost" id="closeBindModalBtn" type="button">×</button>
+    </div>
+    <div class="stack">
+      <input id="bindCode" autocomplete="off" autocapitalize="characters" placeholder="输入美工编号">
+      <button class="primary" id="bindBtn">绑定美工</button>
+      <button class="ghost hidden" id="bindSelfTestBtn" type="button">🧪 绑定我的美工身份（测试）</button>
+      <div id="bindHint" class="authhint"></div>
+    </div>
+  </div>
 </div>
 
 <div id="maintenanceGate" class="maintenance hidden">
@@ -244,6 +255,7 @@ async function bindArtist(){
   $("bindCode").value="";
   $("bindHint").textContent="✅ 已绑定 "+(artist.public_name||"这个美工");
   loadBindings();
+  setTimeout(closeBindModal,700);
 }
 async function bindOwnArtistForTest(){
   if(!user || !(await isOwner()))return;
@@ -265,7 +277,20 @@ async function bindOwnArtistForTest(){
   }
   $("bindHint").textContent="✅ 已绑定自己的美工身份（仅主用户测试）";
   loadBindings();
+  setTimeout(closeBindModal,700);
 }
+function openBindModal(){
+  $("bindHint").textContent="";
+  $("bindCode").value="";
+  $("bindModalBg").classList.add("show");
+  setTimeout(()=>$("bindCode").focus(),50);
+}
+function closeBindModal(){
+  $("bindModalBg").classList.remove("show");
+}
+$("openBindModalBtn").onclick=openBindModal;
+$("closeBindModalBtn").onclick=closeBindModal;
+$("bindModalBg").addEventListener("click",e=>{if(e.target===$("bindModalBg"))closeBindModal()});
 $("bindBtn").onclick=bindArtist;
 $("bindSelfTestBtn").onclick=bindOwnArtistForTest;
 $("bindCode").addEventListener("keydown",e=>{if(e.key==="Enter")bindArtist()});
