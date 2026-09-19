@@ -4,6 +4,7 @@
 -- 若只是日常修改数据库，请使用单独的增量 SQL。
 -- 本文件不包含任何真实邀请码、密码、邮箱密钥或 service_role key。
 -- 最后整理：2026-09-19
+-- 已支持：一次性邀请码 + 多账号通用邀请码（每账号仅可使用一次）
 
 create extension if not exists pgcrypto;
 
@@ -58,6 +59,10 @@ create table if not exists public.invite_codes (
   expires_at timestamptz,
   used_at timestamptz,
   used_by uuid references auth.users(id) on delete set null,
+  use_mode text not null default 'single'
+    check (use_mode in ('single','multi')),
+  max_uses integer check (max_uses is null or max_uses > 0),
+  used_count integer not null default 0,
   created_at timestamptz not null default now(),
 
   constraint invite_duration_check check (
@@ -93,6 +98,9 @@ create table if not exists public.invite_redemptions (
   new_valid_until timestamptz,
   redeemed_at timestamptz not null default now()
 );
+
+create unique index if not exists invite_redemptions_invite_user_unique
+  on public.invite_redemptions(invite_id, user_id);
 
 alter table public.invite_redemptions enable row level security;
 revoke all on table public.invite_redemptions from anon, authenticated;
@@ -590,3 +598,47 @@ $$;
 
 -- 后台查看兑换记录：
 -- select * from public.invite_redemptions order by redeemed_at desc;
+
+
+-- =========================================================
+-- 12. 通用邀请码示例
+-- =========================================================
+
+-- 通用 7 天注册试用码
+-- 同一个码可供多个不同账号注册使用，每个账号只能用一次。
+-- max_uses 可自行调整，例如 100。
+--
+-- insert into public.invite_codes(
+--   code_hash, label, purpose, grant_type, duration_days,
+--   use_mode, max_uses, used_count, is_active
+-- )
+-- values (
+--   encode(digest(upper(trim('YOUR-GENERAL-SIGNUP-CODE')), 'sha256'), 'hex'),
+--   '通用7天注册试用码',
+--   'signup',
+--   'days',
+--   7,
+--   'multi',
+--   100,
+--   0,
+--   true
+-- );
+
+-- 通用 7 天续期码
+-- 已注册用户可兑换，每个账号只能兑换一次。
+--
+-- insert into public.invite_codes(
+--   code_hash, label, purpose, grant_type, duration_days,
+--   use_mode, max_uses, used_count, is_active
+-- )
+-- values (
+--   encode(digest(upper(trim('YOUR-GENERAL-RENEW-CODE')), 'sha256'), 'hex'),
+--   '通用7天续期码',
+--   'renewal',
+--   'days',
+--   7,
+--   'multi',
+--   100,
+--   0,
+--   true
+-- );
