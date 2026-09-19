@@ -37,6 +37,26 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><a class="linkbtn" href="./index.html">🎨 美工端</a><button class="danger hidden" id="logoutBtn">退出登录</button></div>
   </div>
 
+  <section id="publicShareView" class="hidden">
+    <section class="hero">
+      <h1 id="publicShareTitle">顾客排单 🍓</h1>
+      <p id="publicShareSubtitle">这是美工为你生成的免登录查看入口。</p>
+    </section>
+    <section class="card" style="margin-top:14px">
+      <div class="artist-head">
+        <div>
+          <h2 id="publicShareArtistName">正在读取…</h2>
+          <div class="meta" id="publicShareCustomerName"></div>
+        </div>
+        <span class="badge">免登录</span>
+      </div>
+      <div class="meta" id="publicShareUpdatedAt" style="margin-top:8px"></div>
+      <div id="publicShareOrders" class="schedule" style="margin-top:12px">
+        <div class="empty">正在读取排单…</div>
+      </div>
+    </section>
+  </section>
+
   <div id="customerNav" class="customer-nav hidden">
     <button class="ghost active" type="button" data-customer-view="dashboard">🍓 我的排单</button>
     <button class="ghost customer-profile-heart" type="button" data-customer-view="customerProfile">我的</button>
@@ -218,6 +238,54 @@ async function sha256Hex(text){
 }
 async function isOwner(){
   return !!user?.id && (await sha256Hex(user.id))===OWNER_USER_ID_HASH;
+}
+
+function publicShareDate(value){
+  if(!value)return "";
+  try{
+    return new Intl.DateTimeFormat("zh-CN",{
+      year:"numeric",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"
+    }).format(new Date(value));
+  }catch(_){return value}
+}
+
+function renderPublicShareOrder(order){
+  const status=esc(order.status||"待处理");
+  const progress=Math.max(0,Math.min(100,Number(order.progress||0)));
+  const due=[order.due||"",order.dueTime||""].filter(Boolean).join(" ");
+  return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(order.name||"未命名订单")+'</div><div class="code">'+esc(order.cat||"未分类")+'</div><div class="meta" style="margin-top:6px">状态：'+status+' · 进度 '+progress+'%</div><div class="meta">开始：'+esc(order.start||"未填写")+' · 截止：'+esc(due||"未填写")+'</div></div><span class="badge">'+status+'</span></div>';
+}
+
+async function loadPublicShare(token){
+  $("publicShareView").classList.remove("hidden");
+  $("customerNav").classList.add("hidden");
+  ["dashboard","customerProfile","customerSettings","artistPage"].forEach(id=>$(id)?.classList.add("hidden"));
+  $("authGate").classList.add("hidden");
+  $("maintenanceGate").classList.add("hidden");
+  $("customerCodeGate").classList.add("hidden");
+  $("logoutBtn").classList.add("hidden");
+
+  const {data,error}=await supabase.rpc("get_customer_public_share",{p_token:token});
+  if(error||!data?.success){
+    console.error(error);
+    $("publicShareTitle").textContent="链接不可用";
+    $("publicShareSubtitle").textContent="这个免登录入口不存在、已经失效，或数据库还没有升级。";
+    $("publicShareArtistName").textContent="无法读取";
+    $("publicShareCustomerName").textContent="";
+    $("publicShareUpdatedAt").textContent="";
+    $("publicShareOrders").innerHTML='<div class="empty">请联系美工重新生成一个入口链接。</div>';
+    return;
+  }
+
+  $("publicShareTitle").textContent=data.mode==="order"?"订单进度 🍓":"我的排单 🍓";
+  $("publicShareSubtitle").textContent="免登录查看模式，只显示美工公开给你的订单进度。";
+  $("publicShareArtistName").textContent=data.artist_name||"莓桃美工";
+  $("publicShareCustomerName").textContent="顾客："+(data.customer_name||"顾客");
+  $("publicShareUpdatedAt").textContent=data.updated_at?"最近更新："+publicShareDate(data.updated_at):"";
+  const orders=Array.isArray(data.orders)?data.orders:[];
+  $("publicShareOrders").innerHTML=orders.length
+    ?orders.map(renderPublicShareOrder).join("")
+    :'<div class="empty">目前还没有可显示的排单。</div>';
 }
 
 const DEFAULT_CUSTOMER_PREFS={accent:"#e9789d",bg:"#fff8fb",panel:"#ffffff",text_color:"#45383d"};
@@ -719,16 +787,21 @@ async function applySession(session){
   }
 }
 
-const {data:{session}}=await supabase.auth.getSession();
-await applySession(session);
-supabase.auth.onAuthStateChange(async(event,session)=>{
-  if(event==="PASSWORD_RECOVERY"){
-    user=session?.user||null;
-    $("loginView").classList.add("hidden");$("resetView").classList.remove("hidden");$("authGate").classList.remove("hidden");
-    return;
-  }
-  if(["SIGNED_IN","SIGNED_OUT","TOKEN_REFRESHED"].includes(event))await applySession(session);
-});
+const publicShareToken=normCode(new URL(location.href).searchParams.get("share"));
+if(publicShareToken){
+  await loadPublicShare(publicShareToken);
+}else{
+  const {data:{session}}=await supabase.auth.getSession();
+  await applySession(session);
+  supabase.auth.onAuthStateChange(async(event,session)=>{
+    if(event==="PASSWORD_RECOVERY"){
+      user=session?.user||null;
+      $("loginView").classList.add("hidden");$("resetView").classList.remove("hidden");$("authGate").classList.remove("hidden");
+      return;
+    }
+    if(["SIGNED_IN","SIGNED_OUT","TOKEN_REFRESHED"].includes(event))await applySession(session);
+  });
+}
 </script>
 </body>
 </html>
