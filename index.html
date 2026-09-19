@@ -2762,7 +2762,7 @@ $("artistAutoUnbindInput").onchange=async()=>{
   const {data,error}=await supabase.from("artist_profiles")
     .update({auto_unbind_on_finish:wanted,updated_at:new Date().toISOString()})
     .eq("artist_user_id",user.id)
-    .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
+    .select("artist_user_id,artist_code,public_name,auto_unbind_on_finish")
     .single();
   if(error){
     console.error(error);
@@ -3181,7 +3181,7 @@ async function loadArtistPortalProfile(){
   if(!user)return;
   try{
     let {data,error}=await supabase.from("artist_profiles")
-      .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
+      .select("artist_user_id,artist_code,public_name,auto_unbind_on_finish")
       .eq("artist_user_id",user.id)
       .maybeSingle();
     if(error)throw error;
@@ -3192,7 +3192,7 @@ async function loadArtistPortalProfile(){
     if(!data){
       const created=await supabase.from("artist_profiles")
         .insert({artist_user_id:user.id,public_name:S.title||"莓桃美工"})
-        .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
+        .select("artist_user_id,artist_code,public_name,auto_unbind_on_finish")
         .single();
       if(created.error)throw created.error;
       data=created.data;
