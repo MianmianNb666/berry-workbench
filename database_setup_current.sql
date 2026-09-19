@@ -201,7 +201,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = public, auth, extensions
-as $
+as $$
 declare
   v_code text;
   v_hash text;
