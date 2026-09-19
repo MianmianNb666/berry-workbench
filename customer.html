@@ -757,6 +757,8 @@ function ensureCustomerChatRealtime(){
       if(row.user_id===user.id){customerChatAvatar=payload.new?.avatar_data||"";customerDisplayName=(payload.new?.display_name||customerDisplayName||"").trim();renderCustomerSelfAvatar()}
       if(customerChatConversations.some(x=>x.artist_user_id===row.user_id)){
         await loadCustomerChatConversations(true);
+        customerBindingsLoaded=false;
+        await loadBindings(true);
         if(activeCustomerChat?.artist_user_id===row.user_id)await loadCustomerChatMessages(false);
       }
     })
