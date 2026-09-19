@@ -150,7 +150,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const SUPABASE_URL="https://cwzeknrjetwbczqgmdit.supabase.co";
 const SUPABASE_KEY="sb_publishable_kI3ZY_VCFSHIn1sVm1xJ1Q_b9zZAGV2";
-const VAPID_PUBLIC_KEY="BHaMEXuTOlfLvhVBQWa9BIl59_UBfFQ8Ug7JrhoLe6iNzHoDhaz8RwsyXeKclfYt6C3ogcNIfkUtk-dInKWZYy8";
+const VAPID_PUBLIC_KEY="BAn_RVAgEdjS5fL02zswq1oD6NEZxY91WfPsj8wDVwVK-7zTZCBDbF3foiGGfkTA_MbQICaArGKN9WGAW2y7QEc";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 
 const $=id=>document.getElementById(id);
@@ -810,10 +810,19 @@ async function syncPushSubscriptionToCloud(){
   try{
     const reg=swRegistration||await navigator.serviceWorker.ready;
     let sub=await reg.pushManager.getSubscription();
+    const wantedKey=urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+    if(sub?.options?.applicationServerKey){
+      const currentKey=new Uint8Array(sub.options.applicationServerKey);
+      const sameKey=currentKey.length===wantedKey.length&&currentKey.every((v,i)=>v===wantedKey[i]);
+      if(!sameKey){
+        await sub.unsubscribe();
+        sub=null;
+      }
+    }
     if(!sub){
       sub=await reg.pushManager.subscribe({
         userVisibleOnly:true,
-        applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        applicationServerKey:wantedKey
       });
     }
     const json=sub.toJSON();
