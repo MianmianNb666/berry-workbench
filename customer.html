@@ -288,7 +288,7 @@ let customerChatAvatar="";
 let customerChatConversations=[];
 let activeCustomerChat=null;
 let customerChatChannel=null;
-const CUSTOMER_PORTAL_MAINTENANCE=true;
+const CUSTOMER_PORTAL_MAINTENANCE=false;
 const OWNER_USER_ID_HASH="f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8";
 async function sha256Hex(text){
   const data=new TextEncoder().encode(String(text||""));
