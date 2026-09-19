@@ -155,8 +155,8 @@ $("backBtn").onclick=()=>{const u=new URL(location.href);u.searchParams.delete("
 
 async function ensureCustomerRole(){
   if(!user)return;
-  const {error}=await supabase.from("user_roles").upsert({user_id:user.id,role:"customer"},{onConflict:"user_id,role"});
-  if(error)console.warn("customer role:",error.message);
+  const {error}=await supabase.from("user_roles").insert({user_id:user.id,role:"customer"});
+  if(error && error.code!=="23505")console.warn("customer role:",error.message);
 }
 
 async function loadArtistPublic(code){
