@@ -775,6 +775,7 @@ function render(){
   $("scheduleList").innerHTML=ds.length?ds.map(o=>'<div class="item"><div><b>'+esc(o.name)+'</b><small>'+esc(o.client||"未填客户")+'</small></div><div>'+esc(o.due)+'</div></div>').join(""):'<div class="empty">暂时没有排单。</div>';
   $("moneyList").innerHTML=os.length?os.slice().reverse().map(o=>'<div class="item"><div><b>'+esc(o.name)+'</b><small>'+esc(o.status)+'</small></div><b>'+money(o.money)+'</b></div>').join(""):'<div class="empty">暂无收入记录。</div>';
   bind();renderTimes();renderCustomSections();
+  if(accessReadOnly)setTimeout(()=>setAccessReadOnly(true,currentAccessStatus||{}),0);
 }
 function orderReminderLabel(o){
   const parts=[];
@@ -1997,6 +1998,34 @@ function maybeShowExpiryWarning(status={}){
   if($("accessExpiryModalMeta"))$("accessExpiryModalMeta").textContent=text+" 到期后美工端会变成只读，但顾客端仍可正常查看。";
   $("accessExpiryModalBg")?.classList.add("show");
 }
+
+function accessReadOnlyControlAllowed(el){
+  if(!el)return true;
+  const allowedIds=new Set([
+    "search","logoutBtn","settingsLogoutBtn","redeemOpenBtn","settingsRedeemBtn",
+    "redeemCode","redeemModalBtn","cancelRedeemModal","closeRedeemModal",
+    "readOnlyRenewBtn","closeAccessExpiryModal","laterAccessExpiryBtn","renewFromExpiryBtn",
+    "exportJson","exportCsv","copyUserIdBtn","copyDeveloperContactBtn",
+    "copyArtistCodeBtn","copyArtistLinkBtn","openArtistCustomerPageBtn"
+  ]);
+  return allowedIds.has(el.id) || el.matches("[data-page],.chip") || !!el.closest("#redeemModalBg,#accessExpiryModalBg,#authGate");
+}
+document.addEventListener("click",e=>{
+  if(!accessReadOnly)return;
+  const el=e.target.closest("button,input,select,textarea");
+  if(el&&!accessReadOnlyControlAllowed(el)){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+},true);
+document.addEventListener("change",e=>{
+  if(!accessReadOnly)return;
+  const el=e.target.closest("input,select,textarea");
+  if(el&&!accessReadOnlyControlAllowed(el)){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  }
+},true);
 function showRenewView(status={}){
   $("loginView").classList.add("hidden");
   $("resetView").classList.add("hidden");
