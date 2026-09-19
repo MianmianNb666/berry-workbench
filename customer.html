@@ -381,7 +381,7 @@ async function loadBindings(){
   });
 }
 
-const budgetByArtist=new Map();
+const budgetByCustomerRecord=new Map();
 function budgetMoney(v){
   return "¥"+Number(v||0).toLocaleString("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
@@ -393,43 +393,59 @@ function budgetDate(value){
 async function loadCustomerBudgets(){
   if(!user)return;
   $("customerBudgetList").innerHTML='<div class="empty">正在读取…</div>';
-  const {data:entries,error}=await supabase.from("customer_budget_entries")
-    .select("id,artist_user_id,amount,note,created_at")
-    .eq("customer_user_id",user.id)
-    .order("created_at",{ascending:false});
+  const {data:records,error}=await supabase.from("artist_customers")
+    .select("id,artist_user_id,display_name,linked_customer_user_id")
+    .eq("linked_customer_user_id",user.id)
+    .order("created_at",{ascending:true});
   if(error){
-    console.warn("customer budget:",error.message);
-    $("customerBudgetList").innerHTML='<div class="empty">预算功能还没有完成数据库升级。</div>';
+    console.warn("customer records:",error.message);
+    $("customerBudgetList").innerHTML='<div class="empty">顾客档案功能还没有完成数据库升级。</div>';
     return;
   }
-  budgetByArtist.clear();
-  for(const entry of (entries||[])){
-    if(!budgetByArtist.has(entry.artist_user_id))budgetByArtist.set(entry.artist_user_id,{balance:0,entries:[]});
-    const group=budgetByArtist.get(entry.artist_user_id);
+  const rows=records||[];
+  budgetByCustomerRecord.clear();
+  if(!rows.length){
+    $("customerBudgetList").innerHTML='<div class="empty">还没有关联到你的预算档案。</div>';
+    return;
+  }
+  const ids=rows.map(x=>x.id);
+  const {data:entries,error:eerr}=await supabase.from("artist_customer_ledger")
+    .select("id,artist_customer_id,artist_user_id,amount,note,created_at")
+    .in("artist_customer_id",ids)
+    .order("created_at",{ascending:false});
+  if(eerr){
+    console.warn("customer ledger:",eerr.message);
+    $("customerBudgetList").innerHTML='<div class="empty">预算明细暂时读取失败。</div>';
+    return;
+  }
+  rows.forEach(record=>budgetByCustomerRecord.set(record.id,{record,balance:0,entries:[]}));
+  (entries||[]).forEach(entry=>{
+    const group=budgetByCustomerRecord.get(entry.artist_customer_id);
+    if(!group)return;
     group.balance+=Number(entry.amount||0);
     group.entries.push(entry);
-  }
-  const artistIds=[...budgetByArtist.keys()];
-  if(!artistIds.length){
-    $("customerBudgetList").innerHTML='<div class="empty">还没有预算记录。</div>';
-    return;
-  }
+  });
+  const artistIds=[...new Set(rows.map(x=>x.artist_user_id))];
   const {data:artists}=await supabase.from("artist_profiles")
     .select("artist_user_id,artist_code,public_name")
     .in("artist_user_id",artistIds);
-  const names=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
-  $("customerBudgetList").innerHTML=artistIds.map(id=>{
-    const a=names.get(id);
-    const g=budgetByArtist.get(id);
-    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(a?.public_name||"美工")+'</div><div class="code">'+esc(a?.artist_code||"")+'</div></div><div class="artist-actions"><b style="align-self:center">'+budgetMoney(g.balance)+'</b><button class="ghost" data-budget-artist="'+esc(id)+'">查看明细</button></div></div>';
+  const artistMap=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
+  $("customerBudgetList").innerHTML=rows.map(record=>{
+    const g=budgetByCustomerRecord.get(record.id);
+    const a=artistMap.get(record.artist_user_id);
+    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(a?.public_name||"美工")+'</div><div class="code">顾客档案：'+esc(record.display_name||"顾客")+(a?.artist_code?' · '+esc(a.artist_code):'')+'</div></div><div class="artist-actions"><b style="align-self:center">'+budgetMoney(g.balance)+'</b><button class="ghost" data-budget-record="'+esc(record.id)+'">查看明细</button></div></div>';
   }).join("");
-  document.querySelectorAll("[data-budget-artist]").forEach(btn=>btn.onclick=()=>openCustomerBudgetDetails(btn.dataset.budgetArtist,names.get(btn.dataset.budgetArtist)));
+  document.querySelectorAll("[data-budget-record]").forEach(btn=>{
+    btn.onclick=()=>{
+      const group=budgetByCustomerRecord.get(btn.dataset.budgetRecord);
+      if(group)openCustomerBudgetDetails(group,artistMap.get(group.record.artist_user_id));
+    };
+  });
 }
-function openCustomerBudgetDetails(artistId,artist){
-  const group=budgetByArtist.get(artistId);
+function openCustomerBudgetDetails(group,artist){
   if(!group)return;
   $("customerBudgetModalTitle").textContent=(artist?.public_name||"美工")+" · 预算明细 💰";
-  $("customerBudgetModalBalance").textContent="当前余额 "+budgetMoney(group.balance);
+  $("customerBudgetModalBalance").textContent="当前余额 "+budgetMoney(group.balance)+" · "+(group.record.display_name||"顾客");
   $("customerBudgetHistory").innerHTML=group.entries.length?group.entries.map(x=>{
     const n=Number(x.amount||0);
     return '<div class="artist"><div class="artist-main"><div class="artist-name">'+(n>0?"+":"−")+budgetMoney(Math.abs(n))+'</div><div class="code">'+esc(x.note||"预算调整")+' · '+esc(budgetDate(x.created_at))+'</div></div><span class="badge '+(n<0?"private":"")+'">'+(n>0?"增加":"减少")+'</span></div>';
