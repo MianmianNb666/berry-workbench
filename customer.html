@@ -583,6 +583,122 @@ async function loadArtistPublic(code){
   $("scheduleList").innerHTML='<div class="empty">暂无可查看的排单。</div>';
 }
 
+function customerChatClock(value){
+  if(!value)return "";
+  try{return new Intl.DateTimeFormat("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}
+  catch(_){return ""}
+}
+function updateCustomerChatUnread(){
+  const total=customerChatConversations.reduce((sum,x)=>sum+Number(x.unread_count||0),0);
+  const badge=$("customerChatNavUnread");
+  if(!badge)return;
+  badge.textContent=total>99?"99+":String(total);
+  badge.classList.toggle("hidden",total<=0);
+}
+function renderCustomerChatThreads(){
+  const host=$("customerChatThreads");
+  if(!host)return;
+  if(!customerChatConversations.length){
+    host.innerHTML='<div class="empty" style="margin:10px">还没有可以聊天的美工。先用顾客码添加一位美工吧。</div>';
+    updateCustomerChatUnread();
+    return;
+  }
+  host.innerHTML=customerChatConversations.map(row=>{
+    const active=activeCustomerChat?.artist_user_id===row.artist_user_id;
+    const unread=Number(row.unread_count||0);
+    return '<div class="chat-thread '+(active?"active":"")+'" data-customer-chat-artist="'+esc(row.artist_user_id)+'"><div class="chat-thread-row">'+
+      chatAvatarMarkup(row.counterpart_avatar,row.counterpart_label||"美")+
+      '<div class="chat-thread-main"><div class="chat-thread-title">'+esc(row.counterpart_label||"莓桃美工")+'</div><div class="chat-thread-preview">'+esc(row.last_body||"还没有消息，打个招呼吧～")+'</div><div class="meta">'+esc(customerChatClock(row.last_at))+'</div></div>'+
+      (unread?'<span class="chat-unread">'+(unread>99?"99+":unread)+'</span>':'')+'</div></div>';
+  }).join("");
+  host.querySelectorAll("[data-customer-chat-artist]").forEach(el=>el.onclick=()=>{
+    const row=customerChatConversations.find(x=>x.artist_user_id===el.dataset.customerChatArtist);
+    if(row)openCustomerChat(row);
+  });
+  updateCustomerChatUnread();
+}
+async function loadCustomerChatConversations(){
+  if(!user)return;
+  const {data,error}=await supabase.rpc("chat_list_my_conversations");
+  if(error){
+    console.warn("customer chat conversations:",error.message);
+    if($("customerChatThreads"))$("customerChatThreads").innerHTML='<div class="empty" style="margin:10px">聊天数据库还没有安装。请先运行实时聊天 SQL。</div>';
+    return;
+  }
+  customerChatConversations=(data||[]).filter(x=>x.customer_user_id===user.id);
+  renderCustomerChatThreads();
+  if(activeCustomerChat){
+    const fresh=customerChatConversations.find(x=>x.artist_user_id===activeCustomerChat.artist_user_id);
+    if(fresh)activeCustomerChat=fresh;
+  }
+  ensureCustomerChatRealtime();
+}
+async function openCustomerChat(row){
+  activeCustomerChat=row;
+  $("customerChatRoomTitle").textContent=row.counterpart_label||"莓桃美工";
+  $("customerChatRoomMeta").textContent="实时聊天 · 打开后自动已读";
+  renderCustomerChatThreads();
+  await loadCustomerChatMessages(true);
+}
+async function loadCustomerChatMessages(markRead=false){
+  if(!user||!activeCustomerChat)return;
+  const {data,error}=await supabase.from("chat_messages")
+    .select("id,sender_user_id,body,created_at,read_at")
+    .eq("artist_user_id",activeCustomerChat.artist_user_id)
+    .eq("customer_user_id",user.id)
+    .order("created_at",{ascending:true})
+    .limit(300);
+  if(error){
+    $("customerChatMessages").innerHTML='<div class="chat-empty">消息读取失败，请先运行聊天 SQL。</div>';
+    return;
+  }
+  const rows=data||[];
+  $("customerChatMessages").innerHTML=rows.length?rows.map(m=>{
+    const mine=m.sender_user_id===user.id;
+    const avatar=mine?chatAvatarMarkup(customerChatAvatar,(user.email||"我")[0]):chatAvatarMarkup(activeCustomerChat.counterpart_avatar,activeCustomerChat.counterpart_label||"美");
+    return '<div class="chat-line '+(mine?"mine":"")+'">'+avatar+'<div class="chat-bubble">'+esc(m.body)+'<div class="chat-meta">'+esc(customerChatClock(m.created_at))+(mine?' · '+(m.read_at?"已读":"未读"):'')+'</div></div></div>';
+  }).join(""):'<div class="chat-empty">还没有消息，发第一句吧 💬</div>';
+  const box=$("customerChatMessages");box.scrollTop=box.scrollHeight;
+  if(markRead){
+    await supabase.rpc("chat_mark_read",{p_artist_user_id:activeCustomerChat.artist_user_id,p_customer_user_id:user.id});
+    const row=customerChatConversations.find(x=>x.artist_user_id===activeCustomerChat.artist_user_id);
+    if(row)row.unread_count=0;
+    renderCustomerChatThreads();
+  }
+}
+async function sendCustomerChat(){
+  if(!user||!activeCustomerChat)return;
+  const input=$("customerChatInput"),body=input.value.trim();
+  if(!body)return;
+  $("customerChatSendBtn").disabled=true;
+  const {error}=await supabase.from("chat_messages").insert({artist_user_id:activeCustomerChat.artist_user_id,customer_user_id:user.id,sender_user_id:user.id,body:body.slice(0,1000)});
+  $("customerChatSendBtn").disabled=false;
+  if(error){$("customerChatHint").textContent="发送失败："+error.message;return}
+  input.value="";$("customerChatHint").textContent="";
+  await loadCustomerChatMessages(false);
+  await loadCustomerChatConversations();
+}
+function ensureCustomerChatRealtime(){
+  if(!user)return;
+  if(customerChatChannel){supabase.removeChannel(customerChatChannel);customerChatChannel=null}
+  customerChatChannel=supabase.channel("customer-chat-"+user.id)
+    .on("postgres_changes",{event:"*",schema:"public",table:"chat_messages",filter:"customer_user_id=eq."+user.id},async payload=>{
+      await loadCustomerChatConversations();
+      const row=payload.new||payload.old||{};
+      if(activeCustomerChat&&row.artist_user_id===activeCustomerChat.artist_user_id)await loadCustomerChatMessages(true);
+    })
+    .on("postgres_changes",{event:"*",schema:"public",table:"chat_profiles"},async payload=>{
+      const row=payload.new||payload.old||{};
+      if(row.user_id===user.id){customerChatAvatar=payload.new?.avatar_data||"";renderCustomerSelfAvatar()}
+      if(customerChatConversations.some(x=>x.artist_user_id===row.user_id)){
+        await loadCustomerChatConversations();
+        if(activeCustomerChat?.artist_user_id===row.user_id)await loadCustomerChatMessages(false);
+      }
+    })
+    .subscribe();
+}
+$("customerChatSendBtn").onclick=sendCustomerChat;
+$("customerChatInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendCustomerChat()}});
 async function loadBindings(){
   if(!user)return;
   $("artistList").innerHTML='<div class="empty">正在读取…</div>';
