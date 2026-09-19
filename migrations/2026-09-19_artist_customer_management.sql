@@ -12,6 +12,236 @@ begin;
 
 create extension if not exists pgcrypto;
 
+
+-- =========================================================
+-- A0. 顾客码：一个美工一个码；顾客账号只能绑定一个美工
+-- =========================================================
+create table if not exists public.artist_customer_access_codes (
+  artist_user_id uuid primary key references auth.users(id) on delete cascade,
+  access_code text not null unique
+    default ('GC-' || upper(substr(encode(gen_random_bytes(6), 'hex'), 1, 12))),
+  is_active boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.artist_customer_access_codes enable row level security;
+
+revoke all on table public.artist_customer_access_codes from anon, authenticated;
+grant select on table public.artist_customer_access_codes to authenticated;
+
+drop policy if exists "owner_artist_reads_customer_code"
+on public.artist_customer_access_codes;
+
+create policy "owner_artist_reads_customer_code"
+on public.artist_customer_access_codes
+for select
+to authenticated
+using (
+  auth.uid() = artist_user_id
+  and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+);
+
+insert into public.artist_customer_access_codes(artist_user_id)
+select artist_user_id
+from public.artist_profiles
+on conflict (artist_user_id) do nothing;
+
+
+create table if not exists public.customer_portal_access (
+  customer_user_id uuid primary key references auth.users(id) on delete cascade,
+  artist_user_id uuid not null references auth.users(id) on delete cascade,
+  granted_at timestamptz not null default now()
+);
+
+create index if not exists customer_portal_access_artist_idx
+  on public.customer_portal_access(artist_user_id);
+
+alter table public.customer_portal_access enable row level security;
+
+revoke all on table public.customer_portal_access from anon, authenticated;
+grant select on table public.customer_portal_access to authenticated;
+
+drop policy if exists "customer_reads_own_portal_access"
+on public.customer_portal_access;
+
+create policy "customer_reads_own_portal_access"
+on public.customer_portal_access
+for select
+to authenticated
+using (
+  auth.uid() = customer_user_id
+  or (
+    auth.uid() = artist_user_id
+    and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+  )
+);
+
+
+create or replace function public.rotate_customer_access_code()
+returns text
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $
+declare
+  v_code text;
+begin
+  if auth.uid() is null
+     or encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') <> 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8' then
+    raise exception 'not allowed';
+  end if;
+
+  loop
+    v_code := 'GC-' || upper(substr(encode(gen_random_bytes(6), 'hex'), 1, 12));
+    begin
+      insert into public.artist_customer_access_codes(
+        artist_user_id, access_code, is_active, updated_at
+      )
+      values (auth.uid(), v_code, true, now())
+      on conflict (artist_user_id) do update
+      set access_code = excluded.access_code,
+          is_active = true,
+          updated_at = now();
+      exit;
+    exception when unique_violation then
+      -- 极小概率碰撞，自动再生成一次。
+    end;
+  end loop;
+
+  return v_code;
+end;
+$;
+
+revoke all on function public.rotate_customer_access_code() from public, anon;
+grant execute on function public.rotate_customer_access_code() to authenticated;
+
+
+create or replace function public.claim_customer_access_code(p_code text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $
+declare
+  v_artist uuid;
+  v_existing uuid;
+begin
+  if auth.uid() is null then
+    return jsonb_build_object('success', false, 'reason', 'NOT_SIGNED_IN');
+  end if;
+
+  select artist_user_id
+    into v_artist
+  from public.artist_customer_access_codes
+  where access_code = upper(trim(coalesce(p_code,'')))
+    and is_active = true
+  limit 1;
+
+  if v_artist is null then
+    return jsonb_build_object('success', false, 'reason', 'INVALID_CODE');
+  end if;
+
+  select artist_user_id
+    into v_existing
+  from public.customer_portal_access
+  where customer_user_id = auth.uid();
+
+  if v_existing is not null and v_existing <> v_artist then
+    return jsonb_build_object(
+      'success', false,
+      'reason', 'ALREADY_LINKED',
+      'artist_user_id', v_existing
+    );
+  end if;
+
+  insert into public.user_roles(user_id, role)
+  values (auth.uid(), 'customer')
+  on conflict do nothing;
+
+  insert into public.customer_portal_access(customer_user_id, artist_user_id)
+  values (auth.uid(), v_artist)
+  on conflict (customer_user_id) do update
+  set artist_user_id = excluded.artist_user_id,
+      granted_at = now();
+
+  -- 兼容旧绑定表，但只保留当前顾客码对应的美工。
+  delete from public.customer_artist_bindings
+  where customer_user_id = auth.uid()
+    and artist_user_id <> v_artist;
+
+  insert into public.customer_artist_bindings(customer_user_id, artist_user_id)
+  values (auth.uid(), v_artist)
+  on conflict do nothing;
+
+  return jsonb_build_object(
+    'success', true,
+    'artist_user_id', v_artist
+  );
+end;
+$;
+
+revoke all on function public.claim_customer_access_code(text) from public, anon;
+grant execute on function public.claim_customer_access_code(text) to authenticated;
+
+
+-- 新顾客注册必须携带顾客码，注册事务内直接绑定到唯一美工。
+create or replace function public.attach_customer_portal_access_on_signup()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, auth, extensions
+as $
+declare
+  v_role text;
+  v_code text;
+  v_artist uuid;
+begin
+  v_role := lower(trim(coalesce(new.raw_user_meta_data ->> 'account_role', '')));
+  if v_role <> 'customer' then
+    return new;
+  end if;
+
+  v_code := upper(trim(coalesce(new.raw_user_meta_data ->> 'customer_access_code', '')));
+  if v_code = '' then
+    raise exception '注册顾客端需要美工提供的顾客码';
+  end if;
+
+  select artist_user_id
+    into v_artist
+  from public.artist_customer_access_codes
+  where access_code = v_code
+    and is_active = true
+  limit 1;
+
+  if v_artist is null then
+    raise exception '顾客码无效';
+  end if;
+
+  insert into public.customer_portal_access(customer_user_id, artist_user_id)
+  values (new.id, v_artist)
+  on conflict (customer_user_id) do nothing;
+
+  delete from public.customer_artist_bindings
+  where customer_user_id = new.id
+    and artist_user_id <> v_artist;
+
+  insert into public.customer_artist_bindings(customer_user_id, artist_user_id)
+  values (new.id, v_artist)
+  on conflict do nothing;
+
+  return new;
+end;
+$;
+
+drop trigger if exists trg_attach_customer_portal_access_on_signup
+on auth.users;
+
+create trigger trg_attach_customer_portal_access_on_signup
+after insert on auth.users
+for each row
+execute function public.attach_customer_portal_access_on_signup();
+
+
 create table if not exists public.artist_customers (
   id uuid primary key default gen_random_uuid(),
   artist_user_id uuid not null references auth.users(id) on delete cascade,
@@ -45,7 +275,15 @@ using (
     auth.uid() = artist_user_id
     and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
   )
-  or auth.uid() = linked_customer_user_id
+  or (
+    auth.uid() = linked_customer_user_id
+    and exists (
+      select 1
+      from public.customer_portal_access pa
+      where pa.customer_user_id = auth.uid()
+        and pa.artist_user_id = artist_customers.artist_user_id
+    )
+  )
 );
 
 drop policy if exists "artists_insert_customers"
@@ -119,6 +357,12 @@ using (
     from public.artist_customers c
     where c.id = artist_customer_id
       and c.linked_customer_user_id = auth.uid()
+      and exists (
+        select 1
+        from public.customer_portal_access pa
+        where pa.customer_user_id = auth.uid()
+          and pa.artist_user_id = c.artist_user_id
+      )
   )
 );
 
@@ -153,10 +397,10 @@ as $$
   select
     b.customer_user_id,
     '顾客 · ' || right(b.customer_user_id::text, 4) as customer_label
-  from public.customer_artist_bindings b
+  from public.customer_portal_access b
   where b.artist_user_id = auth.uid()
     and encode(extensions.digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
-  order by b.created_at;
+  order by b.granted_at;
 $$;
 
 revoke all on function public.get_artist_bound_customer_accounts() from public, anon;
