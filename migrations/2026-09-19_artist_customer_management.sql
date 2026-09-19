@@ -19,7 +19,7 @@ create extension if not exists pgcrypto;
 create table if not exists public.artist_customer_access_codes (
   artist_user_id uuid primary key references auth.users(id) on delete cascade,
   access_code text not null unique
-    default ('GC-' || upper(substr(encode(gen_random_bytes(6), 'hex'), 1, 12))),
+    default ('GC-' || upper(substr(encode(extensions.gen_random_bytes(6), 'hex'), 1, 12))),
   is_active boolean not null default true,
   updated_at timestamptz not null default now()
 );
@@ -92,7 +92,7 @@ begin
   end if;
 
   loop
-    v_code := 'GC-' || upper(substr(encode(gen_random_bytes(6), 'hex'), 1, 12));
+    v_code := 'GC-' || upper(substr(encode(extensions.gen_random_bytes(6), 'hex'), 1, 12));
     begin
       insert into public.artist_customer_access_codes(
         artist_user_id, access_code, is_active, updated_at
