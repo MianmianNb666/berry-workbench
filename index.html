@@ -15,12 +15,14 @@
   .nav>button,.custom-nav-wrap>button,.custom-nav-add{flex:0 0 auto;min-width:68px;min-height:38px;padding:0 10px!important;text-align:center!important;font-size:11px!important;white-space:nowrap}
   .custom-nav-wrap{display:contents}
   body.mobile-nav-left .app{padding:6px}
-  body.mobile-nav-left .layout{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px;align-items:start}
-  body.mobile-nav-left .side{grid-column:1;grid-row:1 / span 2;position:sticky;top:6px;margin:0;padding:7px 5px;border-radius:18px;max-height:calc(100vh - 12px);overflow-y:auto;overflow-x:hidden}
+  body.mobile-nav-left .layout{display:grid;grid-template-columns:94px minmax(0,1fr);gap:8px;align-items:start}
+  body.mobile-nav-left .side{grid-column:1;grid-row:1 / span 2;position:sticky;top:6px;margin:0;padding:7px 5px;border-radius:18px;height:calc(100vh - 12px);height:calc(100dvh - 12px);max-height:none;overflow-y:auto;overflow-x:hidden}
   body.mobile-nav-left .brand{display:flex;justify-content:center;padding:3px 0 8px;margin-bottom:2px}
   body.mobile-nav-left .brand>div:last-child{display:none}
   body.mobile-nav-left .brand .logo{width:40px;height:40px;border-radius:13px}
-  body.mobile-nav-left .nav{display:grid;gap:5px;overflow:visible;padding:0}
+  body.mobile-nav-left .nav{display:flex;flex-direction:column;gap:5px;overflow:visible;padding:0;min-height:calc(100% - 52px)}
+  body.mobile-nav-left #addSectionBtn{margin-top:auto}
+  body.mobile-nav-left #navSettings{margin-top:0}
   body.mobile-nav-left .nav>button,
   body.mobile-nav-left .custom-nav-add{width:100%;min-width:0;min-height:44px;padding:6px 3px!important;text-align:center!important;font-size:10px!important;line-height:1.25;white-space:normal;border-radius:12px}
   body.mobile-nav-left .custom-nav-wrap{display:grid;gap:5px}
