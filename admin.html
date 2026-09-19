@@ -257,8 +257,10 @@ function renderAccounts(){
       '<button type="button" class="perm" data-grant-permanent data-user="'+esc(a.user_id)+'">设为永久</button></div>'+
       '<div class="customgrant"><input type="number" min="1" max="3650" placeholder="自定义天数" data-custom-days="'+esc(a.user_id)+'"><button class="ghost" type="button" data-custom-grant="'+esc(a.user_id)+'">加时</button></div>'
       :'<div class="meta" style="margin-top:10px">这是顾客账号，不提供美工使用期充值。</div>';
+    const displayName=(a.admin_note||"").trim()||a.workspace_title||a.email||"未命名用户";
+    const noteBadge=(a.admin_note||"").trim()?'<span class="tag" style="margin-left:7px">我的备注</span>':'';
     return '<article class="user">'+
-      '<div class="userhead"><div><div class="email">'+esc(a.workspace_title||a.email||"未命名工作台")+'</div><div class="meta" style="margin-top:2px">'+esc(a.email||"无邮箱")+'</div><div class="uid">UID · '+esc(a.user_id)+'</div></div><div class="tags"><span class="tag">'+esc(role)+'</span><span class="tag '+statusClass+'">'+status+'</span></div></div>'+
+      '<div class="userhead"><div><div style="display:flex;align-items:center;gap:2px;flex-wrap:wrap"><div class="email">'+esc(displayName)+'</div>'+noteBadge+'</div><div class="meta" style="margin-top:3px">工作台 · '+esc(a.workspace_title||"尚未设置")+'</div><div class="meta" style="margin-top:2px">'+esc(a.email||"无邮箱")+'</div><div class="uid">UID · '+esc(a.user_id)+'</div></div><div class="tags"><span class="tag">'+esc(role)+'</span><span class="tag '+statusClass+'">'+status+'</span></div></div>'+
       '<div class="usergrid">'+
         '<div class="cell"><span>工作台名称</span><b>'+esc(a.workspace_title||"尚未设置")+'</b></div>'+
         '<div class="cell"><span>当前到期</span><b>'+esc(a.access_type==="permanent"?"永久":dt(a.valid_until))+'</b></div>'+
@@ -279,6 +281,7 @@ function renderAccounts(){
     const row=accounts.find(x=>x.user_id===userId);
     if(row)row.admin_note=input?.value.trim()||"";
     toast("备注已保存 ✓");
+    renderAccounts();
   });
   document.querySelectorAll("[data-grant-days]").forEach(b=>b.onclick=()=>grantDays(b.dataset.user,Number(b.dataset.grantDays)));
   document.querySelectorAll("[data-grant-permanent]").forEach(b=>b.onclick=()=>grantPermanent(b.dataset.user));
