@@ -41,7 +41,7 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
 .customgrant{display:grid;grid-template-columns:100px auto;gap:7px;margin-top:8px;max-width:260px}.adminnote{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;margin-top:9px}.adminnote input{background:#fff}
 .formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.field label{font-size:10px;color:var(--muted);display:block;margin-bottom:5px}
 .output{margin-top:12px;border:1px dashed var(--pink);background:var(--soft);border-radius:14px;padding:13px}.code{font-size:14px;font-weight:850;word-break:break-all;margin:6px 0}
-.invite-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.invite-box{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fffafd}.invite-box h3{font-size:13px;margin:0 0 4px}.invite{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(70px,.7fr)) auto;gap:8px;align-items:center;border-top:1px solid #f7e2ea;padding:10px 0}.invite:first-child{border-top:0}.invite .main b{font-size:12px}.invite small{color:var(--muted);font-size:9px}.invite-code{display:block;margin-top:5px;font-size:10px;font-weight:850;color:var(--rose);word-break:break-all}.invite-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.invite-actions button{min-height:30px;padding:0 8px;font-size:9px}
+.invite-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.invite-box{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fffafd}.invite-box h3{font-size:13px;margin:0 0 4px}.invite{display:grid;grid-template-columns:26px minmax(0,1.4fr) repeat(2,minmax(70px,.7fr)) auto;gap:8px;align-items:center;border-top:1px solid #f7e2ea;padding:10px 0}.invite:first-child{border-top:0}.invite .main b{font-size:12px}.invite small{color:var(--muted);font-size:9px}.invite-code{display:block;margin-top:5px;font-size:10px;font-weight:850;color:var(--rose);word-break:break-all}.invite-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.invite-actions button{min-height:30px;padding:0 8px;font-size:9px}.invite-check{width:18px;height:18px;accent-color:var(--rose);cursor:pointer}.invite-bulkbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:12px;padding:10px 11px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}.invite-bulkbar .count{font-size:10px;font-weight:850;color:var(--text);margin-right:auto}.invite-bulkbar button{min-height:32px;padding:0 10px}.invite-bulkbar button:disabled{opacity:.45;cursor:not-allowed}
 .log{display:grid;grid-template-columns:minmax(0,1.5fr) .7fr .8fr .9fr;gap:8px;border-top:1px solid #f7e2ea;padding:10px 0;font-size:10px}.log:first-child{border-top:0}
 .empty{padding:25px;text-align:center;color:var(--muted);font-size:11px;border:1px dashed var(--line);border-radius:14px}
 .gate{min-height:80vh;display:grid;place-items:center}.gatecard{width:min(410px,100%);background:#fff;border:1px solid var(--line);border-radius:23px;padding:22px;box-shadow:var(--shadow)}.gatecard h1{margin:0;font-size:21px}.stack{display:grid;gap:9px;margin-top:15px}.hint{font-size:11px;color:var(--muted);min-height:18px}.badtext{color:var(--bad)}
@@ -195,6 +195,13 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
       <div class="card">
         <h2>邀请码记录</h2>
         <div class="meta">左边是当前可以继续使用的，右边是已经停用、过期或使用次数已满的。新生成的可用邀请码可以直接复制。</div>
+        <div class="invite-bulkbar">
+          <span class="count" id="inviteSelectedCount">已选 0 个</span>
+          <button class="ghost" id="selectAllInvitesBtn" type="button">☑️ 全选当前列表</button>
+          <button class="ghost" id="clearInviteSelectionBtn" type="button">取消选择</button>
+          <button class="danger" id="bulkDisableInvitesBtn" type="button" disabled>⛔ 停用选中</button>
+          <button class="danger" id="bulkDeleteInvitesBtn" type="button" disabled>🗑 删除选中</button>
+        </div>
         <div class="invite-columns">
           <div class="invite-box">
             <h3>✅ 可以使用</h3>
@@ -542,6 +549,58 @@ async function createInvite(){
   toast("邀请码已生成 ✓");
   await loadInvites();
 }
+let inviteRowsCache=[];
+const selectedInviteIds=new Set();
+function updateInviteBulkState(){
+  const count=selectedInviteIds.size;
+  $("inviteSelectedCount").textContent="已选 "+count+" 个";
+  $("bulkDisableInvitesBtn").disabled=count===0;
+  $("bulkDeleteInvitesBtn").disabled=count===0;
+}
+function syncInviteChecks(){
+  document.querySelectorAll("[data-invite-select]").forEach(ch=>{
+    ch.checked=selectedInviteIds.has(ch.dataset.inviteSelect);
+  });
+  updateInviteBulkState();
+}
+async function runInviteBulkAction(action){
+  const ids=[...selectedInviteIds];
+  if(!ids.length)return;
+
+  if(action==="disable"){
+    if(!confirm("确认停用选中的 "+ids.length+" 个邀请码吗？\n\n停用后不会删除记录，需要时仍可重新启用。"))return;
+  }else{
+    if(!confirm("确认永久删除选中的 "+ids.length+" 个邀请码吗？\n\n只有从未使用过的邀请码会被删除；已经使用过的会自动跳过。这个操作不能撤销。"))return;
+  }
+
+  $("bulkDisableInvitesBtn").disabled=true;
+  $("bulkDeleteInvitesBtn").disabled=true;
+
+  const {data,error}=await supabase.rpc("admin_bulk_invites",{
+    p_invite_ids:ids,
+    p_action:action
+  });
+
+  if(error){
+    alert("批量操作失败："+error.message);
+    updateInviteBulkState();
+    return;
+  }
+
+  const affected=Number(data?.affected||0);
+  const skipped=Number(data?.skipped||0);
+  selectedInviteIds.clear();
+
+  if(action==="disable"){
+    toast("已停用 "+affected+" 个邀请码 ✓");
+  }else if(skipped>0){
+    toast("已删除 "+affected+" 个，跳过 "+skipped+" 个已使用邀请码");
+  }else{
+    toast("已删除 "+affected+" 个邀请码 ✓");
+  }
+
+  await loadInvites();
+}
 async function loadInvites(){
   $("inviteActiveList").innerHTML='<div class="empty">正在读取…</div>';
   $("inviteInactiveList").innerHTML='<div class="empty">正在读取…</div>';
@@ -553,6 +612,9 @@ async function loadInvites(){
     return;
   }
   const rows=data||[];
+  inviteRowsCache=rows;
+  const validIds=new Set(rows.map(x=>String(x.id)));
+  [...selectedInviteIds].forEach(id=>{if(!validIds.has(id))selectedInviteIds.delete(id)});
   const now=new Date();
   const isUsable=i=>{
     const notExpired=!i.expires_at||new Date(i.expires_at)>now;
@@ -569,6 +631,7 @@ async function loadInvites(){
     const copyBtn=usable&&code?'<button class="ghost" data-copy-invite="'+esc(i.id)+'" data-code="'+esc(code)+'">📋 复制</button>':'';
     const oldCodeHint=usable&&!code?'<small style="display:block;margin-top:4px">旧邀请码未保存明文，无法恢复复制</small>':'';
     return '<div class="invite">'+
+      '<input class="invite-check" type="checkbox" data-invite-select="'+esc(i.id)+'" aria-label="选择邀请码">'+
       '<div class="main"><b>'+esc(i.label||"未备注")+'</b><br><small>'+esc(dt(i.created_at))+' · '+(i.purpose==="signup"?"注册":"续期")+'</small>'+codeLine+oldCodeHint+'</div>'+
       '<div><b style="font-size:11px">'+esc(grant)+'</b><br><small>'+mode+'</small></div>'+
       '<div><b style="font-size:11px">'+esc(usage)+'</b><br><small>已用 / 上限</small></div>'+
@@ -580,6 +643,17 @@ async function loadInvites(){
   const inactiveRows=rows.filter(i=>!isUsable(i));
   $("inviteActiveList").innerHTML=activeRows.length?activeRows.map(rowHtml).join(""):'<div class="empty">暂无可用邀请码</div>';
   $("inviteInactiveList").innerHTML=inactiveRows.length?inactiveRows.map(rowHtml).join(""):'<div class="empty">暂无已停用邀请码</div>';
+
+  document.querySelectorAll("[data-invite-select]").forEach(ch=>{
+    ch.checked=selectedInviteIds.has(ch.dataset.inviteSelect);
+    ch.onchange=()=>{
+      if(ch.checked)selectedInviteIds.add(ch.dataset.inviteSelect);
+      else selectedInviteIds.delete(ch.dataset.inviteSelect);
+      updateInviteBulkState();
+    };
+  });
+  updateInviteBulkState();
+
   document.querySelectorAll("[data-copy-invite]").forEach(b=>b.onclick=async()=>{
     const code=b.dataset.code||"";
     if(!code)return;
@@ -751,6 +825,16 @@ $("copyGeneratedBtn").onclick=async()=>{
   if(!generatedCode)return;
   try{await navigator.clipboard.writeText(generatedCode);toast("邀请码已复制 ✓")}catch(_){prompt("复制邀请码：",generatedCode)}
 };
+$("selectAllInvitesBtn").onclick=()=>{
+  inviteRowsCache.forEach(i=>selectedInviteIds.add(String(i.id)));
+  syncInviteChecks();
+};
+$("clearInviteSelectionBtn").onclick=()=>{
+  selectedInviteIds.clear();
+  syncInviteChecks();
+};
+$("bulkDisableInvitesBtn").onclick=()=>runInviteBulkAction("disable");
+$("bulkDeleteInvitesBtn").onclick=()=>runInviteBulkAction("delete");
 document.querySelectorAll(".tab").forEach(btn=>btn.onclick=()=>{
   document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===btn));
   document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id==="panel-"+btn.dataset.panel));
