@@ -414,7 +414,7 @@ function renderCustomSections(){
   host.innerHTML=S.customSections.map(s=>
     '<section id="p-custom-'+esc(s.id)+'" class="panel"><div class="work">'+
       '<div class="custom-section-head"><div><h2 style="font-size:17px;margin:0">'+esc(s.emoji||"🌸")+' '+esc(s.name)+'</h2><div class="meta">自定义分区 · 自动云同步</div></div>'+
-      '<div class="custom-section-actions"><button class="ghost" type="button" data-rename-section="'+esc(s.id)+'">重命名</button><button class="danger" type="button" data-delete-section="'+esc(s.id)+'">删除分区</button></div></div>'+
+      '<div class="custom-section-actions"><button class="ghost" type="button" data-move-section="'+esc(s.id)+'" data-move-action="up">↑ 上移</button><button class="ghost" type="button" data-move-section="'+esc(s.id)+'" data-move-action="down">↓ 下移</button><button class="ghost" type="button" data-move-section="'+esc(s.id)+'" data-move-action="top">⇧ 置顶</button><button class="ghost" type="button" data-rename-section="'+esc(s.id)+'">重命名</button><button class="danger" type="button" data-delete-section="'+esc(s.id)+'">删除分区</button></div></div>'+
       '<textarea class="custom-note" data-section-content="'+esc(s.id)+'" placeholder="这里可以记录这个分区的内容…">'+esc(s.content||"")+'</textarea>'+
     '</div></section>'
   ).join("");
@@ -426,6 +426,24 @@ function renderCustomSections(){
       if(!s)return;
       s.content=el.value.slice(0,20000);
       persist();
+    };
+  });
+  document.querySelectorAll("[data-move-section]").forEach(btn=>{
+    btn.onclick=()=>{
+      const id=btn.dataset.moveSection;
+      const action=btn.dataset.moveAction;
+      const index=S.customSections.findIndex(x=>x.id===id);
+      if(index<0)return;
+      let target=index;
+      if(action==="up")target=Math.max(0,index-1);
+      if(action==="down")target=Math.min(S.customSections.length-1,index+1);
+      if(action==="top")target=0;
+      if(target===index)return;
+      const [section]=S.customSections.splice(index,1);
+      S.customSections.splice(target,0,section);
+      renderCustomSections();
+      persist();
+      setTimeout(()=>document.querySelector('[data-page="custom-'+id+'"]')?.click(),30);
     };
   });
   document.querySelectorAll("[data-rename-section]").forEach(btn=>{
