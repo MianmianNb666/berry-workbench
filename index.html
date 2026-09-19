@@ -40,14 +40,14 @@
   body.mobile-nav-left .top h1{font-size:19px}
   body.mobile-nav-left .top .primary{padding:0 10px;font-size:11px}
   body.mobile-nav-left .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
-  body.mobile-nav-left .sidebar-collapse-toggle{display:flex;position:absolute;right:-11px;top:58px;width:24px;height:36px;min-height:36px;padding:0;border-radius:999px;z-index:6;font-size:16px}
+  body.mobile-nav-left .sidebar-collapse-toggle{display:flex;position:absolute;right:-11px;top:auto;bottom:16px;width:24px;height:38px;min-height:38px;padding:0;border-radius:999px;z-index:6;font-size:16px;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   body.mobile-nav-left.sidebar-collapsed .layout{grid-template-columns:0 minmax(0,1fr);gap:0}
   body.mobile-nav-left.sidebar-collapsed .side{width:0;min-width:0;height:0;min-height:0;padding:0;border:0;background:transparent;box-shadow:none;overflow:visible}
   body.mobile-nav-left.sidebar-collapsed .side>.brand,
   body.mobile-nav-left.sidebar-collapsed .side>.nav,
   body.mobile-nav-left.sidebar-collapsed .side>.accountbox,
   body.mobile-nav-left.sidebar-collapsed .side>p.note{display:none!important}
-  body.mobile-nav-left.sidebar-collapsed .sidebar-collapse-toggle{display:flex;position:fixed;left:3px;right:auto;top:58px;width:25px;height:42px;min-height:42px;border-radius:0 999px 999px 0;z-index:50;background:var(--panel);box-shadow:0 5px 14px rgba(167,83,112,.13)}
+  body.mobile-nav-left.sidebar-collapsed .sidebar-collapse-toggle{display:flex;position:fixed;left:0;right:auto;top:auto;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:27px;height:44px;min-height:44px;border-radius:0 999px 999px 0;z-index:50;background:var(--panel);box-shadow:0 5px 14px rgba(167,83,112,.13);transform:translateZ(0)}
   body.mobile-nav-left.sidebar-collapsed .main,
   body.mobile-nav-left.sidebar-collapsed .right{min-width:0;width:100%}
   .accountbox{display:none}
@@ -808,8 +808,23 @@ function renderNavOrderSettings(){
     };
   });
 }
+function sidebarCollapseStorageKey(){
+  return "berry-sidebar-collapsed:"+(user?.id||"guest");
+}
+function getSidebarCollapsed(){
+  try{
+    const saved=localStorage.getItem(sidebarCollapseStorageKey());
+    if(saved==="1")return true;
+    if(saved==="0")return false;
+  }catch(_){}
+  return S.sidebarCollapsed===true;
+}
+function setSidebarCollapsedLocal(value){
+  S.sidebarCollapsed=!!value;
+  try{localStorage.setItem(sidebarCollapseStorageKey(),value?"1":"0")}catch(_){}
+}
 function applySidebarCollapse(){
-  const collapsed=S.mobileNavMode==="left"&&S.sidebarCollapsed===true;
+  const collapsed=S.mobileNavMode==="left"&&getSidebarCollapsed();
   document.body.classList.toggle("sidebar-collapsed",collapsed);
   const btn=$("sidebarCollapseBtn");
   if(btn){
@@ -1430,9 +1445,9 @@ document.querySelectorAll("[data-mobile-nav-mode]").forEach(btn=>{
 });
 $("sidebarCollapseBtn").onclick=()=>{
   if(S.mobileNavMode!=="left")return;
-  S.sidebarCollapsed=!S.sidebarCollapsed;
+  const next=!getSidebarCollapsed();
+  setSidebarCollapsedLocal(next);
   applySidebarCollapse();
-  persist();
 };
 
 const STYLE_PRESETS={
