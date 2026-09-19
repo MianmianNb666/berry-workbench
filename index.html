@@ -1654,12 +1654,18 @@ function renderArtistFriendships(){
   requestHost.innerHTML=(incomingHtml||outgoingHtml)?(incomingHtml+outgoingHtml):'<div class="empty">暂时没有好友申请。</div>';
 
   friendHost.innerHTML=friends.length?friends.map(row=>
-    '<div class="friend-item"><div class="friend-main">'+artistFriendAvatar(row)+'<div class="friend-info"><b>'+esc(row.artist_name||"莓桃美工")+'</b><div class="friend-code">'+esc(row.artist_code||"")+'</div></div></div><div class="friend-actions"><button class="danger" type="button" data-friend-remove="'+esc(row.relation_id)+'">删除好友</button></div></div>'
+    '<div class="friend-item"><div class="friend-main">'+artistFriendAvatar(row)+'<div class="friend-info"><b>'+esc(row.artist_name||"莓桃美工")+'</b><div class="friend-code">'+esc(row.artist_code||"")+'</div></div></div><div class="friend-actions"><button class="primary" type="button" data-friend-message="'+esc(row.other_user_id)+'">💬 发消息</button><button class="danger" type="button" data-friend-remove="'+esc(row.relation_id)+'">删除好友</button></div></div>'
   ).join(""):'<div class="empty">还没有美工好友。输入对方的美工编号发送申请吧 🤝</div>';
 
   document.querySelectorAll("[data-friend-accept]").forEach(btn=>btn.onclick=()=>respondArtistFriend(btn.dataset.friendAccept,true));
   document.querySelectorAll("[data-friend-reject]").forEach(btn=>btn.onclick=()=>respondArtistFriend(btn.dataset.friendReject,false));
   document.querySelectorAll("[data-friend-remove]").forEach(btn=>btn.onclick=()=>removeArtistFriend(btn.dataset.friendRemove));
+  document.querySelectorAll("[data-friend-message]").forEach(btn=>btn.onclick=async()=>{
+    document.querySelector('[data-page="messages"]')?.click();
+    await loadArtistFriendChatConversations();
+    const row=artistFriendChatConversations.find(x=>x.friend_user_id===btn.dataset.friendMessage);
+    if(row)openArtistFriendChat(row);
+  });
   updateArtistFriendBadge();
 }
 async function loadArtistFriendships(force=false){
@@ -1732,7 +1738,9 @@ function ensureArtistFriendsRealtime(){
       const row=payload.new||payload.old||{};
       if(row.requester_user_id===user.id||row.addressee_user_id===user.id){
         artistFriendsLoaded=false;
+        artistFriendChatLoaded=false;
         await loadArtistFriendships(true);
+        await loadArtistFriendChatConversations(true);
       }
     })
     .subscribe();
@@ -2534,6 +2542,128 @@ function ensureArtistChatRealtime(){
     })
     .subscribe();
 }
+function renderArtistFriendChatThreads(){
+  const host=$("artistFriendChatThreads");
+  if(!host)return;
+  if(!artistFriendChatConversations.length){
+    host.innerHTML='<div class="empty" style="margin:10px">还没有可以聊天的美工好友。先去「🤝 好友」添加好友吧。</div>';
+    updateArtistFriendChatUnread();
+    return;
+  }
+  host.innerHTML=artistFriendChatConversations.map(row=>{
+    const active=activeArtistFriendChat?.friend_user_id===row.friend_user_id;
+    const preview=row.last_body||"还没有消息，打个招呼吧～";
+    const unread=Number(row.unread_count||0);
+    return '<div class="chat-thread '+(active?"active":"")+'" data-artist-friend-chat="'+esc(row.friend_user_id)+'">'+
+      artistChatAvatarMarkup(row.avatar_data||"",row.artist_name||"美")+
+      '<div class="chat-thread-main"><div class="chat-thread-title">'+esc(row.artist_name||"莓桃美工")+'</div><div class="chat-thread-preview">'+esc(preview)+'</div><div class="meta">'+esc(chatClock(row.last_at))+'</div></div>'+
+      (unread?'<span class="chat-unread">'+(unread>99?"99+":unread)+'</span>':'')+
+      '</div>';
+  }).join("");
+  host.querySelectorAll("[data-artist-friend-chat]").forEach(el=>el.onclick=()=>{
+    const row=artistFriendChatConversations.find(x=>x.friend_user_id===el.dataset.artistFriendChat);
+    if(row)openArtistFriendChat(row);
+  });
+  updateArtistFriendChatUnread();
+}
+async function loadArtistFriendChatConversations(force=false){
+  if(!user)return;
+  if(artistFriendChatLoaded&&!force){
+    renderArtistFriendChatThreads();
+    ensureArtistFriendChatRealtime();
+    return;
+  }
+  const {data,error}=await supabase.rpc("artist_list_friend_conversations");
+  if(error){
+    console.warn("artist friend chat:",error.message);
+    if($("artistFriendChatThreads"))$("artistFriendChatThreads").innerHTML='<div class="empty" style="margin:10px">美工好友聊天还没有完成数据库升级。请先运行好友聊天 SQL。</div>';
+    artistFriendUnreadTotal=0;
+    updateArtistMessageNavUnread();
+    return;
+  }
+  artistFriendChatConversations=data||[];
+  artistFriendChatLoaded=true;
+  renderArtistFriendChatThreads();
+  if(activeArtistFriendChat){
+    const fresh=artistFriendChatConversations.find(x=>x.friend_user_id===activeArtistFriendChat.friend_user_id);
+    if(fresh)activeArtistFriendChat=fresh;
+  }
+  ensureArtistFriendChatRealtime();
+}
+async function openArtistFriendChat(row){
+  activeArtistFriendChat=row;
+  setArtistMessageGroupCollapsed("friend",false);
+  $("artistFriendChatRoomTitle").textContent=row.artist_name||"莓桃美工";
+  $("artistFriendChatRoomMeta").textContent="好友实时聊天 · 打开后自动已读";
+  renderArtistFriendChatThreads();
+  await loadArtistFriendChatMessages(true);
+}
+async function loadArtistFriendChatMessages(markRead=false){
+  if(!user||!activeArtistFriendChat)return;
+  const friendId=activeArtistFriendChat.friend_user_id;
+  const {data,error}=await supabase.from("artist_friend_messages")
+    .select("id,sender_user_id,recipient_user_id,body,created_at,read_at")
+    .in("sender_user_id",[user.id,friendId])
+    .in("recipient_user_id",[user.id,friendId])
+    .order("created_at",{ascending:true})
+    .limit(300);
+  if(error){
+    $("artistFriendChatMessages").innerHTML='<div class="chat-empty">好友消息读取失败，请先运行好友聊天 SQL。</div>';
+    return;
+  }
+  const rows=data||[];
+  $("artistFriendChatMessages").innerHTML=rows.length?rows.map(m=>{
+    const mine=m.sender_user_id===user.id;
+    const avatar=mine
+      ?artistChatAvatarMarkup(S.avatar,S.title||"我")
+      :artistChatAvatarMarkup(activeArtistFriendChat.avatar_data||"",activeArtistFriendChat.artist_name||"美");
+    return '<div class="chat-line '+(mine?"mine":"")+'">'+avatar+'<div class="chat-bubble">'+esc(m.body)+'<div class="chat-meta">'+esc(chatClock(m.created_at))+(mine?' · '+(m.read_at?"已读":"未读"):'')+'</div></div></div>';
+  }).join(""):'<div class="chat-empty">还没有消息，发第一句吧 🤝</div>';
+  const box=$("artistFriendChatMessages");box.scrollTop=box.scrollHeight;
+  if(markRead){
+    await supabase.rpc("artist_mark_friend_messages_read",{p_friend_user_id:friendId});
+    const row=artistFriendChatConversations.find(x=>x.friend_user_id===friendId);
+    if(row)row.unread_count=0;
+    renderArtistFriendChatThreads();
+  }
+}
+async function sendArtistFriendChat(){
+  if(!user||!activeArtistFriendChat)return;
+  if(accessReadOnly){$("artistFriendChatHint").textContent="使用期已结束，目前只能查看历史消息。";return}
+  const input=$("artistFriendChatInput"),body=input.value.trim();
+  if(!body)return;
+  $("artistFriendChatSendBtn").disabled=true;
+  const {error}=await supabase.from("artist_friend_messages").insert({
+    sender_user_id:user.id,
+    recipient_user_id:activeArtistFriendChat.friend_user_id,
+    body:body.slice(0,1000)
+  });
+  $("artistFriendChatSendBtn").disabled=false;
+  if(error){$("artistFriendChatHint").textContent="发送失败："+error.message;return}
+  input.value="";
+  $("artistFriendChatHint").textContent="";
+  await loadArtistFriendChatMessages(false);
+  await loadArtistFriendChatConversations(true);
+}
+function ensureArtistFriendChatRealtime(){
+  if(!user||artistFriendChatChannel)return;
+  artistFriendChatChannel=supabase.channel("artist-friend-chat-"+user.id)
+    .on("postgres_changes",{event:"*",schema:"public",table:"artist_friend_messages"},async payload=>{
+      const row=payload.new||payload.old||{};
+      if(row.sender_user_id!==user.id&&row.recipient_user_id!==user.id)return;
+      await loadArtistFriendChatConversations(true);
+      const friendId=row.sender_user_id===user.id?row.recipient_user_id:row.sender_user_id;
+      if(activeArtistFriendChat?.friend_user_id===friendId){
+        await loadArtistFriendChatMessages(true);
+      }
+    })
+    .subscribe();
+}
+$("artistFriendChatSendBtn").onclick=sendArtistFriendChat;
+$("artistFriendChatInput").addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendArtistFriendChat()}
+});
+
 $("artistChatSendBtn").onclick=sendArtistChat;
 $("artistChatInput").addEventListener("keydown",e=>{
   if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendArtistChat()}
