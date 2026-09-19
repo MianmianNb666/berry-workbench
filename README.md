@@ -34,3 +34,22 @@
 ## 安全边界
 
 网页中使用的是 Supabase Publishable Key，它本来就是给前端浏览器使用的。不要把 Supabase Secret Key 或 service_role key 放进网页或公开仓库。
+
+
+## 当前数据库维护（2026-09-20）
+
+生产库权限已经收口到：
+
+`migrations/2026-09-20_final_permission_lockdown.sql`
+
+这个文件统一处理：
+- 美工注册与 7 天通用邀请码
+- 普通美工角色 / 资料 / 顾客码补齐
+- 到期美工只读
+- 顾客端不误伤
+- 顾客预算、顾客专属码、顾客聊天、美工好友与好友聊天的服务端权限
+- 清理旧注册 trigger 与旧 Owner-only RLS
+
+`invite_setup.sql` 现在只是旧版兼容清理入口，不再创建旧注册逻辑。
+
+`database_setup_current.sql` 只作为核心结构参考；完整新环境还需要按日期运行 `migrations/`，最后运行最终权限收口 migration。
