@@ -88,8 +88,8 @@ create or replace function public.handle_new_user_access()
 returns trigger
 language plpgsql
 security definer
-set search_path = public, auth
-as $$
+set search_path = public, auth, extensions
+as $
 declare
   v_code text;
   v_hash text;
@@ -102,7 +102,7 @@ begin
     raise exception '注册需要有效邀请码';
   end if;
 
-  v_hash := encode(digest(v_code, 'sha256'), 'hex');
+  v_hash := encode(extensions.digest(v_code, 'sha256'), 'hex');
 
   update public.invite_codes ic
   set used_count = ic.used_count + 1,
@@ -197,8 +197,8 @@ create or replace function public.redeem_renewal_code(p_code text)
 returns jsonb
 language plpgsql
 security definer
-set search_path = public, auth
-as $$
+set search_path = public, auth, extensions
+as $
 declare
   v_uid uuid := auth.uid();
   v_hash text;
@@ -246,7 +246,7 @@ begin
     );
   end if;
 
-  v_hash := encode(digest(upper(trim(coalesce(p_code, ''))), 'sha256'), 'hex');
+  v_hash := encode(extensions.digest(upper(trim(coalesce(p_code, ''))), 'sha256'), 'hex');
 
   select exists (
     select 1
@@ -410,7 +410,7 @@ commit;
 --   is_active
 -- )
 -- values (
---   encode(digest(upper(trim('BERRY-7D-GENERAL')), 'sha256'), 'hex'),
+--   encode(extensions.digest(upper(trim('BERRY-7D-GENERAL')), 'sha256'), 'hex'),
 --   '通用7天注册试用码',
 --   'signup',
 --   'days',
@@ -439,7 +439,7 @@ commit;
 --   is_active
 -- )
 -- values (
---   encode(digest(upper(trim('BERRY-7D-RENEW-ALL')), 'sha256'), 'hex'),
+--   encode(extensions.digest(upper(trim('BERRY-7D-RENEW-ALL')), 'sha256'), 'hex'),
 --   '通用7天续期码',
 --   'renewal',
 --   'days',
