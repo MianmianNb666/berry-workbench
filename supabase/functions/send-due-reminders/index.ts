@@ -3,7 +3,7 @@ import {
   buildPushPayload,
   type PushSubscription,
   type VapidKeys,
-} from "npm:@block65/webcrypto-web-push@2.0.0";
+} from "npm:@block65/webcrypto-web-push@1.0.2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
