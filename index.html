@@ -132,6 +132,15 @@
     <div class="profile-item" style="grid-column:1/-1"><span>账号 ID</span><b id="profileUserId">--</b><button id="copyUserIdBtn" class="copy-mini" type="button">复制账号 ID</button></div>
   </div>
 </div>
+<div id="adminPortalCard" class="profile-card hidden">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+    <div>
+      <h3 style="font-size:14px;margin:0">莓桃管理端 🧰</h3>
+      <div class="meta" style="margin-top:4px">Owner 专用后台。可查账号、直接充值使用时间、设为永久，以及生成和管理邀请码。</div>
+    </div>
+    <a href="./admin.html" target="_blank" rel="noopener" style="min-height:34px;padding:0 12px;border:1px solid var(--line);background:var(--panel);color:var(--rose);border-radius:12px;display:inline-flex;align-items:center;font-size:11px;font-weight:750;text-decoration:none">打开管理端</a>
+  </div>
+</div>
 <div id="artistCustomerBetaCard" class="profile-card">
   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
     <div>
@@ -413,6 +422,7 @@ async function applyArtistBetaAccess(){
   const allowed=await isArtistBetaOwner();
   if($("artistCustomerBetaCard"))$("artistCustomerBetaCard").classList.toggle("hidden",!allowed);
   if($("artistCustomerBetaLocked"))$("artistCustomerBetaLocked").classList.toggle("hidden",allowed);
+  if($("adminPortalCard"))$("adminPortalCard").classList.toggle("hidden",!allowed);
   if($("navCustomers"))$("navCustomers").classList.toggle("hidden",!allowed);
   if(!allowed&&$("p-customers")?.classList.contains("active"))document.querySelector('[data-page="desk"]')?.click();
   return allowed;
