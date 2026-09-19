@@ -98,7 +98,25 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
         <button class="danger" id="logoutBtn2" type="button">退出登录</button>
       </div>
     </section>
-    <section class="card" style="margin-top:14px"><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><div id="customerSelfAvatarPreview" class="customer-self-avatar">顾</div><div style="min-width:0;flex:1"><h2 style="margin:0">我的头像</h2><div class="meta" style="margin-top:4px">这是你自己的顾客头像，也会作为聊天头像。绑定美工后，美工端的顾客档案会同步看到你更新后的头像。</div><div class="actions"><button class="ghost" id="customerSelfAvatarBtn" type="button">🖼️ 设置头像</button><button class="ghost" id="customerSelfAvatarResetBtn" type="button">恢复默认</button></div><input id="customerSelfAvatarInput" type="file" accept="image/*" hidden><div id="customerSelfAvatarHint" class="meta" style="margin-top:7px"></div></div></div></section>
+    <section class="card" style="margin-top:14px">
+      <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+        <div id="customerSelfAvatarPreview" class="customer-self-avatar">顾</div>
+        <div style="min-width:0;flex:1">
+          <h2 style="margin:0">我的资料</h2>
+          <div class="meta" style="margin-top:4px">名字和头像会显示给已经绑定的美工，也会作为聊天里的名字和头像。</div>
+          <label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">我的名字
+            <input id="customerSelfNameInput" maxlength="40" placeholder="例如：桃桃" style="margin-top:6px">
+          </label>
+          <div class="actions">
+            <button class="primary" id="saveCustomerSelfNameBtn" type="button">保存名字</button>
+            <button class="ghost" id="customerSelfAvatarBtn" type="button">🖼️ 设置头像</button>
+            <button class="ghost" id="customerSelfAvatarResetBtn" type="button">恢复默认头像</button>
+          </div>
+          <input id="customerSelfAvatarInput" type="file" accept="image/*" hidden>
+          <div id="customerSelfAvatarHint" class="meta" style="margin-top:7px"></div>
+        </div>
+      </div>
+    </section>
     <section class="card" style="margin-top:14px">
       <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
         <div>
@@ -285,9 +303,12 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 const normCode=v=>String(v||"").trim().toUpperCase();
 let user=null;
 let customerChatAvatar="";
+let customerDisplayName="";
 let customerChatConversations=[];
 let activeCustomerChat=null;
 let customerChatChannel=null;
+let customerChatLoaded=false;
+let customerBindingsLoaded=false;
 const CUSTOMER_PORTAL_MAINTENANCE=false;
 const OWNER_USER_ID_HASH="f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8";
 async function sha256Hex(text){
@@ -327,31 +348,39 @@ function chatAvatarMarkup(src,label="顾"){
 function renderCustomerSelfAvatar(){
   const box=$("customerSelfAvatarPreview");
   if(!box)return;
-  box.innerHTML=customerChatAvatar?'<img src="'+esc(customerChatAvatar)+'" alt="">':esc(((user?.email||"顾")[0]||"顾").toUpperCase());
+  const initial=(customerDisplayName||user?.email||"顾")[0]||"顾";
+  box.innerHTML=customerChatAvatar?'<img src="'+esc(customerChatAvatar)+'" alt="">':esc(initial.toUpperCase());
+  if($("customerSelfNameInput"))$("customerSelfNameInput").value=customerDisplayName||"";
 }
 async function loadMyCustomerChatProfile(){
   if(!user)return;
-  const {data,error}=await supabase.from("chat_profiles").select("avatar_data").eq("user_id",user.id).maybeSingle();
-  if(error){
-    console.warn("chat profile:",error.message);
+  let result=await supabase.from("chat_profiles").select("avatar_data,display_name").eq("user_id",user.id).maybeSingle();
+  if(result.error&&String(result.error.message||"").includes("display_name")){
+    result=await supabase.from("chat_profiles").select("avatar_data").eq("user_id",user.id).maybeSingle();
+  }
+  if(result.error){
+    console.warn("chat profile:",result.error.message);
     customerChatAvatar="";
+    customerDisplayName="";
   }else{
-    customerChatAvatar=data?.avatar_data||"";
+    customerChatAvatar=result.data?.avatar_data||"";
+    customerDisplayName=(result.data?.display_name||"").trim();
   }
   renderCustomerSelfAvatar();
 }
-async function saveMyCustomerChatAvatar(){
+async function saveMyCustomerChatProfile(){
   if(!user)return false;
-  const {error}=await supabase.from("chat_profiles").upsert({
-    user_id:user.id,
-    avatar_data:customerChatAvatar||"",
-    updated_at:new Date().toISOString()
-  },{onConflict:"user_id"});
+  const payload={user_id:user.id,avatar_data:customerChatAvatar||"",display_name:(customerDisplayName||"").slice(0,40),updated_at:new Date().toISOString()};
+  let {error}=await supabase.from("chat_profiles").upsert(payload,{onConflict:"user_id"});
+  if(error&&String(error.message||"").includes("display_name")){
+    const retry=await supabase.from("chat_profiles").upsert({user_id:user.id,avatar_data:customerChatAvatar||"",updated_at:new Date().toISOString()},{onConflict:"user_id"});
+    error=retry.error;
+  }
   if(error){
-    $("customerSelfAvatarHint").textContent="头像保存失败："+error.message;
+    $("customerSelfAvatarHint").textContent="资料保存失败："+error.message;
     return false;
   }
-  $("customerSelfAvatarHint").textContent="头像已保存，并会同步到聊天和已绑定美工 ✓";
+  $("customerSelfAvatarHint").textContent="已保存，并同步给已绑定美工 ✓";
   return true;
 }
 
@@ -470,8 +499,8 @@ function setCustomerView(view){
   document.querySelectorAll(".customer-view").forEach(x=>x.classList.toggle("hidden",x.id!==id));
   document.querySelectorAll("[data-customer-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.customerView===id));
   if(user)localStorage.setItem("berry-customer-view-"+user.id,view);
-  if(user&&view==="profile")loadBindings();
-  if(user&&view==="messages")loadCustomerChatConversations();
+  if(user&&view==="profile"&&!customerBindingsLoaded)loadBindings();
+  if(user&&view==="messages"&&!customerChatLoaded)loadCustomerChatConversations();
 }
 document.querySelectorAll("[data-customer-view]").forEach(btn=>{
   btn.onclick=()=>{
@@ -516,7 +545,7 @@ $("customerSelfAvatarInput").onchange=async e=>{
     btn.textContent="正在处理…";
     customerChatAvatar=await squareCustomerImageData(file,192);
     renderCustomerSelfAvatar();
-    await saveMyCustomerChatAvatar();
+    await saveMyCustomerChatProfile();
   }catch(err){
     $("customerSelfAvatarHint").textContent=err.message||"头像处理失败";
   }finally{
@@ -527,7 +556,12 @@ $("customerSelfAvatarInput").onchange=async e=>{
 $("customerSelfAvatarResetBtn").onclick=async()=>{
   customerChatAvatar="";
   renderCustomerSelfAvatar();
-  await saveMyCustomerChatAvatar();
+  await saveMyCustomerChatProfile();
+};
+$("saveCustomerSelfNameBtn").onclick=async()=>{
+  customerDisplayName=$("customerSelfNameInput").value.trim().slice(0,40);
+  renderCustomerSelfAvatar();
+  await saveMyCustomerChatProfile();
 };
 $("copyCustomerDeveloperContactBtn").onclick=async()=>{
   const contact="i-Sooong";
@@ -621,8 +655,13 @@ function renderCustomerChatThreads(){
   });
   updateCustomerChatUnread();
 }
-async function loadCustomerChatConversations(){
+async function loadCustomerChatConversations(force=false){
   if(!user)return;
+  if(customerChatLoaded&&!force){
+    renderCustomerChatThreads();
+    ensureCustomerChatRealtime();
+    return;
+  }
   const {data,error}=await supabase.rpc("chat_list_my_conversations");
   if(error){
     console.warn("customer chat conversations:",error.message);
@@ -634,16 +673,20 @@ async function loadCustomerChatConversations(){
   if(artistIds.length){
     const [{data:artistRows},{data:avatarRows}]=await Promise.all([
       supabase.from("artist_profiles").select("artist_user_id,public_name").in("artist_user_id",artistIds),
-      supabase.from("chat_profiles").select("user_id,avatar_data").in("user_id",artistIds)
+      supabase.from("chat_profiles").select("user_id,avatar_data,display_name").in("user_id",artistIds)
     ]);
     const nameMap=new Map((artistRows||[]).map(x=>[x.artist_user_id,x.public_name||"莓桃美工"]));
-    const avatarMap=new Map((avatarRows||[]).map(x=>[x.user_id,x.avatar_data||""]));
-    customerChatConversations=customerChatConversations.map(x=>({
-      ...x,
-      artist_name:nameMap.get(x.artist_user_id)||x.counterpart_label||"莓桃美工",
-      artist_avatar:avatarMap.get(x.artist_user_id)||x.counterpart_avatar||""
-    }));
+    const profileMap=new Map((avatarRows||[]).map(x=>[x.user_id,x]));
+    customerChatConversations=customerChatConversations.map(x=>{
+      const p=profileMap.get(x.artist_user_id);
+      return {
+        ...x,
+        artist_name:(p?.display_name||"").trim()||nameMap.get(x.artist_user_id)||x.counterpart_label||"莓桃美工",
+        artist_avatar:p?.avatar_data||x.counterpart_avatar||""
+      };
+    });
   }
+  customerChatLoaded=true;
   renderCustomerChatThreads();
   if(activeCustomerChat){
     const fresh=customerChatConversations.find(x=>x.artist_user_id===activeCustomerChat.artist_user_id);
@@ -698,14 +741,14 @@ async function sendCustomerChat(){
   if(error){$("customerChatHint").textContent="发送失败："+error.message;return}
   input.value="";$("customerChatHint").textContent="";
   await loadCustomerChatMessages(false);
-  await loadCustomerChatConversations();
+  await loadCustomerChatConversations(true);
 }
 function ensureCustomerChatRealtime(){
   if(!user)return;
   if(customerChatChannel){supabase.removeChannel(customerChatChannel);customerChatChannel=null}
   customerChatChannel=supabase.channel("customer-chat-"+user.id)
     .on("postgres_changes",{event:"*",schema:"public",table:"chat_messages",filter:"customer_user_id=eq."+user.id},async payload=>{
-      await loadCustomerChatConversations();
+      await loadCustomerChatConversations(true);
       const row=payload.new||payload.old||{};
       if(activeCustomerChat&&row.artist_user_id===activeCustomerChat.artist_user_id)await loadCustomerChatMessages(true);
     })
@@ -713,7 +756,7 @@ function ensureCustomerChatRealtime(){
       const row=payload.new||payload.old||{};
       if(row.user_id===user.id){customerChatAvatar=payload.new?.avatar_data||"";renderCustomerSelfAvatar()}
       if(customerChatConversations.some(x=>x.artist_user_id===row.user_id)){
-        await loadCustomerChatConversations();
+        await loadCustomerChatConversations(true);
         if(activeCustomerChat?.artist_user_id===row.user_id)await loadCustomerChatMessages(false);
       }
     })
@@ -721,9 +764,10 @@ function ensureCustomerChatRealtime(){
 }
 $("customerChatSendBtn").onclick=sendCustomerChat;
 $("customerChatInput").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendCustomerChat()}});
-async function loadBindings(){
+async function loadBindings(force=false){
   if(!user)return;
-  $("artistList").innerHTML='<div class="empty">正在读取…</div>';
+  if(customerBindingsLoaded&&!force)return;
+  if(!customerBindingsLoaded)$("artistList").innerHTML='<div class="empty">正在读取…</div>';
 
   const {data:accessRows,error:accessError}=await supabase.from("customer_portal_access")
     .select("artist_user_id,granted_at")
@@ -761,6 +805,12 @@ async function loadBindings(){
 
   const artistMap=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
   const artistAvatarMap=new Map((artistAvatars||[]).map(a=>[a.user_id,a.avatar_data||""]));
+  let artistNoteMap=new Map();
+  const noteResult=await supabase.from("contact_notes")
+    .select("counterpart_user_id,note")
+    .eq("owner_user_id",user.id)
+    .in("counterpart_user_id",artistIds);
+  if(!noteResult.error)artistNoteMap=new Map((noteResult.data||[]).map(x=>[x.counterpart_user_id,x.note||""]));
   const recordByArtist=new Map();
   budgetByCustomerRecord.clear();
 
@@ -795,7 +845,8 @@ async function loadBindings(){
       ?'<button class="ghost" data-budget-artist="'+esc(id)+'">余额明细</button>'
       :'<button class="ghost" type="button" disabled style="opacity:.55">暂无余额档案</button>';
     const avatar=artistAvatarMap.get(id)||"";
-    return '<div class="artist"><div style="display:flex;align-items:center;gap:10px;min-width:0">'+chatAvatarMarkup(avatar,artist.public_name||"美")+'<div class="artist-main"><div class="artist-name">'+esc(artist.public_name||"莓桃美工")+'</div><div class="code">'+esc(artist.artist_code)+'</div><div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">当前余额 '+budgetMoney(balance)+'</div></div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(artist.artist_code)+'">查看排单</a><button class="ghost" type="button" data-message-artist="'+esc(id)+'">💬 发消息</button>'+detailButton+'</div></div>';
+    const myNote=artistNoteMap.get(id)||"";
+    return '<div class="artist"><div style="display:flex;align-items:center;gap:10px;min-width:0">'+chatAvatarMarkup(avatar,artist.public_name||"美")+'<div class="artist-main"><div class="artist-name">'+esc(artist.public_name||"莓桃美工")+'</div><div class="code">'+esc(artist.artist_code)+'</div>'+(myNote?'<div class="meta" style="margin-top:4px">我的备注：'+esc(myNote)+'</div>':'')+'<div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">当前余额 '+budgetMoney(balance)+'</div></div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(artist.artist_code)+'">查看排单</a><button class="ghost" type="button" data-message-artist="'+esc(id)+'">💬 发消息</button><button class="ghost" type="button" data-note-artist="'+esc(id)+'" data-current-note="'+esc(myNote)+'">✏️ 备注</button>'+detailButton+'</div></div>';
   }).join("")||'<div class="empty">暂无美工资料。</div>';
 
   document.querySelectorAll("[data-budget-artist]").forEach(btn=>btn.onclick=()=>{
@@ -809,6 +860,32 @@ async function loadBindings(){
     const row=customerChatConversations.find(x=>x.artist_user_id===btn.dataset.messageArtist);
     if(row)openCustomerChat(row);
   });
+  document.querySelectorAll("[data-note-artist]").forEach(btn=>btn.onclick=async()=>{
+    const artistId=btn.dataset.noteArtist;
+    const current=btn.dataset.currentNote||"";
+    const note=prompt("给这位美工写一个仅自己可见的备注：",current);
+    if(note===null)return;
+    const clean=note.trim().slice(0,120);
+    let error=null;
+    if(clean){
+      const result=await supabase.from("contact_notes").upsert({
+        owner_user_id:user.id,
+        counterpart_user_id:artistId,
+        note:clean,
+        updated_at:new Date().toISOString()
+      },{onConflict:"owner_user_id,counterpart_user_id"});
+      error=result.error;
+    }else{
+      const result=await supabase.from("contact_notes").delete()
+        .eq("owner_user_id",user.id)
+        .eq("counterpart_user_id",artistId);
+      error=result.error;
+    }
+    if(error){alert("备注保存失败，请先运行最新的昵称与备注 SQL。");return}
+    customerBindingsLoaded=false;
+    await loadBindings(true);
+  });
+  customerBindingsLoaded=true;
 }
 
 const budgetByCustomerRecord=new Map();
@@ -1089,7 +1166,8 @@ async function applySession(session){
     }
   }else{
     if(customerChatChannel){supabase.removeChannel(customerChatChannel);customerChatChannel=null}
-    customerChatConversations=[];activeCustomerChat=null;customerChatAvatar="";
+    customerChatConversations=[];activeCustomerChat=null;customerChatAvatar="";customerDisplayName="";
+    customerChatLoaded=false;customerBindingsLoaded=false;
     $("logoutBtn").classList.add("hidden");
     $("customerNav").classList.add("hidden");
     $("customerAccountBar").classList.add("hidden");
