@@ -39,7 +39,6 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
 
   <div id="customerNav" class="customer-nav hidden">
     <button class="ghost active" type="button" data-customer-view="dashboard">🍓 我的排单</button>
-    <button class="ghost" type="button" data-customer-view="customerBalance">💰 我的余额</button>
     <button class="ghost customer-profile-heart" type="button" data-customer-view="customerProfile">我的</button>
     <button class="ghost" type="button" data-customer-view="customerSettings">⚙️ 设置</button>
   </div>
@@ -73,20 +72,8 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
     </section>
     <section class="card" style="margin-top:14px">
       <h2>我的美工</h2>
-      <div class="meta">绑定入口收在“我的”里，不占用排单首页。</div>
+      <div class="meta">每个美工分别显示你的余额和排单入口，绑定多个美工也不会混在一起。</div>
       <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
-    </section>
-  </section>
-
-  <section id="customerBalance" class="customer-view hidden">
-    <section class="hero">
-      <h1>我的余额 💰</h1>
-      <p>查看不同美工为你记录的当前余额和每一笔变动。</p>
-    </section>
-    <section class="card" style="margin-top:14px">
-      <h2>余额明细</h2>
-      <div class="meta">顾客端只用于查看，余额的增加和减少由美工端记录。</div>
-      <div id="customerBudgetList" class="artist-list"><div class="empty">正在读取…</div></div>
     </section>
   </section>
 
@@ -131,7 +118,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
   <div class="modal">
     <div class="modalhead">
       <div>
-        <h2 id="customerBudgetModalTitle">预算明细 💰</h2>
+        <h2 id="customerBudgetModalTitle">余额明细 💰</h2>
         <div class="meta" id="customerBudgetModalBalance">当前余额 ¥0.00</div>
       </div>
       <button class="ghost" id="closeCustomerBudgetModalBtn" type="button">×</button>
@@ -283,16 +270,15 @@ function saveCustomerPreferences(){
   },300);
 }
 function setCustomerView(view){
-  const id=view==="profile"?"customerProfile":view==="balance"?"customerBalance":view==="settings"?"customerSettings":"dashboard";
+  const id=view==="profile"?"customerProfile":view==="settings"?"customerSettings":"dashboard";
   document.querySelectorAll(".customer-view").forEach(x=>x.classList.toggle("hidden",x.id!==id));
   document.querySelectorAll("[data-customer-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.customerView===id));
   if(user)localStorage.setItem("berry-customer-view-"+user.id,view);
   if(user&&view==="profile")loadBindings();
-  if(user&&view==="balance")loadCustomerBudgets();
 }
 document.querySelectorAll("[data-customer-view]").forEach(btn=>{
   btn.onclick=()=>{
-    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerBalance"?"balance":btn.dataset.customerView==="customerSettings"?"settings":"dashboard";
+    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerSettings"?"settings":"dashboard";
     const u=new URL(location.href);u.searchParams.delete("artist");u.searchParams.set("view",view);history.replaceState(null,"",u);
     $("artistPage").classList.add("hidden");$("customerNav").classList.remove("hidden");setCustomerView(view);
   };
@@ -356,111 +342,122 @@ async function loadArtistPublic(code){
 async function loadBindings(){
   if(!user)return;
   $("artistList").innerHTML='<div class="empty">正在读取…</div>';
-  const {data:bindings,error}=await supabase.from("customer_artist_bindings")
-    .select("artist_user_id,created_at")
-    .eq("customer_user_id",user.id)
-    .order("created_at",{ascending:true});
-  if(error){
+
+  const [{data:bindings,error:bindingError},{data:records,error:recordError}]=await Promise.all([
+    supabase.from("customer_artist_bindings")
+      .select("artist_user_id,created_at")
+      .eq("customer_user_id",user.id)
+      .order("created_at",{ascending:true}),
+    supabase.from("artist_customers")
+      .select("id,artist_user_id,display_name,linked_customer_user_id")
+      .eq("linked_customer_user_id",user.id)
+      .order("created_at",{ascending:true})
+  ]);
+
+  if(bindingError){
     $("artistList").innerHTML='<div class="empty">顾客端数据库还没有初始化，暂时无法读取绑定。</div>';
     return;
   }
+
   const ids=(bindings||[]).map(x=>x.artist_user_id);
   if(!ids.length){
-    $("artistList").innerHTML='<div class="empty">还没有绑定美工。拿到美工编号后，在右边添加就可以啦 🍓</div>';
+    $("artistList").innerHTML='<div class="empty">还没有绑定美工。拿到美工编号后，在“我的”里绑定就可以啦 🍓</div>';
     return;
   }
+
   const {data:artists,error:aerr}=await supabase.from("artist_profiles")
     .select("artist_user_id,artist_code,public_name,privacy_mode")
     .in("artist_user_id",ids);
+
   if(aerr){
     $("artistList").innerHTML='<div class="empty">读取美工资料失败，请稍后刷新。</div>';
     return;
   }
-  const map=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
+
+  const artistMap=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
+  budgetByCustomerRecord.clear();
+  const balanceByArtist=new Map();
+  const recordByArtist=new Map();
+
+  if(!recordError){
+    const rows=records||[];
+    rows.forEach(record=>{
+      const group={record,balance:0,entries:[]};
+      budgetByCustomerRecord.set(record.id,group);
+      recordByArtist.set(record.artist_user_id,group);
+      balanceByArtist.set(record.artist_user_id,0);
+    });
+
+    const recordIds=rows.map(x=>x.id);
+    if(recordIds.length){
+      const {data:entries,error:eerr}=await supabase.from("artist_customer_ledger")
+        .select("id,artist_customer_id,artist_user_id,amount,note,created_at")
+        .in("artist_customer_id",recordIds)
+        .order("created_at",{ascending:false});
+      if(!eerr){
+        (entries||[]).forEach(entry=>{
+          const group=budgetByCustomerRecord.get(entry.artist_customer_id);
+          if(!group)return;
+          const amount=Number(entry.amount||0);
+          group.balance+=amount;
+          group.entries.push(entry);
+          balanceByArtist.set(group.record.artist_user_id,Number(balanceByArtist.get(group.record.artist_user_id)||0)+amount);
+        });
+      }
+    }
+  }
+
   $("artistList").innerHTML=ids.map(id=>{
-    const a=map.get(id);
+    const a=artistMap.get(id);
     if(!a)return "";
-    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(a.public_name||"莓桃美工")+'</div><div class="code">'+esc(a.artist_code)+'</div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(a.artist_code)+'">查看排单</a><button class="danger" data-unbind="'+esc(id)+'">移除</button></div></div>';
+    const group=recordByArtist.get(id);
+    const balance=Number(balanceByArtist.get(id)||0);
+    const balanceText=recordError?"余额暂不可用":("当前余额 "+budgetMoney(balance));
+    const detailButton=group
+      ?'<button class="ghost" data-budget-artist="'+esc(id)+'">余额明细</button>'
+      :'<button class="ghost" type="button" disabled style="opacity:.55">暂无余额档案</button>';
+    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(a.public_name||"莓桃美工")+'</div><div class="code">'+esc(a.artist_code)+'</div><div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">'+esc(balanceText)+'</div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(a.artist_code)+'">查看排单</a>'+detailButton+'<button class="danger" data-unbind="'+esc(id)+'">移除</button></div></div>';
   }).join("")||'<div class="empty">暂无美工资料。</div>';
+
+  document.querySelectorAll("[data-budget-artist]").forEach(btn=>btn.onclick=()=>{
+    const group=recordByArtist.get(btn.dataset.budgetArtist);
+    const artist=artistMap.get(btn.dataset.budgetArtist);
+    if(group)openCustomerBudgetDetails(group,artist);
+  });
+
   document.querySelectorAll("[data-unbind]").forEach(btn=>btn.onclick=async()=>{
     if(!confirm("确定从“我的美工”里移除吗？"))return;
     const {error}=await supabase.from("customer_artist_bindings").delete()
-      .eq("customer_user_id",user.id).eq("artist_user_id",btn.dataset.unbind);
-    if(error)alert("移除失败："+error.message); else {loadBindings();loadCustomerBudgets();}
+      .eq("customer_user_id",user.id)
+      .eq("artist_user_id",btn.dataset.unbind);
+    if(error)alert("移除失败："+error.message);
+    else loadBindings();
   });
 }
 
 const budgetByCustomerRecord=new Map();
+
 function budgetMoney(v){
   return "¥"+Number(v||0).toLocaleString("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
+
 function budgetDate(value){
   try{
     return new Intl.DateTimeFormat("zh-CN",{month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(value));
   }catch(_){return value||""}
 }
-async function loadCustomerBudgets(){
-  if(!user)return;
-  $("customerBudgetList").innerHTML='<div class="empty">正在读取…</div>';
-  const {data:records,error}=await supabase.from("artist_customers")
-    .select("id,artist_user_id,display_name,linked_customer_user_id")
-    .eq("linked_customer_user_id",user.id)
-    .order("created_at",{ascending:true});
-  if(error){
-    console.warn("customer records:",error.message);
-    $("customerBudgetList").innerHTML='<div class="empty">顾客档案功能还没有完成数据库升级。</div>';
-    return;
-  }
-  const rows=records||[];
-  budgetByCustomerRecord.clear();
-  if(!rows.length){
-    $("customerBudgetList").innerHTML='<div class="empty">还没有关联到你的预算档案。</div>';
-    return;
-  }
-  const ids=rows.map(x=>x.id);
-  const {data:entries,error:eerr}=await supabase.from("artist_customer_ledger")
-    .select("id,artist_customer_id,artist_user_id,amount,note,created_at")
-    .in("artist_customer_id",ids)
-    .order("created_at",{ascending:false});
-  if(eerr){
-    console.warn("customer ledger:",eerr.message);
-    $("customerBudgetList").innerHTML='<div class="empty">预算明细暂时读取失败。</div>';
-    return;
-  }
-  rows.forEach(record=>budgetByCustomerRecord.set(record.id,{record,balance:0,entries:[]}));
-  (entries||[]).forEach(entry=>{
-    const group=budgetByCustomerRecord.get(entry.artist_customer_id);
-    if(!group)return;
-    group.balance+=Number(entry.amount||0);
-    group.entries.push(entry);
-  });
-  const artistIds=[...new Set(rows.map(x=>x.artist_user_id))];
-  const {data:artists}=await supabase.from("artist_profiles")
-    .select("artist_user_id,artist_code,public_name")
-    .in("artist_user_id",artistIds);
-  const artistMap=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
-  $("customerBudgetList").innerHTML=rows.map(record=>{
-    const g=budgetByCustomerRecord.get(record.id);
-    const a=artistMap.get(record.artist_user_id);
-    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(a?.public_name||"美工")+'</div><div class="code">顾客档案：'+esc(record.display_name||"顾客")+(a?.artist_code?' · '+esc(a.artist_code):'')+'</div></div><div class="artist-actions"><b style="align-self:center">'+budgetMoney(g.balance)+'</b><button class="ghost" data-budget-record="'+esc(record.id)+'">查看明细</button></div></div>';
-  }).join("");
-  document.querySelectorAll("[data-budget-record]").forEach(btn=>{
-    btn.onclick=()=>{
-      const group=budgetByCustomerRecord.get(btn.dataset.budgetRecord);
-      if(group)openCustomerBudgetDetails(group,artistMap.get(group.record.artist_user_id));
-    };
-  });
-}
+
 function openCustomerBudgetDetails(group,artist){
   if(!group)return;
-  $("customerBudgetModalTitle").textContent=(artist?.public_name||"美工")+" · 预算明细 💰";
+  $("customerBudgetModalTitle").textContent=(artist?.public_name||"美工")+" · 余额明细 💰";
   $("customerBudgetModalBalance").textContent="当前余额 "+budgetMoney(group.balance)+" · "+(group.record.display_name||"顾客");
   $("customerBudgetHistory").innerHTML=group.entries.length?group.entries.map(x=>{
     const n=Number(x.amount||0);
-    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+(n>0?"+":"−")+budgetMoney(Math.abs(n))+'</div><div class="code">'+esc(x.note||"预算调整")+' · '+esc(budgetDate(x.created_at))+'</div></div><span class="badge '+(n<0?"private":"")+'">'+(n>0?"增加":"减少")+'</span></div>';
-  }).join(""):'<div class="empty">暂无明细。</div>';
+    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+(n>0?"+":"−")+budgetMoney(Math.abs(n))+'</div><div class="code">'+esc(x.note||"余额调整")+' · '+esc(budgetDate(x.created_at))+'</div></div><span class="badge '+(n<0?"private":"")+'">'+(n>0?"增加":"减少")+'</span></div>';
+  }).join(""):'<div class="empty">暂无余额明细。</div>';
   $("customerBudgetModalBg").classList.add("show");
 }
+
 function closeCustomerBudgetDetails(){
   $("customerBudgetModalBg").classList.remove("show");
 }
@@ -487,7 +484,6 @@ async function bindArtist(){
   $("bindCode").value="";
   $("bindHint").textContent="✅ 已绑定 "+(artist.public_name||"这个美工");
   loadBindings();
-  loadCustomerBudgets();
   setTimeout(closeBindModal,700);
 }
 async function bindOwnArtistForTest(){
@@ -510,7 +506,6 @@ async function bindOwnArtistForTest(){
   }
   $("bindHint").textContent="✅ 已绑定自己的美工身份（仅主用户测试）";
   loadBindings();
-  loadCustomerBudgets();
   setTimeout(closeBindModal,700);
 }
 function openBindModal(){
@@ -619,7 +614,6 @@ async function applySession(session){
     await ensureCustomerRole();
     await loadCustomerPreferences();
     await loadBindings();
-    await loadCustomerBudgets();
     if(artistCode){
       $("customerNav").classList.add("hidden");
       await loadArtistPublic(artistCode);
@@ -627,7 +621,8 @@ async function applySession(session){
       $("artistPage").classList.add("hidden");
       const requested=new URL(location.href).searchParams.get("view");
       const remembered=localStorage.getItem("berry-customer-view-"+user.id);
-      setCustomerView(requested||remembered||"dashboard");
+      const preferred=(requested||remembered||"dashboard")==="balance"?"profile":(requested||remembered||"dashboard");
+      setCustomerView(preferred);
     }
   }else{
     $("logoutBtn").classList.add("hidden");
