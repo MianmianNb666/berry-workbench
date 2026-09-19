@@ -74,7 +74,7 @@
 .access-readonly-banner{display:none;margin:0 0 14px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--soft);align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.access-readonly-banner.show{display:flex}.access-readonly-banner b{font-size:13px}.access-readonly-banner .meta{margin-top:3px}.access-readonly button:disabled,.access-readonly input:disabled,.access-readonly select:disabled,.access-readonly textarea:disabled{opacity:.48;cursor:not-allowed}
 </style></head>
 <body><div class="app"><div class="layout">
-<aside class="side"><div class="brand"><div class="logo" id="brandLogo"><span>🍓</span><img id="brandAvatar" alt="自定义头像"></div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><div id="navScroll" class="nav-scroll"><button class="active" data-page="desk" id="navDesk">🏠 工作台</button><button data-page="orders" id="navOrders">🧾 订单</button><button data-page="schedule" id="navSchedule">🗓️ 排单</button><button data-page="money" id="navMoney">💰 财务</button><button data-page="time" id="navTime">⏱️ 时间</button><button data-page="customers" id="navCustomers" class="hidden">👥 顾客 <span id="artistChatNavUnread" class="nav-unread hidden">0</span></button><button id="navRenew" type="button">🎟️ 续期</button><button data-page="profile" id="navProfile" class="nav-heart">我的</button><button data-page="settings" id="navSettings">⚙️ 设置</button><div id="customNav" class="custom-nav-wrap"></div></div><div class="nav-bottom"><button id="addSectionBtn" class="custom-nav-add" type="button">＋ 添加分区</button></div></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><div class="note" id="sidebarAccessRemaining" style="margin-top:5px">使用期限：--</div><div class="avatar-actions"><button class="ghost" id="avatarBtn" type="button">🖼️ 自定义头像</button><button class="avatar-reset" id="avatarResetBtn" type="button">恢复草莓头像</button><input id="avatarInput" type="file" accept="image/*" hidden></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。不同账号的数据会彼此分开。</p></aside>
+<aside class="side"><div class="brand"><div class="logo" id="brandLogo"><span>🍓</span><img id="brandAvatar" alt="自定义头像"></div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><div id="navScroll" class="nav-scroll"><button class="active" data-page="desk" id="navDesk">🏠 工作台</button><button data-page="orders" id="navOrders">🧾 订单</button><button data-page="schedule" id="navSchedule">🗓️ 排单</button><button data-page="money" id="navMoney">💰 财务</button><button data-page="time" id="navTime">⏱️ 时间</button><button data-page="customers" id="navCustomers" class="hidden">👥 顾客</button><button data-page="messages" id="navMessages" class="hidden">💬 消息 <span id="artistChatNavUnread" class="nav-unread hidden">0</span></button><button id="navRenew" type="button">🎟️ 续期</button><button data-page="profile" id="navProfile" class="nav-heart">我的</button><button data-page="settings" id="navSettings">⚙️ 设置</button><div id="customNav" class="custom-nav-wrap"></div></div><div class="nav-bottom"><button id="addSectionBtn" class="custom-nav-add" type="button">＋ 添加分区</button></div></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><div class="note" id="sidebarAccessRemaining" style="margin-top:5px">使用期限：--</div><div class="avatar-actions"><button class="ghost" id="avatarBtn" type="button">🖼️ 自定义头像</button><button class="avatar-reset" id="avatarResetBtn" type="button">恢复草莓头像</button><input id="avatarInput" type="file" accept="image/*" hidden></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。不同账号的数据会彼此分开。</p></aside>
 <main class="main"><div id="accessReadOnlyBanner" class="access-readonly-banner"><div><b>🔒 使用期已结束 · 当前为只读模式</b><div class="meta">你的数据和顾客端都不会消失。现在可以继续查看，但不能新增、修改或删除内容。</div></div><button id="readOnlyRenewBtn" class="primary" type="button">🎟️ 立即续期</button></div><div class="top"><div><h1 id="greet">下午好，创作者！</h1><p id="dateText"></p><div id="topDeadlines" class="top-ddl"></div></div><div class="actions" style="margin-top:0"><a href="./guide.html#artist" target="_blank" rel="noopener" style="min-height:38px;padding:0 13px;border:1px solid var(--line);background:var(--panel);color:var(--rose);border-radius:12px;display:inline-flex;align-items:center;font-size:11px;font-weight:750;text-decoration:none">📖 使用教程</a><button class="primary" id="newBtn">＋ 新增需求</button></div></div>
 <section class="summary"><div class="stat"><span>全部需求</span><b id="sAll">0</b></div><div class="stat"><span>进行中</span><b id="sDoing">0</b></div><div class="stat"><span>已逾期</span><b id="sLate">0</b></div><div class="stat"><span>已完成</span><b id="sDone">0</b></div></section>
 <section id="p-desk" class="panel active"><div class="work">
@@ -115,25 +115,25 @@
 <section id="p-time" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">制作计时</h2><div class="timer"><div><input id="timerTask" placeholder="现在在做什么"><div class="actions"><button class="primary" id="startTimer">开始计时</button><button class="ghost" id="stopTimer" disabled>结束并保存</button></div></div><div id="clock" class="clock">00:00:00</div></div><h2 style="font-size:17px">时间记录 <span id="todayTime" class="tag">今日 0m</span></h2><div id="timeList" class="list"></div></div></section>
 <section id="p-customers" class="panel"><div class="work">
   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
-    <button id="customerCenterToggleBtn" class="customer-center-toggle" type="button" aria-expanded="true" aria-controls="customerCenterBody">
-      <span class="customer-center-toggle-copy">
-        <span style="display:block;font-size:17px;font-weight:850">顾客中心 👥</span>
-        <span class="meta" style="display:block;margin-top:4px">顾客码、顾客端入口、顾客档案、余额、匿名链接和实时消息都集中在这里。点一下可以展开 / 收起。</span>
-      </span>
-      <span class="customer-center-toggle-icon" aria-hidden="true">⌃</span>
-    </button>
+    <div>
+      <h2 style="font-size:17px;margin:0">顾客中心 👥</h2>
+      <div class="meta" style="margin-top:4px">顾客档案一直显示在这里；只有上面的顾客码区域可以展开 / 收起。</div>
+    </div>
     <a href="./guide.html#connect" target="_blank" rel="noopener" class="ghost" style="text-decoration:none;display:inline-flex;align-items:center">📖 顾客连接教程</a>
   </div>
 
-  <div id="customerCenterBody" class="customer-center-body">
   <div id="artistCustomerBetaCard" class="profile-card">
   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
-    <div>
-      <h3 style="font-size:14px;margin:0">顾客端入口与顾客码 🔗</h3>
-      <div class="meta" style="margin-top:4px">顾客必须拿到你的专属顾客码，才能解锁你的顾客端内容。一个顾客账号可以绑定多个美工，但每位美工都要用自己的顾客码单独解锁。</div>
-    </div>
+    <button id="customerCenterToggleBtn" class="customer-center-toggle" type="button" aria-expanded="true" aria-controls="customerCenterBody">
+      <span class="customer-center-toggle-copy">
+        <span style="display:block;font-size:14px;font-weight:850">顾客端入口与顾客码 🔗</span>
+        <span class="meta" style="display:block;margin-top:4px">这里只折叠顾客码和顾客端入口。顾客档案不会跟着收起来。</span>
+      </span>
+      <span class="customer-center-toggle-icon" aria-hidden="true">⌃</span>
+    </button>
     <span id="artistPortalStatus" class="access-badge">读取中…</span>
   </div>
+  <div id="customerCenterBody" class="customer-center-body">
   <div class="profile-grid">
     <div class="profile-item">
       <span>美工编号</span>
@@ -165,6 +165,7 @@
   </label>
   <div id="artistAutoUnbindHint" class="meta" style="margin-top:7px"></div>
   <div class="meta" style="margin-top:8px">顾客码相当于你这一位美工的入场券。顾客可以同时拥有多位美工，但没有你的码就看不到你的内容。重新生成后旧码立即失效，已经解锁成功的顾客不受影响。</div>
+  </div>
 </div>
 
   <div class="profile-card" id="artistCustomerRecordsCard">
@@ -179,8 +180,14 @@
       <div class="empty">正在读取顾客…</div>
     </div>
   </div>
-
+</div></section>
+<section id="p-messages" class="panel"><div class="work">
+  <div>
+    <h2 style="font-size:17px;margin:0">消息 💬</h2>
+    <div class="meta" style="margin-top:4px">聊天单独放在这里。顾客头像、顾客自己设置的名字、已读 / 未读和实时消息会同步更新。</div>
+  </div>
   <div class="profile-card" id="artistCustomerMessagesCard">
+
     <div>
       <h3 style="font-size:14px;margin:0">顾客消息 💬</h3>
       <div class="meta" style="margin-top:4px">和已经绑定顾客端账号的顾客实时聊天。未读消息会直接显示在左侧「顾客」旁边。</div>
@@ -200,7 +207,7 @@
         <div id="artistChatHint" class="authhint" style="padding:0 11px 8px"></div>
       </div>
     </div>
-  </div>
+  
   </div>
 </div></section>
 <section id="p-profile" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">我的 <span class="theme-heart">♥</span></h2><div class="meta">查看账号资料、头像、导航和开发者联系方式。续期已独立放到左侧「续期」入口。</div>
@@ -387,14 +394,14 @@
     </div>
   </div>
   <div class="formgrid" style="margin-top:14px">
-    <label>顾客昵称<input id="artistCustomerNameInput" maxlength="40" placeholder="例如：桃桃"></label>
+    <label>档案名称<input id="artistCustomerNameInput" maxlength="40" placeholder="例如：桃桃"><span class="meta" style="display:block;margin-top:5px">顾客绑定账号并设置自己的名字后，列表和聊天会优先显示顾客自己的名字。</span></label>
     <label>关联顾客端账号
       <select id="artistCustomerLinkSelect">
         <option value="">暂不关联</option>
       </select>
       <span class="meta" style="display:block;margin-top:5px">如果顾客已经先用你的美工顾客码进入，就在这里选她；如果顾客还没注册，保存档案后会自动生成她自己的专属码。</span>
     </label>
-    <label style="grid-column:1/-1">备注<textarea id="artistCustomerNoteInput" rows="3" maxlength="500" placeholder="只在美工端查看的备注"></textarea></label>
+    <label style="grid-column:1/-1">给顾客的备注（仅自己可见）<textarea id="artistCustomerNoteInput" rows="3" maxlength="500" placeholder="例如：喜欢粉色 / 急单 / 老顾客"></textarea></label>
   </div>
   <div class="profile-item" id="artistCustomerProfileCodeBox" style="margin-top:12px">
     <span>顾客专属码 🎟️</span>
@@ -559,6 +566,7 @@ async function applyArtistBetaAccess(){
   if($("artistCustomerBetaCard"))$("artistCustomerBetaCard").classList.remove("hidden");
   if($("ownerHomeCard"))$("ownerHomeCard").classList.toggle("hidden",!owner);
   if($("navCustomers"))$("navCustomers").classList.remove("hidden");
+  if($("navMessages"))$("navMessages").classList.remove("hidden");
   return true;
 }
 
@@ -926,6 +934,10 @@ function bindPageButtons(){
         applyArtistBetaAccess().then(async()=>{
           await loadArtistPortalProfile();
           await loadArtistCustomers();
+        });
+      }
+      if(b.dataset.page==="messages"){
+        applyArtistBetaAccess().then(async()=>{
           await loadArtistChatConversations();
         });
       }
@@ -1561,8 +1573,13 @@ function artistChatAvatarMarkup(src,label="顾"){
 }
 async function syncArtistChatProfile(){
   if(!user)return;
-  const {error}=await supabase.from("chat_profiles").upsert({user_id:user.id,avatar_data:S.avatar||"",updated_at:new Date().toISOString()},{onConflict:"user_id"});
-  if(error)console.warn("sync artist chat avatar:",error.message);
+  const payload={user_id:user.id,avatar_data:S.avatar||"",display_name:(S.title||S.displayName||"莓桃美工").slice(0,40),updated_at:new Date().toISOString()};
+  let {error}=await supabase.from("chat_profiles").upsert(payload,{onConflict:"user_id"});
+  if(error&&String(error.message||"").includes("display_name")){
+    const retry=await supabase.from("chat_profiles").upsert({user_id:user.id,avatar_data:S.avatar||"",updated_at:new Date().toISOString()},{onConflict:"user_id"});
+    error=retry.error;
+  }
+  if(error)console.warn("sync artist chat profile:",error.message);
 }
 function renderCustomerAvatarPreview(){
   const box=$("artistCustomerAvatarPreview");
@@ -1608,11 +1625,14 @@ async function loadArtistCustomers(){
   const linkedCustomerIds=[...new Set(artistCustomers.map(x=>x.linked_customer_user_id).filter(Boolean))];
   if(linkedCustomerIds.length){
     const {data:profiles,error:profileError}=await supabase.from("chat_profiles")
-      .select("user_id,avatar_data")
+      .select("user_id,avatar_data,display_name")
       .in("user_id",linkedCustomerIds);
     if(!profileError){
-      const profileMap=new Map((profiles||[]).map(x=>[x.user_id,x.avatar_data||""]));
-      artistCustomers=artistCustomers.map(x=>({...x,self_avatar_data:x.linked_customer_user_id?(profileMap.get(x.linked_customer_user_id)||""):""}));
+      const profileMap=new Map((profiles||[]).map(x=>[x.user_id,x]));
+      artistCustomers=artistCustomers.map(x=>{
+        const profile=x.linked_customer_user_id?profileMap.get(x.linked_customer_user_id):null;
+        return {...x,self_avatar_data:profile?.avatar_data||"",self_display_name:(profile?.display_name||"").trim()};
+      });
     }
   }
   const ids=artistCustomers.map(x=>x.id);
@@ -1638,7 +1658,8 @@ async function loadArtistCustomers(){
     const linked=customer.linked_customer_user_id
       ?'<span class="tag">已绑定顾客端</span>'
       :'<span class="tag" style="opacity:.65">未绑定顾客端</span>';
-    return '<div class="item"><div class="customer-main">'+customerAvatarMarkup(customer,"large")+'<div style="min-width:0"><b>'+esc(customer.display_name||"未命名顾客")+'</b><small>'+linked+(customer.note?' · '+esc(customer.note):'')+'</small></div></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end"><b>'+artistCustomerMoney(balance)+'</b><button class="ghost" type="button" data-copy-customer-share="'+esc(customer.id)+'">🔗 匿名链接</button><button class="ghost" type="button" data-edit-artist-customer="'+esc(customer.id)+'">管理</button></div></div>';
+    const shownName=customer.self_display_name||customer.display_name||"未命名顾客";
+    return '<div class="item"><div class="customer-main">'+customerAvatarMarkup(customer,"large")+'<div style="min-width:0"><b>'+esc(shownName)+'</b><small>'+linked+(customer.note?' · 备注：'+esc(customer.note):'')+'</small></div></div><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end"><b>'+artistCustomerMoney(balance)+'</b><button class="ghost" type="button" data-copy-customer-share="'+esc(customer.id)+'">🔗 匿名链接</button><button class="ghost" type="button" data-edit-artist-customer="'+esc(customer.id)+'">管理</button></div></div>';
   }).join("");
   host.querySelectorAll("[data-copy-customer-share]").forEach(btn=>btn.onclick=()=>copyCustomerPersistentShare(btn.dataset.copyCustomerShare));
   host.querySelectorAll("[data-edit-artist-customer]").forEach(btn=>btn.onclick=()=>openArtistCustomerModal(btn.dataset.editArtistCustomer));
@@ -2113,6 +2134,7 @@ function closeBudgetModal(){
 let artistChatConversations=[];
 let activeArtistChat=null;
 let artistChatChannel=null;
+let artistChatLoaded=false;
 
 function chatClock(value){
   if(!value)return "";
@@ -2145,8 +2167,8 @@ function renderArtistChatThreads(){
     const preview=row.last_body||"还没有消息，打个招呼吧～";
     const unread=Number(row.unread_count||0);
     return '<div class="chat-thread '+(active?"active":"")+'" data-artist-chat-customer="'+esc(row.customer_user_id)+'">'+
-      artistChatCounterpartAvatar(row.customer_user_id,row.counterpart_label,row.counterpart_avatar)+
-      '<div class="chat-thread-main"><div class="chat-thread-title">'+esc(row.counterpart_label||"顾客")+'</div><div class="chat-thread-preview">'+esc(preview)+'</div><div class="meta">'+esc(chatClock(row.last_at))+'</div></div>'+
+      artistChatCounterpartAvatar(row.customer_user_id,row.customer_name||row.counterpart_label,row.customer_avatar||row.counterpart_avatar)+
+      '<div class="chat-thread-main"><div class="chat-thread-title">'+esc(row.customer_name||row.counterpart_label||"顾客")+'</div><div class="chat-thread-preview">'+esc(preview)+'</div><div class="meta">'+esc(chatClock(row.last_at))+'</div></div>'+
       (unread?'<span class="chat-unread">'+(unread>99?"99+":unread)+'</span>':'')+
       '</div>';
   }).join("");
@@ -2156,8 +2178,13 @@ function renderArtistChatThreads(){
   });
   updateArtistChatUnread();
 }
-async function loadArtistChatConversations(){
+async function loadArtistChatConversations(force=false){
   if(!user)return;
+  if(artistChatLoaded&&!force){
+    renderArtistChatThreads();
+    ensureArtistChatRealtime();
+    return;
+  }
   const {data,error}=await supabase.rpc("chat_list_my_conversations");
   if(error){
     console.warn("chat conversations:",error.message);
@@ -2165,6 +2192,16 @@ async function loadArtistChatConversations(){
     return;
   }
   artistChatConversations=(data||[]).filter(x=>x.artist_user_id===user.id);
+  const customerIds=[...new Set(artistChatConversations.map(x=>x.customer_user_id).filter(Boolean))];
+  if(customerIds.length){
+    const {data:profiles}=await supabase.from("chat_profiles").select("user_id,avatar_data,display_name").in("user_id",customerIds);
+    const profileMap=new Map((profiles||[]).map(x=>[x.user_id,x]));
+    artistChatConversations=artistChatConversations.map(x=>{
+      const p=profileMap.get(x.customer_user_id);
+      return {...x,customer_name:(p?.display_name||"").trim()||x.counterpart_label||"顾客",customer_avatar:p?.avatar_data||x.counterpart_avatar||""};
+    });
+  }
+  artistChatLoaded=true;
   renderArtistChatThreads();
   if(activeArtistChat){
     const fresh=artistChatConversations.find(x=>x.customer_user_id===activeArtistChat.customer_user_id);
@@ -2174,7 +2211,7 @@ async function loadArtistChatConversations(){
 }
 async function openArtistChat(row){
   activeArtistChat=row;
-  $("artistChatRoomTitle").textContent=row.counterpart_label||"顾客";
+  $("artistChatRoomTitle").textContent=row.customer_name||row.counterpart_label||"顾客";
   $("artistChatRoomMeta").textContent="实时聊天 · 打开后自动已读";
   renderArtistChatThreads();
   await loadArtistChatMessages(true);
@@ -2194,7 +2231,7 @@ async function loadArtistChatMessages(markRead=false){
   const rows=data||[];
   $("artistChatMessages").innerHTML=rows.length?rows.map(m=>{
     const mine=m.sender_user_id===user.id;
-    const avatar=mine?artistChatAvatarMarkup(S.avatar,S.displayName||"我"):artistChatCounterpartAvatar(activeArtistChat.customer_user_id,activeArtistChat.counterpart_label,activeArtistChat.counterpart_avatar);
+    const avatar=mine?artistChatAvatarMarkup(S.avatar,S.displayName||"我"):artistChatCounterpartAvatar(activeArtistChat.customer_user_id,activeArtistChat.customer_name||activeArtistChat.counterpart_label,activeArtistChat.customer_avatar||activeArtistChat.counterpart_avatar);
     return '<div class="chat-line '+(mine?"mine":"")+'">'+avatar+'<div class="chat-bubble">'+esc(m.body)+'<div class="chat-meta">'+esc(chatClock(m.created_at))+(mine?' · '+(m.read_at?"已读":"未读"):'')+'</div></div></div>';
   }).join(""):'<div class="chat-empty">还没有消息，发第一句吧 💬</div>';
   const box=$("artistChatMessages");box.scrollTop=box.scrollHeight;
@@ -2222,14 +2259,14 @@ async function sendArtistChat(){
   input.value="";
   $("artistChatHint").textContent="";
   await loadArtistChatMessages(false);
-  await loadArtistChatConversations();
+  await loadArtistChatConversations(true);
 }
 function ensureArtistChatRealtime(){
   if(!user)return;
   if(artistChatChannel){supabase.removeChannel(artistChatChannel);artistChatChannel=null}
   artistChatChannel=supabase.channel("artist-chat-"+user.id)
     .on("postgres_changes",{event:"*",schema:"public",table:"chat_messages",filter:"artist_user_id=eq."+user.id},async payload=>{
-      await loadArtistChatConversations();
+      await loadArtistChatConversations(true);
       const row=payload.new||payload.old||{};
       if(activeArtistChat&&row.customer_user_id===activeArtistChat.customer_user_id){
         await loadArtistChatMessages(true);
@@ -2243,7 +2280,7 @@ function ensureArtistChatRealtime(){
       }
       if(artistCustomers.some(x=>x.linked_customer_user_id===row.user_id)){
         await loadArtistCustomers();
-        await loadArtistChatConversations();
+        await loadArtistChatConversations(true);
         if(activeArtistChat?.customer_user_id===row.user_id)await loadArtistChatMessages(false);
       }
     })
@@ -2925,6 +2962,7 @@ async function applySession(session){
     if(channel){supabase.removeChannel(channel);channel=null}
     if(artistChatChannel){supabase.removeChannel(artistChatChannel);artistChatChannel=null}
     artistChatConversations=[];activeArtistChat=null;
+    artistChatLoaded=false;
     return;
   }
 
