@@ -74,7 +74,7 @@
 .access-readonly-banner{display:none;margin:0 0 14px;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:var(--soft);align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.access-readonly-banner.show{display:flex}.access-readonly-banner b{font-size:13px}.access-readonly-banner .meta{margin-top:3px}.access-readonly button:disabled,.access-readonly input:disabled,.access-readonly select:disabled,.access-readonly textarea:disabled{opacity:.48;cursor:not-allowed}
 </style></head>
 <body><div class="app"><div class="layout">
-<aside class="side"><div class="brand"><div class="logo" id="brandLogo"><span>🍓</span><img id="brandAvatar" alt="自定义头像"></div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><div id="navScroll" class="nav-scroll"><button class="active" data-page="desk" id="navDesk">🏠 工作台</button><button data-page="orders" id="navOrders">🧾 订单</button><button data-page="schedule" id="navSchedule">🗓️ 排单</button><button data-page="money" id="navMoney">💰 财务</button><button data-page="time" id="navTime">⏱️ 时间</button><button data-page="customers" id="navCustomers" class="hidden">👥 顾客</button><button data-page="profile" id="navProfile" class="nav-heart">我的</button><button data-page="settings" id="navSettings">⚙️ 设置</button><div id="customNav" class="custom-nav-wrap"></div></div><div class="nav-bottom"><button id="addSectionBtn" class="custom-nav-add" type="button">＋ 添加分区</button></div></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><div class="note" id="sidebarAccessRemaining" style="margin-top:5px">使用期限：--</div><div class="avatar-actions"><button class="ghost" id="avatarBtn" type="button">🖼️ 自定义头像</button><button class="ghost" id="redeemOpenBtn" type="button">🎟️ 兑换邀请码</button><button class="avatar-reset" id="avatarResetBtn" type="button">恢复草莓头像</button><input id="avatarInput" type="file" accept="image/*" hidden></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。不同账号的数据会彼此分开。</p></aside>
+<aside class="side"><div class="brand"><div class="logo" id="brandLogo"><span>🍓</span><img id="brandAvatar" alt="自定义头像"></div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><div id="navScroll" class="nav-scroll"><button class="active" data-page="desk" id="navDesk">🏠 工作台</button><button data-page="orders" id="navOrders">🧾 订单</button><button data-page="schedule" id="navSchedule">🗓️ 排单</button><button data-page="money" id="navMoney">💰 财务</button><button data-page="time" id="navTime">⏱️ 时间</button><button data-page="customers" id="navCustomers" class="hidden">👥 顾客</button><button id="navRenew" type="button">🎟️ 续期</button><button data-page="profile" id="navProfile" class="nav-heart">我的</button><button data-page="settings" id="navSettings">⚙️ 设置</button><div id="customNav" class="custom-nav-wrap"></div></div><div class="nav-bottom"><button id="addSectionBtn" class="custom-nav-add" type="button">＋ 添加分区</button></div></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><div class="note" id="sidebarAccessRemaining" style="margin-top:5px">使用期限：--</div><div class="avatar-actions"><button class="ghost" id="avatarBtn" type="button">🖼️ 自定义头像</button><button class="avatar-reset" id="avatarResetBtn" type="button">恢复草莓头像</button><input id="avatarInput" type="file" accept="image/*" hidden></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。不同账号的数据会彼此分开。</p></aside>
 <main class="main"><div id="accessReadOnlyBanner" class="access-readonly-banner"><div><b>🔒 使用期已结束 · 当前为只读模式</b><div class="meta">你的数据和顾客端都不会消失。现在可以继续查看，但不能新增、修改或删除内容。</div></div><button id="readOnlyRenewBtn" class="primary" type="button">🎟️ 立即续期</button></div><div class="top"><div><h1 id="greet">下午好，创作者！</h1><p id="dateText"></p><div id="topDeadlines" class="top-ddl"></div></div><div class="actions" style="margin-top:0"><a href="./guide.html#artist" target="_blank" rel="noopener" style="min-height:38px;padding:0 13px;border:1px solid var(--line);background:var(--panel);color:var(--rose);border-radius:12px;display:inline-flex;align-items:center;font-size:11px;font-weight:750;text-decoration:none">📖 使用教程</a><button class="primary" id="newBtn">＋ 新增需求</button></div></div>
 <section class="summary"><div class="stat"><span>全部需求</span><b id="sAll">0</b></div><div class="stat"><span>进行中</span><b id="sDoing">0</b></div><div class="stat"><span>已逾期</span><b id="sLate">0</b></div><div class="stat"><span>已完成</span><b id="sDone">0</b></div></section>
 <section id="p-desk" class="panel active"><div class="work">
@@ -125,7 +125,7 @@
     <div class="empty">正在读取顾客…</div>
   </div>
 </div></section>
-<section id="p-profile" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">我的 <span class="theme-heart">♥</span></h2><div class="meta">查看账号资料、使用期限、头像、导航和开发者联系方式。</div>
+<section id="p-profile" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">我的 <span class="theme-heart">♥</span></h2><div class="meta">查看账号资料、头像、导航和开发者联系方式。续期已独立放到左侧「续期」入口。</div>
 <div class="profile-card">
   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
     <div>
@@ -142,7 +142,6 @@
   </div>
   <div class="settings-account-actions">
     <button class="ghost" id="settingsAvatarBtn" type="button">🖼️ 更换头像</button>
-    <button class="ghost" id="settingsRedeemBtn" type="button">🎟️ 使用期 / 续期</button>
     <button class="ghost" id="settingsResetAvatarBtn" type="button">🍓 恢复头像</button>
     <button class="danger" id="settingsLogoutBtn" type="button">退出登录</button>
   </div>
@@ -440,8 +439,8 @@
       <div class="renewal-plan"><b>永久</b><span>永久使用</span></div>
     </div>
     <div class="renewal-contact">
-      需要续期码时请联系开发者 <b>i-Sooong</b>。拿到续期码后直接在这里兑换，不需要连接银行卡。
-      <button id="copyRenewContactBtn" class="copy-mini" type="button" style="display:inline-block;margin-left:5px">复制联系方式</button>
+      需要续期时，请联系代理或 <b>-Lveuoi</b> 获取续期码。获得续期码后可以直接在下方输入；也可以提供 UUID，由管理员直接为账号增加使用时长。
+      <button id="copyRenewContactBtn" class="copy-mini" type="button" style="display:inline-block;margin-left:5px">复制 -Lveuoi</button>
     </div>
   </div>
 
@@ -625,8 +624,9 @@ function applyNavOrder(){
     if(el)navScroll.insertBefore(el,anchor);
   });
   if(settingsBtn)navScroll.insertBefore(settingsBtn,anchor);
-  const customerBtn=$("navCustomers"),profileBtn=$("navProfile");
+  const customerBtn=$("navCustomers"),profileBtn=$("navProfile"),renewBtn=$("navRenew");
   if(customerBtn&&profileBtn)navScroll.insertBefore(customerBtn,profileBtn);
+  if(renewBtn&&profileBtn)navScroll.insertBefore(renewBtn,profileBtn);
 }
 function renderNavOrderSettings(){
   const host=$("navOrderList");
@@ -1380,7 +1380,8 @@ $("createSectionBtn").onclick=createCustomSection;
 $("sectionName").addEventListener("keydown",e=>{if(e.key==="Enter")createCustomSection()});
 $("sectionModalBg").addEventListener("click",e=>{if(e.target===$("sectionModalBg"))closeSectionModal()});
 $("logoutBtn").onclick=()=>supabase.auth.signOut();
-$("redeemOpenBtn").onclick=openRedeemModal;
+$("redeemOpenBtn")?.addEventListener("click",openRedeemModal);
+$("navRenew")?.addEventListener("click",openRedeemModal);
 $("closeRedeemModal").onclick=closeRedeemModal;
 $("cancelRedeemModal").onclick=closeRedeemModal;
 $("redeemModalBtn").onclick=redeemFromModal;
@@ -1390,7 +1391,7 @@ $("installPwaBtn").onclick=installPWA;
 $("enableNotificationsBtn").onclick=enableSystemNotifications;
 $("testNotificationBtn").onclick=testSystemNotification;
 $("settingsAvatarBtn").onclick=()=>$("avatarInput").click();
-$("settingsRedeemBtn").onclick=openRedeemModal;
+$("settingsRedeemBtn")?.addEventListener("click",openRedeemModal);
 $("openChangePasswordBtn").onclick=openChangePasswordModal;
 $("settingsResetPasswordBtn").onclick=sendSettingsPasswordReset;
 $("closeChangePasswordModal").onclick=closeChangePasswordModal;
@@ -1408,7 +1409,7 @@ $("settingsResetAvatarBtn").onclick=()=>{
 };
 $("settingsLogoutBtn").onclick=()=>supabase.auth.signOut();
 $("copyRenewContactBtn").onclick=async()=>{
-  const contact="i-Sooong";
+  const contact="-Lveuoi";
   try{
     await navigator.clipboard.writeText(contact);
     const btn=$("copyRenewContactBtn"),old=btn.textContent;
@@ -2419,7 +2420,7 @@ function setAccessReadOnly(on,status={}){
   $("accessReadOnlyBanner")?.classList.toggle("show",accessReadOnly);
 
   const allowedIds=new Set([
-    "search","logoutBtn","settingsLogoutBtn","redeemOpenBtn","settingsRedeemBtn",
+    "search","logoutBtn","settingsLogoutBtn","redeemOpenBtn","settingsRedeemBtn","navRenew",
     "copyRenewContactBtn",
     "redeemCode","redeemModalBtn","cancelRedeemModal","closeRedeemModal",
     "readOnlyRenewBtn","closeAccessExpiryModal","laterAccessExpiryBtn","renewFromExpiryBtn",
@@ -2467,7 +2468,7 @@ function maybeShowExpiryWarning(status={}){
 function accessReadOnlyControlAllowed(el){
   if(!el)return true;
   const allowedIds=new Set([
-    "search","logoutBtn","settingsLogoutBtn","redeemOpenBtn","settingsRedeemBtn",
+    "search","logoutBtn","settingsLogoutBtn","redeemOpenBtn","settingsRedeemBtn","navRenew",
     "copyRenewContactBtn",
     "redeemCode","redeemModalBtn","cancelRedeemModal","closeRedeemModal",
     "readOnlyRenewBtn","closeAccessExpiryModal","laterAccessExpiryBtn","renewFromExpiryBtn",
