@@ -1,4 +1,4 @@
-const CACHE_NAME = "berry-workbench-pwa-v2";
+const CACHE_NAME = "berry-workbench-pwa-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -46,13 +46,17 @@ self.addEventListener("fetch", event => {
 
   if (req.mode === "navigate") {
     event.respondWith(
-      fetch(req)
+      fetch(req, { cache: "no-store" })
         .then(res => {
           const copy = res.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put("./index.html", copy));
+          caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
           return res;
         })
-        .catch(() => caches.match("./index.html"))
+        .catch(async () => {
+          const exact = await caches.match(req);
+          if (exact) return exact;
+          return caches.match("./index.html");
+        })
     );
     return;
   }
