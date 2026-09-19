@@ -328,6 +328,7 @@
   </div>
   <div class="profile-grid">
     <div class="profile-item"><span>登录邮箱</span><b id="profileEmail">--</b></div>
+    <div class="profile-item"><span>美工编号</span><b id="profileArtistCode">--</b><button id="copyProfileArtistCodeBtn" class="copy-mini" type="button">复制美工编号</button></div>
     <div class="profile-item"><span>剩余使用</span><b id="profileRemaining">--</b></div>
     <div class="profile-item"><span>到期时间</span><b id="profileValidUntil">--</b></div>
     <div class="profile-item"><span>注册时间</span><b id="profileCreatedAt">--</b></div>
@@ -2840,6 +2841,17 @@ $("budgetCustomerSelect").onchange=loadBudgetHistory;
 $("addBudgetBtn").onclick=()=>adjustBudget("add");
 $("subtractBudgetBtn").onclick=()=>adjustBudget("subtract");
 
+$("copyProfileArtistCodeBtn").onclick=async()=>{
+  let code=(currentArtistProfile?.artist_code||$("profileArtistCode")?.textContent||"").trim();
+  if(!code||code==="--"){await loadArtistPortalProfile();code=(currentArtistProfile?.artist_code||"").trim()}
+  if(!code)return;
+  try{
+    await navigator.clipboard.writeText(code);
+    const btn=$("copyProfileArtistCodeBtn"),old=btn.textContent;
+    btn.textContent="已复制 ✓";
+    setTimeout(()=>btn.textContent=old,1000);
+  }catch(_){prompt("复制美工编号：",code)}
+};
 $("copyArtistCodeBtn").onclick=async()=>{
   if(!user)return;
   const code=currentArtistAccessCode;
@@ -3196,6 +3208,7 @@ function renderArtistPortalProfile(profile,accessCode=""){
   const code=currentArtistAccessCode||"--";
   const link=currentArtistAccessCode?customerPageLink(currentArtistAccessCode):"--";
   if($("artistCode"))$("artistCode").textContent=artistCode;
+  if($("profileArtistCode"))$("profileArtistCode").textContent=artistCode;
   if($("artistCustomerAccessCode"))$("artistCustomerAccessCode").textContent=code;
   if($("artistCustomerLink"))$("artistCustomerLink").textContent=link;
   if($("openArtistCustomerPageBtn"))$("openArtistCustomerPageBtn").href=currentArtistAccessCode?link:"./customer.html";
