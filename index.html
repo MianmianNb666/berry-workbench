@@ -185,6 +185,15 @@
     <button id="openBudgetManagerBtn" class="hidden" type="button" aria-hidden="true" tabindex="-1">预算管理</button>
   </div>
   <label style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);cursor:pointer">
+    <input id="artistPrivacyInput" type="checkbox" style="width:auto;margin-top:2px">
+    <span>
+      <b style="display:block;font-size:12px">公开排单</b>
+      <span class="meta" style="display:block;margin-top:3px">开启后显示为「🌷 公开排单」；关闭后显示为「🔒 隐私排单」。</span>
+    </span>
+  </label>
+  <div id="artistPrivacyHint" class="meta" style="margin-top:7px"></div>
+
+  <label style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);cursor:pointer">
     <input id="artistAutoUnbindInput" type="checkbox" style="width:auto;margin-top:2px">
     <span>
       <b style="display:block;font-size:12px">排单结束自动解绑顾客</b>
@@ -2754,6 +2763,26 @@ $("artistChatInput").addEventListener("keydown",e=>{
   if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendArtistChat()}
 });
 
+$("artistPrivacyInput").onchange=async()=>{
+  if(!user||!currentArtistProfile)return;
+  const wanted=$("artistPrivacyInput").checked;
+  $("artistPrivacyHint").textContent="正在保存…";
+  const {data,error}=await supabase.from("artist_profiles")
+    .update({
+      privacy_mode:wanted?"public":"private",
+      updated_at:new Date().toISOString()
+    })
+    .eq("artist_user_id",user.id)
+    .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
+    .single();
+  if(error){
+    console.error(error);
+    $("artistPrivacyInput").checked=!wanted;
+    $("artistPrivacyHint").textContent="保存失败，请稍后重试。";
+    return;
+  }
+  renderArtistPortalProfile(data,currentArtistAccessCode);
+};
 $("artistAutoUnbindInput").onchange=async()=>{
   if(!user)return;
   if(!user||!currentArtistProfile)return;
@@ -2762,7 +2791,7 @@ $("artistAutoUnbindInput").onchange=async()=>{
   const {data,error}=await supabase.from("artist_profiles")
     .update({auto_unbind_on_finish:wanted,updated_at:new Date().toISOString()})
     .eq("artist_user_id",user.id)
-    .select("artist_user_id,artist_code,public_name,auto_unbind_on_finish")
+    .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
     .single();
   if(error){
     console.error(error);
@@ -3170,6 +3199,10 @@ function renderArtistPortalProfile(profile,accessCode=""){
   if($("artistCustomerAccessCode"))$("artistCustomerAccessCode").textContent=code;
   if($("artistCustomerLink"))$("artistCustomerLink").textContent=link;
   if($("openArtistCustomerPageBtn"))$("openArtistCustomerPageBtn").href=currentArtistAccessCode?link:"./customer.html";
+  if($("artistPrivacyInput"))$("artistPrivacyInput").checked=profile?.privacy_mode==="public";
+  if($("artistPrivacyHint"))$("artistPrivacyHint").textContent=profile?.privacy_mode==="public"
+    ?"当前状态：🌷 公开排单"
+    :"当前状态：🔒 隐私排单";
   if($("artistAutoUnbindInput"))$("artistAutoUnbindInput").checked=!!profile?.auto_unbind_on_finish;
   if($("artistAutoUnbindHint"))$("artistAutoUnbindHint").textContent=profile?.auto_unbind_on_finish?"已开启：完成顾客最后一笔关联订单后自动解绑。":"当前关闭：完成订单后仍保留绑定。";
   if($("artistPortalStatus")){
@@ -3181,7 +3214,7 @@ async function loadArtistPortalProfile(){
   if(!user)return;
   try{
     let {data,error}=await supabase.from("artist_profiles")
-      .select("artist_user_id,artist_code,public_name,auto_unbind_on_finish")
+      .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
       .eq("artist_user_id",user.id)
       .maybeSingle();
     if(error)throw error;
@@ -3192,7 +3225,7 @@ async function loadArtistPortalProfile(){
     if(!data){
       const created=await supabase.from("artist_profiles")
         .insert({artist_user_id:user.id,public_name:S.title||"莓桃美工"})
-        .select("artist_user_id,artist_code,public_name,auto_unbind_on_finish")
+        .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
         .single();
       if(created.error)throw created.error;
       data=created.data;
