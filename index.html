@@ -77,7 +77,38 @@
 <aside class="side"><div class="brand"><div class="logo" id="brandLogo"><span>🍓</span><img id="brandAvatar" alt="自定义头像"></div><div><div style="display:flex;gap:5px;align-items:center"><strong id="workspaceTitle">莓桃工作台</strong><button id="rename" style="border:0;background:transparent;color:var(--rose)">✎</button></div><small>接单 · 排单 · 财务</small></div></div><nav class="nav"><div id="navScroll" class="nav-scroll"><button class="active" data-page="desk" id="navDesk">🏠 工作台</button><button data-page="orders" id="navOrders">🧾 订单</button><button data-page="schedule" id="navSchedule">🗓️ 排单</button><button data-page="money" id="navMoney">💰 财务</button><button data-page="time" id="navTime">⏱️ 时间</button><button data-page="customers" id="navCustomers" class="hidden">👥 顾客</button><button data-page="profile" id="navProfile" class="nav-heart">我的</button><button data-page="settings" id="navSettings">⚙️ 设置</button><div id="customNav" class="custom-nav-wrap"></div></div><div class="nav-bottom"><button id="addSectionBtn" class="custom-nav-add" type="button">＋ 添加分区</button></div></nav><div class="accountbox"><div class="note" id="accountEmail">未登录</div><div class="syncdot"><span id="syncDot"></span><span id="syncStatus">等待登录</span></div><div class="note" id="sidebarAccessRemaining" style="margin-top:5px">使用期限：--</div><div class="avatar-actions"><button class="ghost" id="avatarBtn" type="button">🖼️ 自定义头像</button><button class="ghost" id="redeemOpenBtn" type="button">🎟️ 兑换邀请码</button><button class="avatar-reset" id="avatarResetBtn" type="button">恢复草莓头像</button><input id="avatarInput" type="file" accept="image/*" hidden></div><button class="ghost" id="logoutBtn" type="button" style="width:100%;margin-top:8px;display:none">退出登录</button></div><p class="note">登录后自动云同步。不同账号的数据会彼此分开。</p></aside>
 <main class="main"><div id="accessReadOnlyBanner" class="access-readonly-banner"><div><b>🔒 使用期已结束 · 当前为只读模式</b><div class="meta">你的数据和顾客端都不会消失。现在可以继续查看，但不能新增、修改或删除内容。</div></div><button id="readOnlyRenewBtn" class="primary" type="button">🎟️ 立即续期</button></div><div class="top"><div><h1 id="greet">下午好，创作者！</h1><p id="dateText"></p><div id="topDeadlines" class="top-ddl"></div></div><div class="actions" style="margin-top:0"><a href="./guide.html#artist" target="_blank" rel="noopener" style="min-height:38px;padding:0 13px;border:1px solid var(--line);background:var(--panel);color:var(--rose);border-radius:12px;display:inline-flex;align-items:center;font-size:11px;font-weight:750;text-decoration:none">📖 使用教程</a><button class="primary" id="newBtn">＋ 新增需求</button></div></div>
 <section class="summary"><div class="stat"><span>全部需求</span><b id="sAll">0</b></div><div class="stat"><span>进行中</span><b id="sDoing">0</b></div><div class="stat"><span>已逾期</span><b id="sLate">0</b></div><div class="stat"><span>已完成</span><b id="sDone">0</b></div></section>
-<section id="p-desk" class="panel active"><div class="work"><div class="tabs"><button class="chip active" data-filter="全部">全部</button><button class="chip" data-filter="进行中">进行中</button><button class="chip" data-filter="待处理">待处理</button><button class="chip" data-filter="待付款">待付款</button><button class="chip" data-filter="已完成">已完成</button></div><div class="search"><input id="search" placeholder="搜索需求、客户或备注..."></div><div id="deskOrders" class="orders"></div></div></section>
+<section id="p-desk" class="panel active"><div class="work">
+<div id="ownerHomeCard" class="profile-card hidden" style="margin-top:0;margin-bottom:14px">
+  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap">
+    <div>
+      <h2 style="font-size:18px;margin:0">莓桃主页 🍓</h2>
+      <div class="meta" style="margin-top:4px">你的几个入口都放在这里，不用再跑到「我的」里面找。</div>
+    </div>
+    <span class="access-badge">Owner</span>
+  </div>
+  <div class="profile-grid" style="margin-top:12px">
+    <a href="./index.html" style="text-decoration:none;color:inherit" class="profile-item">
+      <span>🏠 工作台</span>
+      <b>当前工作区</b>
+      <div class="meta" style="margin-top:4px">订单、排单、财务和时间记录</div>
+    </a>
+    <button type="button" id="ownerOpenArtistHomeBtn" class="profile-item" style="text-align:left;cursor:pointer;border:1px solid var(--line);font:inherit;color:inherit">
+      <span>🎨 美工台</span>
+      <b>美工功能</b>
+      <div class="meta" style="margin-top:4px">顾客管理、美工资料和专属顾客码</div>
+    </button>
+    <a href="./customer.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit" class="profile-item">
+      <span>👤 顾客台</span>
+      <b>打开顾客端</b>
+      <div class="meta" style="margin-top:4px">查看顾客视角和绑定页面</div>
+    </a>
+    <a href="./admin.html" target="_blank" rel="noopener" style="text-decoration:none;color:inherit" class="profile-item">
+      <span>🧰 管理端</span>
+      <b>Owner 后台</b>
+      <div class="meta" style="margin-top:4px">账号、加时、邀请码和后台备注</div>
+    </a>
+  </div>
+</div><div class="tabs"><button class="chip active" data-filter="全部">全部</button><button class="chip" data-filter="进行中">进行中</button><button class="chip" data-filter="待处理">待处理</button><button class="chip" data-filter="待付款">待付款</button><button class="chip" data-filter="已完成">已完成</button></div><div class="search"><input id="search" placeholder="搜索需求、客户或备注..."></div><div id="deskOrders" class="orders"></div></div></section>
 <section id="p-orders" class="panel"><div class="work"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:17px;margin:0">全部订单</h2><button class="primary" id="newBtn2">＋ 新建订单</button></div><div id="allOrders" class="orders"></div></div></section>
 <section id="p-schedule" class="panel"><div class="work"><h2 style="font-size:17px;margin-top:0">排单表</h2><div id="scheduleList" class="list"></div></div></section>
 <section id="p-money" class="panel"><div class="work"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="font-size:17px;margin:0">财务汇总</h2><div><button class="ghost" id="exportJson">导出备份</button><button class="ghost" id="importBtn">导入备份</button><button class="ghost" id="exportCsv">导出CSV</button><input id="importFile" type="file" accept=".json" hidden></div></div><section class="summary" style="margin-top:12px"><div class="stat"><span>累计收入</span><b id="mTotal">¥0</b></div><div class="stat"><span>已完成收入</span><b id="mDone">¥0</b></div><div class="stat"><span>待收款</span><b id="mWait">¥0</b></div><div class="stat"><span>订单数</span><b id="mNum">0</b></div></section><div id="moneyList" class="list" style="margin-top:12px"></div></div></section>
@@ -129,27 +160,7 @@
     <div class="profile-item"><span>剩余使用</span><b id="profileRemaining">--</b></div>
     <div class="profile-item"><span>到期时间</span><b id="profileValidUntil">--</b></div>
     <div class="profile-item"><span>注册时间</span><b id="profileCreatedAt">--</b></div>
-    <div class="profile-item" style="grid-column:1/-1"><span>UID</span><b id="profileUserId">--</b><button id="copyUserIdBtn" class="copy-mini" type="button">复制 UID</button></div>
-  </div>
-</div>
-<div id="ownerQuickPortalsCard" class="profile-card hidden">
-  <div>
-    <h3 style="font-size:14px;margin:0">我的快捷入口 🚪</h3>
-    <div class="meta" style="margin-top:4px">Owner 账号可以在这里快速切换页面。</div>
-  </div>
-  <div class="actions" style="margin-top:10px">
-    <a href="./index.html" class="ghost" style="text-decoration:none;display:inline-flex;align-items:center">🏠 工作台</a>
-    <a href="./index.html" class="ghost" style="text-decoration:none;display:inline-flex;align-items:center">🎨 美工台</a>
-    <a href="./customer.html" target="_blank" rel="noopener" class="ghost" style="text-decoration:none;display:inline-flex;align-items:center">👤 顾客台</a>
-  </div>
-</div>
-<div id="adminPortalCard" class="profile-card hidden">
-  <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
-    <div>
-      <h3 style="font-size:14px;margin:0">莓桃管理端 🧰</h3>
-      <div class="meta" style="margin-top:4px">Owner 专用后台。可查账号、直接充值使用时间、设为永久，以及生成和管理邀请码。</div>
-    </div>
-    <a href="./admin.html" target="_blank" rel="noopener" style="min-height:34px;padding:0 12px;border:1px solid var(--line);background:var(--panel);color:var(--rose);border-radius:12px;display:inline-flex;align-items:center;font-size:11px;font-weight:750;text-decoration:none">打开管理端</a>
+    <div class="profile-item" style="grid-column:1/-1"><span>UUID</span><b id="profileUserId">--</b><button id="copyUserIdBtn" class="copy-mini" type="button">复制 UUID</button></div>
   </div>
 </div>
 <div id="artistCustomerBetaCard" class="profile-card">
@@ -344,7 +355,7 @@
   </div>
   <div id="artistCustomerBudgetTools" style="margin-top:12px">
     <div class="formgrid">
-      <label>调整金额 ¥<input id="artistCustomerAmountInput" type="number" min="0.01" step="0.01" placeholder="例如：100"></label>
+      <label>调整金额 ¥<input id="artistCustomerAmountInput" type="text" inputmode="decimal" autocomplete="off" placeholder="例如：13+5 或 22+6"><span id="artistCustomerAmountCalc" class="meta" style="display:block;margin-top:5px">可以直接输入算式，系统会自动计算。</span></label>
       <label>明细说明<input id="artistCustomerAmountNoteInput" maxlength="80" placeholder="例如：追加预算 / 海报扣款"></label>
     </div>
     <div class="actions">
@@ -387,7 +398,7 @@
       <b id="budgetCurrentBalance">¥0.00</b>
     </div>
     <div class="formgrid" style="margin-top:10px">
-      <label>调整金额 ¥<input id="budgetAmountInput" type="number" min="0.01" step="0.01" placeholder="例如 100"></label>
+      <label>调整金额 ¥<input id="budgetAmountInput" type="text" inputmode="decimal" autocomplete="off" placeholder="例如：13+5 或 22+6"><span id="budgetAmountCalc" class="meta" style="display:block;margin-top:5px">可以直接输入算式，系统会自动计算。</span></label>
       <label>说明<input id="budgetNoteInput" maxlength="80" placeholder="例如：追加预算 / 海报扣款"></label>
     </div>
     <div class="actions">
@@ -433,8 +444,7 @@ async function applyArtistBetaAccess(){
   const allowed=await isArtistBetaOwner();
   if($("artistCustomerBetaCard"))$("artistCustomerBetaCard").classList.toggle("hidden",!allowed);
   if($("artistCustomerBetaLocked"))$("artistCustomerBetaLocked").classList.toggle("hidden",allowed);
-  if($("adminPortalCard"))$("adminPortalCard").classList.toggle("hidden",!allowed);
-  if($("ownerQuickPortalsCard"))$("ownerQuickPortalsCard").classList.toggle("hidden",!allowed);
+  if($("ownerHomeCard"))$("ownerHomeCard").classList.toggle("hidden",!allowed);
   if($("navCustomers"))$("navCustomers").classList.toggle("hidden",!allowed);
   if(!allowed&&$("p-customers")?.classList.contains("active"))document.querySelector('[data-page="desk"]')?.click();
   return allowed;
@@ -1598,6 +1608,7 @@ async function openArtistCustomerModal(customerId=null){
   $("artistCustomerBalanceValue").textContent=artistCustomerMoney(customer?artistCustomerBalances.get(customer.id)||0:0);
   $("artistCustomerAmountInput").value="";
   $("artistCustomerAmountNoteInput").value="";
+  if($("artistCustomerAmountCalc"))$("artistCustomerAmountCalc").textContent="可以直接输入算式，系统会自动计算。";
   $("artistCustomerModalHint").textContent="";
   $("artistCustomerBalanceHint").textContent="";
   await renderArtistCustomerLedger(customer?.id||null);
@@ -1645,10 +1656,74 @@ async function saveArtistCustomer(){
   }
   setTimeout(closeArtistCustomerModal,450);
 }
+function parseMoneyExpression(value){
+  let s=String(value??"").trim().replace(/，/g,",").replace(/[×xX]/g,"*").replace(/÷/g,"/");
+  if(!s)return NaN;
+  if(!/^[0-9+\-*/().\s]+$/.test(s))return NaN;
+  let i=0;
+  const skip=()=>{while(/\s/.test(s[i]||""))i++};
+  const number=()=>{
+    skip();
+    const start=i;
+    while(/[0-9.]/.test(s[i]||""))i++;
+    const token=s.slice(start,i);
+    if(!token||token==="."||(token.match(/\./g)||[]).length>1)throw new Error("bad number");
+    return Number(token);
+  };
+  const factor=()=>{
+    skip();
+    let sign=1;
+    while(s[i]==="+"||s[i]==="-"){if(s[i]==="-")sign*=-1;i++;skip()}
+    let v;
+    if(s[i]==="("){i++;v=expr();skip();if(s[i]!==")")throw new Error("missing )");i++}
+    else v=number();
+    return sign*v;
+  };
+  const term=()=>{
+    let v=factor();
+    while(true){
+      skip();
+      const op=s[i];
+      if(op!=="*"&&op!=="/")break;
+      i++;
+      const rhs=factor();
+      if(op==="/"&&rhs===0)throw new Error("divide by zero");
+      v=op==="*"?v*rhs:v/rhs;
+    }
+    return v;
+  };
+  const expr=()=>{
+    let v=term();
+    while(true){
+      skip();
+      const op=s[i];
+      if(op!=="+"&&op!=="-")break;
+      i++;
+      const rhs=term();
+      v=op==="+"?v+rhs:v-rhs;
+    }
+    return v;
+  };
+  try{
+    const result=expr();
+    skip();
+    if(i!==s.length||!Number.isFinite(result))return NaN;
+    return Math.round((result+Number.EPSILON)*100)/100;
+  }catch(_){return NaN}
+}
+function updateAmountCalc(inputId,hintId){
+  const input=$(inputId),hint=$(hintId);
+  if(!input||!hint)return;
+  const raw=input.value.trim();
+  if(!raw){hint.textContent="可以直接输入算式，系统会自动计算。";return}
+  const result=parseMoneyExpression(raw);
+  hint.textContent=Number.isFinite(result)?"＝ "+money(result):"算式看不懂，请检查一下。";
+}
+
 async function adjustArtistCustomerBalance(direction){
   if(!user||!editingArtistCustomerId||!(await isArtistBetaOwner()))return;
-  const raw=Number($("artistCustomerAmountInput").value||0);
-  if(!(raw>0)){$("artistCustomerBalanceHint").textContent="请输入大于 0 的金额。";return}
+  const raw=parseMoneyExpression($("artistCustomerAmountInput").value);
+  if(!(raw>0)){$("artistCustomerBalanceHint").textContent="请输入大于 0 的金额或算式。";return}
   const amount=direction==="subtract"?-Math.abs(raw):Math.abs(raw);
   const note=$("artistCustomerAmountNoteInput").value.trim()||(direction==="subtract"?"减少余额":"增加余额");
   $("artistCustomerBalanceHint").textContent="正在保存…";
@@ -1665,6 +1740,7 @@ async function adjustArtistCustomerBalance(direction){
   }
   $("artistCustomerAmountInput").value="";
   $("artistCustomerAmountNoteInput").value="";
+  if($("artistCustomerAmountCalc"))$("artistCustomerAmountCalc").textContent="可以直接输入算式，系统会自动计算。";
   $("artistCustomerBalanceHint").textContent="已记录并同步 ✓";
   await loadArtistCustomers();
   $("artistCustomerBalanceValue").textContent=artistCustomerMoney(artistCustomerBalances.get(editingArtistCustomerId)||0);
@@ -1733,9 +1809,9 @@ async function loadBudgetHistory(){
 async function adjustBudget(direction){
   if(!user)return;
   const customerId=$("budgetCustomerSelect").value;
-  const raw=Number($("budgetAmountInput").value||0);
+  const raw=parseMoneyExpression($("budgetAmountInput").value);
   if(!customerId){$("budgetHint").textContent="请先选择顾客。";return}
-  if(!(raw>0)){$("budgetHint").textContent="请输入大于 0 的金额。";return}
+  if(!(raw>0)){$("budgetHint").textContent="请输入大于 0 的金额或算式。";return}
   const amount=direction==="subtract"?-Math.abs(raw):Math.abs(raw);
   const note=$("budgetNoteInput").value.trim()||(direction==="subtract"?"减少预算":"增加预算");
   $("budgetHint").textContent="正在保存…";
@@ -1752,6 +1828,7 @@ async function adjustBudget(direction){
   }
   $("budgetAmountInput").value="";
   $("budgetNoteInput").value="";
+  if($("budgetAmountCalc"))$("budgetAmountCalc").textContent="可以直接输入算式，系统会自动计算。";
   $("budgetHint").textContent="已同步到顾客端 ✓";
   await loadBudgetCustomers();
 }
@@ -1788,8 +1865,14 @@ $("artistCustomerModalBg").addEventListener("click",e=>{if(e.target===$("artistC
 $("saveArtistCustomerBtn").onclick=saveArtistCustomer;
 $("deleteArtistCustomerBtn").onclick=deleteArtistCustomer;
 $("generateArtistCustomerShareBtn").onclick=generateArtistCustomerShare;
+$("artistCustomerAmountInput").addEventListener("input",()=>updateAmountCalc("artistCustomerAmountInput","artistCustomerAmountCalc"));
+$("budgetAmountInput").addEventListener("input",()=>updateAmountCalc("budgetAmountInput","budgetAmountCalc"));
 $("artistCustomerAddBalanceBtn").onclick=()=>adjustArtistCustomerBalance("add");
 $("artistCustomerSubtractBalanceBtn").onclick=()=>adjustArtistCustomerBalance("subtract");
+$("ownerOpenArtistHomeBtn")?.addEventListener("click",async()=>{
+  if(!(await isArtistBetaOwner()))return;
+  document.querySelector('[data-page="customers"]')?.click();
+});
 $("openCustomersFromProfileBtn").onclick=async()=>{
   if(!(await isArtistBetaOwner()))return;
   document.querySelector('[data-page="customers"]')?.click();
@@ -1845,7 +1928,7 @@ $("copyUserIdBtn").onclick=async()=>{
     btn.textContent="已复制 ✓";
     setTimeout(()=>btn.textContent=old,900);
   }catch(_){
-    prompt("复制这个账号 ID：",user.id);
+    prompt("复制这个 UUID：",user.id);
   }
 };
 
