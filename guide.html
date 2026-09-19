@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>莓桃工作台 · 使用教程</title>
+<meta name="theme-color" content="#fff7fa">
+<style>
+:root{
+  --rose:#d96f94;--deep:#bd5f83;--pink:#ef93b2;--bg:#fff8fb;--panel:#fff;
+  --soft:#fff0f5;--line:#f1cedb;--text:#493a40;--muted:#8f7b83;--good:#5e9c7d;
+  --shadow:0 18px 50px rgba(145,80,105,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#fff8fb 0,#fffdfd 50%,#fff8fb 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.7}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1100px,100%);margin:auto;padding:24px 18px 70px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:48px;height:48px;border-radius:16px;background:var(--soft);display:grid;place-items:center;font-size:26px;border:1px solid var(--line)}
+.brand b{display:block;font-size:18px}.brand small{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{min-height:38px;padding:0 14px;border-radius:12px;border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:750;background:#fff;color:var(--rose)}
+.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--pink),var(--deep))}
+.hero{background:linear-gradient(135deg,#fff,#fff0f5);border:1px solid var(--line);border-radius:26px;padding:25px;box-shadow:var(--shadow)}
+.hero h1{font-size:30px;line-height:1.25;margin:0}.hero p{margin:10px 0 0;color:var(--muted);max-width:800px}
+.quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}
+.quick a{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px}
+.quick b{display:block;font-size:13px}.quick span{font-size:11px;color:var(--muted)}
+.nav{position:sticky;top:8px;z-index:10;margin:16px 0;background:rgba(255,255,255,.90);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:18px;padding:8px;display:flex;gap:7px;overflow:auto;box-shadow:0 8px 30px rgba(130,75,96,.08)}
+.nav a{white-space:nowrap;padding:7px 11px;border-radius:11px;font-size:11px;color:var(--muted)}
+.nav a:hover{background:var(--soft);color:var(--rose)}
+.section{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 8px 30px rgba(130,75,96,.05)}
+.section h2{margin:0 0 6px;font-size:20px}.section>p{margin:0 0 12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.card{border:1px solid var(--line);border-radius:17px;padding:15px;background:linear-gradient(180deg,#fff,#fffbfd)}
+.card h3{margin:0 0 7px;font-size:14px}.card p{margin:0;color:var(--muted);font-size:12px}
+.step{display:grid;grid-template-columns:34px 1fr;gap:12px;padding:13px 0;border-top:1px solid #f7e4eb}
+.step:first-of-type{border-top:0}.num{width:30px;height:30px;border-radius:10px;background:var(--soft);color:var(--rose);display:grid;place-items:center;font-weight:850;font-size:12px}
+.step h3{margin:0 0 3px;font-size:13px}.step p{margin:0;color:var(--muted);font-size:12px}
+.path{background:#443b3f;color:#fff;border-radius:13px;padding:10px 12px;margin-top:7px;font-size:11px;overflow:auto}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;gap:10px;margin-top:14px}
+.flow .node{border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px;text-align:center}.flow .arrow{color:var(--rose);font-size:20px;font-weight:900}
+.tag{display:inline-flex;align-items:center;border-radius:999px;background:var(--soft);color:var(--rose);padding:3px 8px;font-size:10px;font-weight:800}
+.note{border-left:4px solid var(--pink);background:var(--soft);border-radius:12px;padding:11px 13px;font-size:12px;color:#725a64;margin-top:10px}
+.good{border-left-color:#83b79b;background:#f3fbf6}.warn{border-left-color:#d6a460;background:#fff9ef}
+.code-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.code-card{padding:15px;border-radius:17px;border:1px solid var(--line);background:#fff}.code-card code{display:inline-block;margin:6px 0;padding:4px 7px;background:#f7f2f4;border-radius:8px;color:#6e5962}
+.faq details{border-top:1px solid #f6e4ea;padding:12px 0}.faq details:first-of-type{border-top:0}.faq summary{cursor:pointer;font-weight:800;font-size:13px}.faq p{font-size:12px;color:var(--muted);margin:7px 0 0}
+.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:26px}
+@media(max-width:760px){.wrap{padding:14px 10px 50px}.hero{padding:18px;border-radius:21px}.hero h1{font-size:24px}.quick,.grid,.code-grid{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.flow .arrow{transform:rotate(90deg);text-align:center}.section{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="logo">🍓</div>
+      <div><b>莓桃工作台 · 使用教程</b><small>美工端、顾客端、匿名入口全部串起来</small></div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="./index.html">🎨 打开美工端</a>
+      <a class="btn primary" href="./customer.html">👤 打开顾客端</a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <span class="tag">完整使用手册</span>
+    <h1 style="margin-top:9px">从接单，到顾客查看，一条线走到底。</h1>
+    <p>这份教程把美工端和顾客端放在同一套流程里。第一次使用建议先看「3 个东西不要混」和「美工 ↔ 顾客怎么连接」，之后再按自己的身份查对应功能。</p>
+    <div class="quick">
+      <a href="#connect"><b>🔗 美工 ↔ 顾客</b><span>最快搞懂两端怎么连接</span></a>
+      <a href="#artist"><b>🎨 美工端教程</b><span>接单、顾客、余额、提醒、分享</span></a>
+      <a href="#customer"><b>👤 顾客端教程</b><span>登录、多美工、余额、匿名查看</span></a>
+    </div>
+  </section>
+
+  <nav class="nav">
+    <a href="#codes">3种码</a>
+    <a href="#connect">连接流程</a>
+    <a href="#artist">美工端</a>
+    <a href="#customer">顾客端</a>
+    <a href="#anonymous">匿名模式</a>
+    <a href="#balance">余额扣费</a>
+    <a href="#reminders">提醒</a>
+    <a href="#install">安装主屏幕</a>
+    <a href="#expiry">到期续期</a>
+    <a href="#faq">常见问题</a>
+  </nav>
+
+  <section class="section" id="codes">
+    <h2>先分清 3 个东西，不然后面很容易串线 🎟️</h2>
+    <p>它们长得都像“入口”，但用途完全不同。</p>
+    <div class="code-grid">
+      <div class="code-card">
+        <h3>① 美工邀请码</h3>
+        <code>BERRY-...</code>
+        <p>给美工自己注册或续期工作台使用。顾客不需要它。</p>
+      </div>
+      <div class="code-card">
+        <h3>② 美工专属顾客码</h3>
+        <code>GC-...</code>
+        <p>美工发给顾客。顾客注册/登录顾客端后输入它，就能解锁这位美工。一个顾客可以解锁多个美工。</p>
+      </div>
+      <div class="code-card">
+        <h3>③ 匿名链接</h3>
+        <code>customer.html?share=SH-...</code>
+        <p>不用注册、不用登录。正式顾客一人一条长期链接；散客才是一单一条链接。</p>
+      </div>
+    </div>
+    <div class="note warn"><b>最重要：</b>美工邀请码 ≠ 顾客码 ≠ 匿名链接。美工邀请码管“美工能不能用工作台”，顾客码管“顾客账号能不能解锁某位美工”，匿名链接管“无需登录直接看排单”。</div>
+  </section>
+
+  <section class="section" id="connect">
+    <h2>美工 ↔ 顾客到底怎么连接？ 🔗</h2>
+    <p>有 3 种常用场景。选对场景以后，整个系统会很顺。</p>
+
+    <h3 style="font-size:15px;margin:16px 0 8px">场景 A：顾客愿意注册顾客端账号</h3>
+    <div class="flow">
+      <div class="node"><b>美工</b><br><small>复制专属 GC 顾客码</small></div><div class="arrow">→</div>
+      <div class="node"><b>顾客</b><br><small>注册/登录并输入 GC 码</small></div><div class="arrow">→</div>
+      <div class="node"><b>系统</b><br><small>建立美工与顾客的授权关系</small></div>
+    </div>
+    <div class="step"><div class="num">1</div><div><h3>美工找到顾客码</h3><p>进入「我的 → 顾客端」，复制“专属顾客码”或“顾客入口”。</p><div class="path">美工端 → 我的 → 顾客端 → 复制顾客码</div></div></div>
+    <div class="step"><div class="num">2</div><div><h3>顾客注册或登录</h3><p>第一次注册必须带至少一位美工的 GC 码。已经有顾客账号时，进入「我的 → 添加美工」输入新的 GC 码即可。</p><div class="path">顾客端 → 我的 → ＋ 添加美工 → 输入 GC-...</div></div></div>
+    <div class="step"><div class="num">3</div><div><h3>一位顾客可以连接多个美工</h3><p>每位美工都需要各自的 GC 码。拿到 A 的码只会解锁 A，不会看到 B。</p></div></div>
+    <div class="note good"><b>推荐：</b>如果这个顾客确定要用“登录顾客端”，最好先让她用 GC 码完成绑定。系统会出现对应的已绑定顾客档案，美工再去改昵称、备注、余额，会比较干净。</div>
+
+    <h3 style="font-size:15px;margin:18px 0 8px">场景 B：正式顾客，但她不想注册账号</h3>
+    <div class="flow">
+      <div class="node"><b>美工</b><br><small>添加顾客档案</small></div><div class="arrow">→</div>
+      <div class="node"><b>系统</b><br><small>生成这个顾客固定匿名链接</small></div><div class="arrow">→</div>
+      <div class="node"><b>顾客</b><br><small>一直用同一条链接查看</small></div>
+    </div>
+    <p class="note">以后美工新增订单时，只要在「用户 / 顾客」选择这个人，新订单就会自动出现在她原来的匿名链接里，不需要重新发链接。</p>
+
+    <h3 style="font-size:15px;margin:18px 0 8px">场景 C：真正的散客，只做这一单</h3>
+    <div class="flow">
+      <div class="node"><b>新建订单</b><br><small>选择“散客 / 不关联用户”</small></div><div class="arrow">→</div>
+      <div class="node"><b>订单卡</b><br><small>点“散客订单链接”</small></div><div class="arrow">→</div>
+      <div class="node"><b>顾客</b><br><small>只看到这一单</small></div>
+    </div>
+  </section>
+
+  <section class="section" id="artist">
+    <h2>美工端详细教程 🎨</h2>
+    <p>从第一次注册到完整接单流程。</p>
+
+    <div class="grid">
+      <div class="card"><h3>第一次注册</h3><p>输入邮箱、密码和美工邀请码。邀请码只在第一次注册需要。之后正常登录不需要邀请码。</p></div>
+      <div class="card"><h3>续期</h3><p>使用期快到时会提前两天弹窗提醒。到期后数据不会删除，但美工端会进入只读模式。</p></div>
+    </div>
+
+    <div class="step"><div class="num">1</div><div><h3>先建立正式顾客</h3><p>进入「顾客」页面，点“＋ 添加顾客”。可以设置顾客昵称、内部备注、关联顾客端账号和余额。</p><div class="path">美工端 → 顾客 → ＋ 添加顾客</div></div></div>
+    <div class="step"><div class="num">2</div><div><h3>给顾客充值 / 加预算</h3><p>进入顾客管理，填写“调整金额”和说明，点击“增加余额”。每一笔都会形成流水，不会覆盖历史。</p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>新建需求 / 订单</h3><p>点击“新增需求”。填写需求名称、金额、状态、日期、分类、进度和备注。如果是已有顾客，在“用户 / 顾客”里直接选她；如果是一锤子买卖，选“散客 / 不关联用户”。</p></div></div>
+    <div class="step"><div class="num">4</div><div><h3>保存订单时直接扣顾客余额</h3><p>选择正式顾客后，“保存订单时直接扣除本单金额”会自动可用。系统会显示扣费后余额。如果余额不足，会拦住，不会让余额直接变成负数。</p></div></div>
+    <div class="step"><div class="num">5</div><div><h3>分享给顾客</h3><p>正式顾客使用固定的“顾客匿名链接”；散客使用“散客订单链接”。如果顾客有账号，也可以让她用 GC 顾客码登录顾客端。</p></div></div>
+    <div class="step"><div class="num">6</div><div><h3>更新进度</h3><p>订单状态可切换为“待处理 / 进行中 / 待付款 / 已完成”。顾客查看端读取的是公开进度信息，不会把你的内部备注和工作台原始数据暴露出去。</p></div></div>
+    <div class="step"><div class="num">7</div><div><h3>DDL 与系统通知</h3><p>订单可以设置提前 1 天、提前 3 小时或自定义提醒。手机安装到主屏幕后允许通知，提醒体验最好。</p></div></div>
+    <div class="step"><div class="num">8</div><div><h3>个性化</h3><p>可以改应用名称、通知名称、头像、应用图标、导航名称、导航排序、显示风格和主题颜色。设置会跟随账号同步。</p></div></div>
+  </section>
+
+  <section class="section" id="customer">
+    <h2>顾客端详细教程 👤</h2>
+    <p>顾客可以选择“登录账号模式”或“匿名链接模式”。</p>
+
+    <h3 style="font-size:15px;margin:14px 0 5px">登录账号模式</h3>
+    <div class="step"><div class="num">1</div><div><h3>第一次注册</h3><p>输入邮箱、密码和美工发来的 GC 顾客码。没有顾客码不能注册进入对应美工。</p></div></div>
+    <div class="step"><div class="num">2</div><div><h3>添加第二位、第三位美工</h3><p>一个顾客账号可以对应多个美工。进入「我的 → ＋ 添加美工」，输入另一位美工自己的 GC 码即可。</p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>查看不同美工</h3><p>「我的美工」会把已解锁的美工分别列出来。余额、排单和后续订单都按美工分开，不会串账。</p></div></div>
+    <div class="step"><div class="num">4</div><div><h3>查看余额明细</h3><p>如果美工为顾客建立了余额账本，顾客可以看到当前余额和每一笔增加 / 扣费记录，但不能自己修改。</p></div></div>
+    <div class="step"><div class="num">5</div><div><h3>自定义顾客端</h3><p>设置里可以改主色、背景、卡片、文字颜色，也可以把“我的排单”旁边的小草莓 🍓 换成自己的 emoji。</p></div></div>
+
+    <h3 style="font-size:15px;margin:18px 0 5px">匿名链接模式</h3>
+    <p class="note good">不需要邮箱、不需要密码、不需要注册。打开美工发来的匿名链接就能看。正式顾客用一条长期链接，散客只看对应的单笔订单。</p>
+  </section>
+
+  <section class="section" id="anonymous">
+    <h2>匿名入口到底会显示什么？ 🔐</h2>
+    <div class="grid">
+      <div class="card"><h3>会显示</h3><p>美工名称、顾客昵称、订单名称、分类、状态、完成进度、开始日期、截止日期和更新时间。</p></div>
+      <div class="card"><h3>不会显示</h3><p>订单金额、顾客余额、联系方式、美工内部备注、其他顾客的订单、完整工作台 JSON 数据。</p></div>
+    </div>
+    <div class="note">匿名链接本身就是“钥匙”。不要发到公开群里。如果以后需要做“失效 / 重置匿名链接”，可以在顾客管理里再加撤销功能。</div>
+  </section>
+
+  <section class="section" id="balance">
+    <h2>余额和订单扣费 💰</h2>
+    <div class="step"><div class="num">1</div><div><h3>先给顾客余额</h3><p>顾客管理里增加余额，例如 +¥300，并填写“预存 / 充值”等说明。</p></div></div>
+    <div class="step"><div class="num">2</div><div><h3>新单选择顾客</h3><p>新建订单时选择这个正式顾客，系统会显示她现在还有多少余额。</p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>保存时自动扣费</h3><p>订单 ¥80，余额 ¥300，保存后会自动记一笔 -¥80 流水，剩余 ¥220。</p></div></div>
+    <div class="step"><div class="num">4</div><div><h3>删除已扣费订单</h3><p>系统会提醒“删除订单不会自动退款”。这样可以避免误删订单导致账本自己倒流。</p></div></div>
+  </section>
+
+  <section class="section" id="reminders">
+    <h2>DDL 提醒和通知 🔔</h2>
+    <div class="grid">
+      <div class="card"><h3>订单提醒</h3><p>可以同时开启提前 1 天、提前 3 小时、自定义提醒。系统会按你设置的时间推送。</p></div>
+      <div class="card"><h3>收不到通知怎么办</h3><p>先确认已经把工作台安装到主屏幕，再确认浏览器 / 系统通知权限允许。Android 还需要检查电池优化有没有限制 Chrome 或工作台。</p></div>
+    </div>
+  </section>
+
+  <section class="section" id="install">
+    <h2>安装到手机主屏幕 📲</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>iPhone / iPad</h3>
+        <p>1. 用 Safari 打开工作台。<br>2. 点底部“分享”。<br>3. 往下找到“添加到主屏幕”。<br>4. 确认名称后添加。<br>5. 以后从桌面图标打开，再去设置里开启系统通知。</p>
+      </div>
+      <div class="card">
+        <h3>Android</h3>
+        <p>1. 建议用 Chrome 打开。<br>2. 点右上角菜单。<br>3. 选择“安装应用”或“添加到主屏幕”。<br>4. 从桌面图标重新打开。<br>5. 允许通知；如果提醒迟到，再检查电池优化。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="expiry">
+    <h2>美工使用期到期会发生什么？ ⏳</h2>
+    <div class="grid">
+      <div class="card"><h3>不会发生的事</h3><p>不会删除数据，不会把顾客踢掉，不会让已经生成的顾客匿名链接失效。</p></div>
+      <div class="card"><h3>会发生的事</h3><p>美工端进入只读模式。还可以登录和查看历史内容，但不能新增、修改、删除、扣余额或生成新的链接。</p></div>
+    </div>
+    <div class="note good">续期成功后会恢复编辑权限。到期前 48 小时内，系统会弹窗提醒续期。</div>
+  </section>
+
+  <section class="section faq" id="faq">
+    <h2>常见问题 🧩</h2>
+    <details open><summary>顾客一定要注册账号吗？</summary><p>不用。正式顾客可以只用自己的固定匿名链接。注册账号的好处是一个账号可以统一管理多个美工。</p></details>
+    <details><summary>一个顾客能绑定多个美工吗？</summary><p>可以。每位美工需要单独的 GC 顾客码。不同美工的余额和数据是分开的。</p></details>
+    <details><summary>正式顾客每个订单都要重新发链接吗？</summary><p>不用。她只有一条固定匿名链接。以后新订单只要关联到她，就会自动出现。</p></details>
+    <details><summary>什么时候才需要“一单一链接”？</summary><p>只有散客。新增订单时选“散客 / 不关联用户”，这笔单才使用独立的散客订单链接。</p></details>
+    <details><summary>顾客能看到美工内部备注吗？</summary><p>匿名查看不会。公开读取只返回清洗后的订单字段。</p></details>
+    <details><summary>美工到期后顾客还能看吗？</summary><p>可以。已有的顾客端关系和匿名链接继续有效，美工端只是不能继续写入。</p></details>
+    <details><summary>遇到问题找谁？</summary><p>开发者联系：<b>i-Sooong</b>。美工端和顾客端设置里都可以直接复制。</p></details>
+  </section>
+
+  <div class="footer">🍓 莓桃工作台 · 使用教程 · 开发者联系 i-Sooong</div>
+</div>
+</body>
+</html>
