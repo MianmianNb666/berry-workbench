@@ -742,6 +742,9 @@ document.querySelectorAll(".tab").forEach(btn=>btn.onclick=()=>{
 });
 syncInviteForm();
 await checkOwner();
+setInterval(()=>{
+  if($("panel-capacity")?.classList.contains("active"))loadCapacity();
+},30000);
 supabase.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT")location.reload()});
 </script>
 </body>
