@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fff7fa">
+<title>莓桃顾客端</title>
+<style>
+:root{--rose:#e9789d;--rose2:#f4a7bf;--bg:#fff8fb;--panel:#fff;--soft:#fff0f5;--line:#f2dce4;--text:#45383d;--muted:#927d85;--ok:#5d9b72;--warn:#c89542;--danger:#c95e69}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:var(--text);background:linear-gradient(180deg,#fff7fa,#fffdfd)}
+button,input{font:inherit}button{cursor:pointer}
+.wrap{width:min(980px,100%);margin:0 auto;padding:18px 16px 44px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:10px}.logo{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;background:var(--soft);border:1px solid var(--line);font-size:22px}.brand b{display:block;font-size:16px}.brand small{color:var(--muted);font-size:10px}
+.linkbtn,.ghost,.primary,.danger{border-radius:13px;min-height:40px;padding:0 14px;font-weight:800;border:1px solid var(--line);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.linkbtn,.ghost{background:var(--panel);color:var(--text)}.primary{background:var(--rose);border-color:var(--rose);color:white}.danger{background:#fff3f4;color:var(--danger);border-color:#f3cdd1}
+.hero{padding:22px;border:1px solid var(--line);background:rgba(255,255,255,.84);border-radius:24px;box-shadow:0 18px 55px rgba(125,76,95,.08)}
+.hero h1{font-size:25px;margin:0}.hero p{color:var(--muted);font-size:12px;line-height:1.7;margin:8px 0 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px}.card h2,.card h3{margin:0}.card h2{font-size:17px}.card h3{font-size:14px}.meta{color:var(--muted);font-size:11px;line-height:1.6}.stack{display:grid;gap:9px;margin-top:12px}
+input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:0 12px;color:var(--text);outline:none}input:focus{border-color:var(--rose2);box-shadow:0 0 0 3px rgba(233,120,157,.10)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.actions>*{flex:1 1 120px}
+.artist-list{display:grid;gap:10px;margin-top:12px}.artist{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}.artist-main{min-width:0}.artist-name{font-weight:850}.code{font-size:10px;color:var(--muted);margin-top:4px}.artist-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.artist-actions button,.artist-actions a{min-height:34px;padding:0 10px;font-size:11px}
+.badge{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;background:var(--soft);color:var(--rose)}.badge.private{background:#f4f1f2;color:#76666c}
+.empty{padding:20px;border:1px dashed var(--line);border-radius:16px;text-align:center;color:var(--muted);font-size:12px;background:#fffbfd}
+.authbg{position:fixed;inset:0;z-index:50;background:rgba(255,247,250,.95);backdrop-filter:blur(10px);display:grid;place-items:center;padding:18px}.authbg.hidden{display:none}.authcard{width:min(430px,100%);max-height:calc(100dvh - 28px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 25px 70px rgba(125,76,95,.14)}
+.portal-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}.portal-switch a,.portal-switch span{display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:10px;font-size:12px;font-weight:800;text-decoration:none;color:var(--muted)}.portal-switch .active{background:var(--panel);color:var(--rose);box-shadow:0 3px 10px rgba(125,76,95,.08)}
+.authcard h2{font-size:22px;color:var(--rose);margin:0}.authcard p{font-size:12px;line-height:1.65;color:var(--muted)}.authcard label{display:block;font-size:11px;color:var(--muted);margin-top:10px}.authactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.authhint{min-height:20px;margin-top:10px;color:var(--rose);font-size:11px;line-height:1.5}.authlink{border:0;background:transparent;color:var(--rose);padding:10px 0 0;text-decoration:underline;text-underline-offset:3px;font-size:12px}
+.lookup{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}.lookup-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}.hidden{display:none!important}
+.artist-page{margin-top:14px}.artist-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.schedule{margin-top:12px}
+@media(max-width:680px){.wrap{padding:12px 10px 34px}.grid{grid-template-columns:1fr}.hero{padding:17px;border-radius:20px}.hero h1{font-size:22px}.topbar{align-items:flex-start}.artist{align-items:flex-start;flex-direction:column}.artist-actions{width:100%;justify-content:stretch}.artist-actions>*{flex:1}.lookup-row{grid-template-columns:1fr}.lookup-row button{width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="topbar">
+    <div class="brand"><div class="logo">🍓</div><div><b>莓桃顾客端</b><small>查看自己的排单与进度</small></div></div>
+    <div style="display:flex;gap:8px;align-items:center"><a class="linkbtn" href="./index.html">🎨 美工端</a><button class="ghost hidden" id="logoutBtn">退出</button></div>
+  </div>
+
+  <div id="dashboard">
+    <section class="hero">
+      <h1>我的排单 🍓</h1>
+      <p id="welcomeText">登录后可以绑定多个美工，在一个页面查看自己在不同美工那里的排单。</p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>我的美工</h2>
+        <div class="meta">绑定后会一直保留，不需要每次重新输入编号。</div>
+        <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
+      </section>
+      <section class="card">
+        <h2>＋ 添加美工</h2>
+        <div class="meta">输入美工发给你的编号，例如 MT-12AB34CD56。</div>
+        <div class="stack">
+          <input id="bindCode" autocomplete="off" autocapitalize="characters" placeholder="输入美工编号">
+          <button class="primary" id="bindBtn">绑定美工</button>
+          <div id="bindHint" class="authhint"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section id="artistPage" class="artist-page hidden">
+    <button class="ghost" id="backBtn">← 返回我的美工</button>
+    <div class="card" style="margin-top:10px">
+      <div class="artist-head">
+        <div><h2 id="artistPageName">美工排单</h2><div class="meta" id="artistPageCode"></div></div>
+        <span class="badge" id="artistPrivacyBadge">排单</span>
+      </div>
+      <div id="scheduleList" class="schedule"><div class="empty">暂无可查看的排单。</div></div>
+    </div>
+  </section>
+</div>
+
+<div id="authGate" class="authbg">
+  <div class="authcard">
+    <div class="portal-switch"><a href="./index.html">🎨 美工端</a><span class="active">👤 顾客端</span></div>
+    <div id="loginView">
+      <h2>登录顾客端</h2>
+      <p>登录后可以绑定多个美工，并查看属于自己的排单。顾客账号注册不需要邀请码。</p>
+      <form id="authForm">
+        <label>邮箱<input id="email" type="email" autocomplete="username" placeholder="name@example.com"></label>
+        <label>密码<input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"></label>
+        <div class="authactions">
+          <button class="primary" type="submit">登录</button>
+          <button class="ghost" id="signupBtn" type="button">第一次使用 · 注册</button>
+        </div>
+      </form>
+      <button class="authlink" id="forgotBtn" type="button">忘记密码？发送重置邮件</button>
+      <div id="authHint" class="authhint">正在连接云端…</div>
+      <div class="lookup">
+        <b style="font-size:13px">不登录也可以查看美工公开排单</b>
+        <div class="meta" style="margin-top:3px">输入美工编号，直接进入她的个人排单链接。</div>
+        <div class="lookup-row"><input id="lookupCode" autocomplete="off" autocapitalize="characters" placeholder="MT-XXXXXXXXXX"><button class="ghost" id="lookupBtn" type="button">查看排单</button></div>
+      </div>
+    </div>
+    <div id="resetView" class="hidden">
+      <h2>设置新密码</h2>
+      <p>输入新的顾客端密码。</p>
+      <label>新密码<input id="newPassword" type="password" minlength="6" autocomplete="new-password"></label>
+      <label>再次输入<input id="newPassword2" type="password" minlength="6" autocomplete="new-password"></label>
+      <button class="primary" id="savePasswordBtn" type="button" style="width:100%;margin-top:12px">保存新密码</button>
+      <div id="resetHint" class="authhint"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+const SUPABASE_URL="https://cwzeknrjetwbczqgmdit.supabase.co";
+const SUPABASE_KEY="sb_publishable_kI3ZY_VCFSHIn1sVm1xJ1Q_b9zZAGV2";
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const normCode=v=>String(v||"").trim().toUpperCase();
+let user=null;
+
+function openArtist(code){
+  const c=normCode(code);
+  if(!c)return;
+  const u=new URL(location.href);
+  u.searchParams.set("artist",c);
+  location.href=u.href;
+}
+$("lookupBtn").onclick=()=>openArtist($("lookupCode").value);
+$("lookupCode").addEventListener("keydown",e=>{if(e.key==="Enter")openArtist(e.currentTarget.value)});
+$("backBtn").onclick=()=>{const u=new URL(location.href);u.searchParams.delete("artist");location.href=u.pathname+u.search};
+
+async function ensureCustomerRole(){
+  if(!user)return;
+  const {error}=await supabase.from("user_roles").upsert({user_id:user.id,role:"customer"},{onConflict:"user_id,role"});
+  if(error)console.warn("customer role:",error.message);
+}
+
+async function loadArtistPublic(code){
+  $("dashboard").classList.add("hidden");
+  $("artistPage").classList.remove("hidden");
+  $("artistPageName").textContent="正在读取美工…";
+  $("artistPageCode").textContent=code;
+  const {data,error}=await supabase.from("artist_profiles")
+    .select("artist_user_id,artist_code,public_name,privacy_mode")
+    .eq("artist_code",code).maybeSingle();
+  if(error){
+    $("artistPageName").textContent="暂时无法读取";
+    $("scheduleList").innerHTML='<div class="empty">顾客端数据库还没有初始化，或暂时连接失败。</div>';
+    return;
+  }
+  if(!data){
+    $("artistPageName").textContent="没有找到这个美工";
+    $("scheduleList").innerHTML='<div class="empty">请检查美工编号是否输入正确。</div>';
+    return;
+  }
+  $("artistPageName").textContent=data.public_name||"莓桃美工";
+  $("artistPageCode").textContent="美工编号："+data.artist_code;
+  const badge=$("artistPrivacyBadge");
+  badge.className="badge "+(data.privacy_mode==="private"?"private":"");
+  badge.textContent=data.privacy_mode==="private"?"🔒 隐私排单":"🌷 公开排单";
+  $("scheduleList").innerHTML='<div class="empty">暂无可查看的排单。</div>';
+}
+
+async function loadBindings(){
+  if(!user)return;
+  $("artistList").innerHTML='<div class="empty">正在读取…</div>';
+  const {data:bindings,error}=await supabase.from("customer_artist_bindings")
+    .select("artist_user_id,created_at")
+    .eq("customer_user_id",user.id)
+    .order("created_at",{ascending:true});
+  if(error){
+    $("artistList").innerHTML='<div class="empty">顾客端数据库还没有初始化，暂时无法读取绑定。</div>';
+    return;
+  }
+  const ids=(bindings||[]).map(x=>x.artist_user_id);
+  if(!ids.length){
+    $("artistList").innerHTML='<div class="empty">还没有绑定美工。拿到美工编号后，在右边添加就可以啦 🍓</div>';
+    return;
+  }
+  const {data:artists,error:aerr}=await supabase.from("artist_profiles")
+    .select("artist_user_id,artist_code,public_name,privacy_mode")
+    .in("artist_user_id",ids);
+  if(aerr){
+    $("artistList").innerHTML='<div class="empty">读取美工资料失败，请稍后刷新。</div>';
+    return;
+  }
+  const map=new Map((artists||[]).map(a=>[a.artist_user_id,a]));
+  $("artistList").innerHTML=ids.map(id=>{
+    const a=map.get(id);
+    if(!a)return "";
+    return '<div class="artist"><div class="artist-main"><div class="artist-name">'+esc(a.public_name||"莓桃美工")+'</div><div class="code">'+esc(a.artist_code)+'</div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(a.artist_code)+'">查看排单</a><button class="danger" data-unbind="'+esc(id)+'">移除</button></div></div>';
+  }).join("")||'<div class="empty">暂无美工资料。</div>';
+  document.querySelectorAll("[data-unbind]").forEach(btn=>btn.onclick=async()=>{
+    if(!confirm("确定从“我的美工”里移除吗？"))return;
+    const {error}=await supabase.from("customer_artist_bindings").delete()
+      .eq("customer_user_id",user.id).eq("artist_user_id",btn.dataset.unbind);
+    if(error)alert("移除失败："+error.message); else loadBindings();
+  });
+}
+
+async function bindArtist(){
+  if(!user)return;
+  const code=normCode($("bindCode").value);
+  if(!code){$("bindHint").textContent="请输入美工编号。";return}
+  $("bindHint").textContent="正在查找…";
+  const {data:artist,error}=await supabase.from("artist_profiles")
+    .select("artist_user_id,artist_code,public_name")
+    .eq("artist_code",code).maybeSingle();
+  if(error){$("bindHint").textContent="暂时无法查询，请确认顾客端数据库已经初始化。";return}
+  if(!artist){$("bindHint").textContent="没有找到这个美工，请检查编号。";return}
+  if(artist.artist_user_id===user.id){$("bindHint").textContent="不能把自己的美工账号绑定成自己的美工。";return}
+  const {error:bindError}=await supabase.from("customer_artist_bindings").insert({
+    customer_user_id:user.id,artist_user_id:artist.artist_user_id
+  });
+  if(bindError){
+    if((bindError.code||"")==="23505")$("bindHint").textContent="这个美工已经绑定过啦。";
+    else $("bindHint").textContent="绑定失败："+bindError.message;
+    return;
+  }
+  $("bindCode").value="";
+  $("bindHint").textContent="✅ 已绑定 "+(artist.public_name||"这个美工");
+  loadBindings();
+}
+$("bindBtn").onclick=bindArtist;
+$("bindCode").addEventListener("keydown",e=>{if(e.key==="Enter")bindArtist()});
+
+async function login(){
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||password.length<6){$("authHint").textContent="请输入邮箱和至少 6 位密码。";return}
+  $("authHint").textContent="正在登录…";
+  const {error}=await supabase.auth.signInWithPassword({email,password});
+  $("authHint").textContent=error?"登录失败："+error.message:"登录成功…";
+}
+async function signup(){
+  const email=$("email").value.trim(),password=$("password").value;
+  if(!email||password.length<6){$("authHint").textContent="请输入邮箱和至少 6 位密码。";return}
+  $("authHint").textContent="正在注册顾客账号…";
+  const redirectTo=location.origin+location.pathname;
+  const {data,error}=await supabase.auth.signUp({
+    email,password,
+    options:{emailRedirectTo:redirectTo,data:{account_role:"customer"}}
+  });
+  if(error){
+    $("authHint").textContent="注册失败："+error.message;
+    return;
+  }
+  $("authHint").textContent=data.session?"注册成功，正在进入顾客端…":"注册成功，请按邮箱提示完成验证。";
+}
+async function forgot(){
+  const email=$("email").value.trim();
+  if(!email){$("authHint").textContent="先填写邮箱。";return}
+  $("authHint").textContent="正在发送重置邮件…";
+  const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+  $("authHint").textContent=error?"发送失败："+error.message:"重置邮件已发送。";
+}
+async function savePassword(){
+  const a=$("newPassword").value,b=$("newPassword2").value;
+  if(a.length<6){$("resetHint").textContent="新密码至少 6 位。";return}
+  if(a!==b){$("resetHint").textContent="两次密码不一致。";return}
+  const {error}=await supabase.auth.updateUser({password:a});
+  $("resetHint").textContent=error?"修改失败："+error.message:"密码修改成功。";
+  if(!error)setTimeout(()=>{ $("resetView").classList.add("hidden");$("loginView").classList.remove("hidden");$("authGate").classList.add("hidden"); },500);
+}
+$("authForm").onsubmit=e=>{e.preventDefault();login()};
+$("signupBtn").onclick=signup;$("forgotBtn").onclick=forgot;$("savePasswordBtn").onclick=savePassword;
+$("logoutBtn").onclick=()=>supabase.auth.signOut();
+
+async function applySession(session){
+  user=session?.user||null;
+  const artistCode=normCode(new URL(location.href).searchParams.get("artist"));
+  if(user){
+    $("authGate").classList.add("hidden");
+    $("logoutBtn").classList.remove("hidden");
+    $("welcomeText").textContent=(user.email||"顾客")+" · 可以同时绑定多个美工查看自己的排单。";
+    await ensureCustomerRole();
+    if(artistCode)await loadArtistPublic(artistCode); else await loadBindings();
+  }else{
+    $("logoutBtn").classList.add("hidden");
+    if(artistCode){
+      $("authGate").classList.add("hidden");
+      await loadArtistPublic(artistCode);
+    }else{
+      $("authGate").classList.remove("hidden");
+      $("authHint").textContent="";
+    }
+  }
+}
+
+const {data:{session}}=await supabase.auth.getSession();
+await applySession(session);
+supabase.auth.onAuthStateChange(async(event,session)=>{
+  if(event==="PASSWORD_RECOVERY"){
+    user=session?.user||null;
+    $("loginView").classList.add("hidden");$("resetView").classList.remove("hidden");$("authGate").classList.remove("hidden");
+    return;
+  }
+  if(["SIGNED_IN","SIGNED_OUT","TOKEN_REFRESHED"].includes(event))await applySession(session);
+});
+</script>
+</body>
+</html>
