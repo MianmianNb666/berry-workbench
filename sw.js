@@ -1,9 +1,11 @@
-const CACHE_NAME = "berry-workbench-pwa-v1";
+const CACHE_NAME = "berry-workbench-pwa-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon.svg",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", event => {
@@ -28,6 +30,19 @@ self.addEventListener("fetch", event => {
 
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
+
+  if (url.pathname.endsWith("/manifest.webmanifest") || url.pathname.endsWith("/icon-192.png") || url.pathname.endsWith("/icon-512.png") || url.pathname.endsWith("/icon.svg")) {
+    event.respondWith(
+      fetch(req)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
 
   if (req.mode === "navigate") {
     event.respondWith(
