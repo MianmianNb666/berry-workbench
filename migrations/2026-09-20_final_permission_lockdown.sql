@@ -1485,7 +1485,7 @@ language sql
 stable
 security definer
 set search_path = public, auth
-as $
+as $$
   select
     f.id as relation_id,
     case
@@ -1541,7 +1541,7 @@ as $
       else 2
     end,
     f.created_at desc;
-$;
+$$;
 
 revoke all on function public.artist_list_friendships() from public, anon;
 grant execute on function public.artist_list_friendships() to authenticated;
@@ -1563,7 +1563,7 @@ language sql
 stable
 security definer
 set search_path = public, auth
-as $
+as $$
   with friends as (
     select
       case
@@ -1627,7 +1627,7 @@ as $
       and m.read_at is null
   ) uc on true
   order by lm.created_at desc nulls last, artist_name;
-$;
+$$;
 
 revoke all on function public.artist_list_friend_conversations() from public, anon;
 grant execute on function public.artist_list_friend_conversations() to authenticated;
@@ -1640,7 +1640,7 @@ returns integer
 language plpgsql
 security definer
 set search_path = public, auth
-as $
+as $$
 declare
   v_count integer;
 begin
@@ -1685,7 +1685,7 @@ begin
   get diagnostics v_count = row_count;
   return v_count;
 end;
-$;
+$$;
 
 revoke all on function public.artist_mark_friend_messages_read(uuid) from public, anon;
 grant execute on function public.artist_mark_friend_messages_read(uuid) to authenticated;
