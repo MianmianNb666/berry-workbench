@@ -4,9 +4,10 @@
 --
 -- 设计：
 -- 1) 美工可以先手动建立顾客档案，不要求顾客已经注册。
--- 2) 顾客注册并绑定美工后，可把顾客档案关联到她的顾客端账号。
--- 3) 余额采用“流水账”方式增加 / 减少，不直接覆盖历史。
--- 4) 顾客端只读取与自己账号关联的档案与流水。
+-- 2) 每个美工有自己的专属顾客码；顾客必须持有该码才能解锁该美工。
+-- 3) 一个顾客账号可以凭不同顾客码解锁多个美工，各美工数据彼此隔离。
+-- 4) 余额采用“流水账”方式增加 / 减少，不直接覆盖历史。
+-- 5) 顾客端只读取已通过顾客码授权的美工档案与流水。
 
 begin;
 
@@ -14,7 +15,7 @@ create extension if not exists pgcrypto;
 
 
 -- =========================================================
--- A0. 顾客码：一个美工一个码；顾客账号只能绑定一个美工
+-- A0. 顾客码：一个美工一个码；顾客账号可凭不同美工码解锁多个美工
 -- =========================================================
 create table if not exists public.artist_customer_access_codes (
   artist_user_id uuid primary key references auth.users(id) on delete cascade,
@@ -48,10 +49,19 @@ on conflict (artist_user_id) do nothing;
 
 
 create table if not exists public.customer_portal_access (
-  customer_user_id uuid primary key references auth.users(id) on delete cascade,
+  customer_user_id uuid not null references auth.users(id) on delete cascade,
   artist_user_id uuid not null references auth.users(id) on delete cascade,
   granted_at timestamptz not null default now()
 );
+
+-- 兼容之前的一对一测试结构，升级成“一个顾客可解锁多个美工”。
+alter table public.customer_portal_access
+  drop constraint if exists customer_portal_access_pkey;
+
+alter table public.customer_portal_access
+  add constraint customer_portal_access_pkey
+  primary key (customer_user_id, artist_user_id);
+
 
 create index if not exists customer_portal_access_artist_idx
   on public.customer_portal_access(artist_user_id);
@@ -121,10 +131,9 @@ returns jsonb
 language plpgsql
 security definer
 set search_path = public, auth, extensions
-as $
+as $$
 declare
   v_artist uuid;
-  v_existing uuid;
 begin
   if auth.uid() is null then
     return jsonb_build_object('success', false, 'reason', 'NOT_SIGNED_IN');
@@ -141,34 +150,15 @@ begin
     return jsonb_build_object('success', false, 'reason', 'INVALID_CODE');
   end if;
 
-  select artist_user_id
-    into v_existing
-  from public.customer_portal_access
-  where customer_user_id = auth.uid();
-
-  if v_existing is not null and v_existing <> v_artist then
-    return jsonb_build_object(
-      'success', false,
-      'reason', 'ALREADY_LINKED',
-      'artist_user_id', v_existing
-    );
-  end if;
-
   insert into public.user_roles(user_id, role)
   values (auth.uid(), 'customer')
   on conflict do nothing;
 
   insert into public.customer_portal_access(customer_user_id, artist_user_id)
   values (auth.uid(), v_artist)
-  on conflict (customer_user_id) do update
-  set artist_user_id = excluded.artist_user_id,
-      granted_at = now();
+  on conflict (customer_user_id, artist_user_id) do nothing;
 
-  -- 兼容旧绑定表，但只保留当前顾客码对应的美工。
-  delete from public.customer_artist_bindings
-  where customer_user_id = auth.uid()
-    and artist_user_id <> v_artist;
-
+  -- 保留兼容绑定表，同一个顾客可以绑定多个美工。
   insert into public.customer_artist_bindings(customer_user_id, artist_user_id)
   values (auth.uid(), v_artist)
   on conflict do nothing;
@@ -178,19 +168,19 @@ begin
     'artist_user_id', v_artist
   );
 end;
-$;
+$$;
 
 revoke all on function public.claim_customer_access_code(text) from public, anon;
 grant execute on function public.claim_customer_access_code(text) to authenticated;
 
 
--- 新顾客注册必须携带顾客码，注册事务内直接绑定到唯一美工。
+-- 新顾客注册必须先携带至少一个有效顾客码；后续可继续添加其他美工码。
 create or replace function public.attach_customer_portal_access_on_signup()
 returns trigger
 language plpgsql
 security definer
 set search_path = public, auth, extensions
-as $
+as $$
 declare
   v_role text;
   v_code text;
@@ -219,11 +209,7 @@ begin
 
   insert into public.customer_portal_access(customer_user_id, artist_user_id)
   values (new.id, v_artist)
-  on conflict (customer_user_id) do nothing;
-
-  delete from public.customer_artist_bindings
-  where customer_user_id = new.id
-    and artist_user_id <> v_artist;
+  on conflict (customer_user_id, artist_user_id) do nothing;
 
   insert into public.customer_artist_bindings(customer_user_id, artist_user_id)
   values (new.id, v_artist)
@@ -231,7 +217,7 @@ begin
 
   return new;
 end;
-$;
+$$;
 
 drop trigger if exists trg_attach_customer_portal_access_on_signup
 on auth.users;
