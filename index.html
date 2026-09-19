@@ -14,6 +14,25 @@
   .nav::-webkit-scrollbar{display:none}
   .nav>button,.custom-nav-wrap>button,.custom-nav-add{flex:0 0 auto;min-width:68px;min-height:38px;padding:0 10px!important;text-align:center!important;font-size:11px!important;white-space:nowrap}
   .custom-nav-wrap{display:contents}
+  body.mobile-nav-left .app{padding:6px}
+  body.mobile-nav-left .layout{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px;align-items:start}
+  body.mobile-nav-left .side{grid-column:1;grid-row:1 / span 2;position:sticky;top:6px;margin:0;padding:7px 5px;border-radius:18px;max-height:calc(100vh - 12px);overflow-y:auto;overflow-x:hidden}
+  body.mobile-nav-left .brand{display:flex;justify-content:center;padding:3px 0 8px;margin-bottom:2px}
+  body.mobile-nav-left .brand>div:last-child{display:none}
+  body.mobile-nav-left .brand .logo{width:40px;height:40px;border-radius:13px}
+  body.mobile-nav-left .nav{display:grid;gap:5px;overflow:visible;padding:0}
+  body.mobile-nav-left .nav>button,
+  body.mobile-nav-left .custom-nav-add{width:100%;min-width:0;min-height:44px;padding:6px 3px!important;text-align:center!important;font-size:10px!important;line-height:1.25;white-space:normal;border-radius:12px}
+  body.mobile-nav-left .custom-nav-wrap{display:grid;gap:5px}
+  body.mobile-nav-left .custom-nav-item{display:grid;grid-template-columns:minmax(0,1fr) 18px;gap:2px;align-items:center}
+  body.mobile-nav-left .custom-nav-item>button[data-page]{min-width:0;width:100%;min-height:44px;padding:6px 2px!important;text-align:center!important;font-size:10px!important;line-height:1.25;white-space:normal}
+  body.mobile-nav-left .custom-nav-delete{width:18px;height:24px;min-height:24px!important;padding:0!important;font-size:13px!important}
+  body.mobile-nav-left .main{grid-column:2;min-width:0}
+  body.mobile-nav-left .right{grid-column:2;min-width:0}
+  body.mobile-nav-left .top{gap:6px}
+  body.mobile-nav-left .top h1{font-size:19px}
+  body.mobile-nav-left .top .primary{padding:0 10px;font-size:11px}
+  body.mobile-nav-left .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
   .accountbox{display:none}
   .side>p.note{display:none}
   .main{gap:10px}
@@ -118,6 +137,14 @@
     <div class="meta" style="margin-top:4px">手机版空间比较紧，可以把常用栏目上移或直接置顶。</div>
     <div id="navOrderList" class="list" style="margin-top:10px"></div>
   </div>
+  <div style="margin-top:16px">
+    <h3 style="font-size:13px;margin:0">手机版导航位置 📱</h3>
+    <div class="meta" style="margin-top:4px">可以在“顶部横向”和“左侧竖向”之间切换。左侧模式会像你参考图那样，栏目竖着排在屏幕左边。</div>
+    <div class="presetrow" style="margin-top:10px">
+      <button class="preset" type="button" data-mobile-nav-mode="top">⬆️ 顶部横向</button>
+      <button class="preset" type="button" data-mobile-nav-mode="left">⬅️ 左侧竖向</button>
+    </div>
+  </div>
 </div>
 <div class="profile-card">
   <div>
@@ -202,7 +229,7 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true
 
 const $=id=>document.getElementById(id);
 const OLD_KEY="berry-workbench-v2";
-let S={orders:[],times:[],title:"莓桃工作台",avatar:"",appIcon:"",appIconToken:"",notificationName:"莓桃工作台",displayName:"创作者",welcomeText:"今天也要轻轻松松收工 ♡",footerText:"♡ 莓桃工作台 · 自动云同步 + 本地缓存",stylePreset:"custom",passwordChangedAt:"",theme:{accent:"#f292b2",bg:"#fff9fb",panel:"#ffffff",text:"#45383d"},customSections:[],navLabels:{desk:"工作台",orders:"订单",schedule:"排单",money:"财务",time:"时间",profile:"我的",settings:"设置"},navOrder:["desk","orders","schedule","money","time","profile","settings"]},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false,currentAccessStatus=null;
+let S={orders:[],times:[],title:"莓桃工作台",avatar:"",appIcon:"",appIconToken:"",notificationName:"莓桃工作台",displayName:"创作者",welcomeText:"今天也要轻轻松松收工 ♡",footerText:"♡ 莓桃工作台 · 自动云同步 + 本地缓存",stylePreset:"custom",passwordChangedAt:"",theme:{accent:"#f292b2",bg:"#fff9fb",panel:"#ffffff",text:"#45383d"},customSections:[],navLabels:{desk:"工作台",orders:"订单",schedule:"排单",money:"财务",time:"时间",profile:"我的",settings:"设置"},navOrder:["desk","orders","schedule","money","time","profile","settings"],mobileNavMode:"top"},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false,currentAccessStatus=null;
 let deferredInstallPrompt=null;
 let swRegistration=null;
 let dynamicManifestUrl="";
@@ -212,7 +239,7 @@ const T=today();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=n=>"¥"+(Number(n)||0).toFixed(2);
 const human=m=>{m=Math.max(0,Math.round(m||0));return m>=60?Math.floor(m/60)+"h "+m%60+"m":m+"m"};
-const normalize=x=>({orders:Array.isArray(x?.orders)?x.orders:[],times:Array.isArray(x?.times)?x.times:[],title:(x?.title||"莓桃工作台").slice(0,30),avatar:(typeof x?.avatar==="string"&&x.avatar.startsWith("data:image/")&&x.avatar.length<300000)?x.avatar:"",appIcon:(typeof x?.appIcon==="string"&&x.appIcon.startsWith("data:image/")&&x.appIcon.length<500000)?x.appIcon:"",appIconToken:(typeof x?.appIconToken==="string"&&/^[A-Za-z0-9_-]{16,80}$/.test(x.appIconToken))?x.appIconToken:"",notificationName:String(x?.notificationName||x?.title||"莓桃工作台").slice(0,30),displayName:String(x?.displayName||"创作者").slice(0,20),welcomeText:String(x?.welcomeText||"今天也要轻轻松松收工 ♡").slice(0,80),footerText:String(x?.footerText||"♡ 莓桃工作台 · 自动云同步 + 本地缓存").slice(0,100),stylePreset:["cute","simple","boss","custom"].includes(x?.stylePreset)?x.stylePreset:"custom",passwordChangedAt:typeof x?.passwordChangedAt==="string"?x.passwordChangedAt:"",theme:{accent:/^#[0-9a-f]{6}$/i.test(x?.theme?.accent||"")?x.theme.accent:"#f292b2",bg:/^#[0-9a-f]{6}$/i.test(x?.theme?.bg||"")?x.theme.bg:"#fff9fb",panel:/^#[0-9a-f]{6}$/i.test(x?.theme?.panel||"")?x.theme.panel:"#ffffff",text:/^#[0-9a-f]{6}$/i.test(x?.theme?.text||"")?x.theme.text:"#45383d"},navLabels:{desk:String(x?.navLabels?.desk||"工作台").slice(0,12),orders:String(x?.navLabels?.orders||"订单").slice(0,12),schedule:String(x?.navLabels?.schedule||"排单").slice(0,12),money:String(x?.navLabels?.money||"财务").slice(0,12),time:String(x?.navLabels?.time||"时间").slice(0,12),profile:String(x?.navLabels?.profile||"我的").slice(0,12),settings:String(x?.navLabels?.settings||"设置").slice(0,12)},navOrder:(()=>{const d=["desk","orders","schedule","money","time","profile","settings"];const a=Array.isArray(x?.navOrder)?x.navOrder.filter(k=>d.includes(k)):[];return [...new Set([...a,...d])].slice(0,d.length)})(),customSections:Array.isArray(x?.customSections)?x.customSections.filter(s=>s&&typeof s.id==="string").slice(0,20).map(s=>({id:s.id,name:String(s.name||"未命名分区").slice(0,20),emoji:String(s.emoji||"🌸").slice(0,4),content:String(s.content||"").slice(0,20000)})):[]});
+const normalize=x=>({orders:Array.isArray(x?.orders)?x.orders:[],times:Array.isArray(x?.times)?x.times:[],title:(x?.title||"莓桃工作台").slice(0,30),avatar:(typeof x?.avatar==="string"&&x.avatar.startsWith("data:image/")&&x.avatar.length<300000)?x.avatar:"",appIcon:(typeof x?.appIcon==="string"&&x.appIcon.startsWith("data:image/")&&x.appIcon.length<500000)?x.appIcon:"",appIconToken:(typeof x?.appIconToken==="string"&&/^[A-Za-z0-9_-]{16,80}$/.test(x.appIconToken))?x.appIconToken:"",notificationName:String(x?.notificationName||x?.title||"莓桃工作台").slice(0,30),displayName:String(x?.displayName||"创作者").slice(0,20),welcomeText:String(x?.welcomeText||"今天也要轻轻松松收工 ♡").slice(0,80),footerText:String(x?.footerText||"♡ 莓桃工作台 · 自动云同步 + 本地缓存").slice(0,100),stylePreset:["cute","simple","boss","custom"].includes(x?.stylePreset)?x.stylePreset:"custom",passwordChangedAt:typeof x?.passwordChangedAt==="string"?x.passwordChangedAt:"",theme:{accent:/^#[0-9a-f]{6}$/i.test(x?.theme?.accent||"")?x.theme.accent:"#f292b2",bg:/^#[0-9a-f]{6}$/i.test(x?.theme?.bg||"")?x.theme.bg:"#fff9fb",panel:/^#[0-9a-f]{6}$/i.test(x?.theme?.panel||"")?x.theme.panel:"#ffffff",text:/^#[0-9a-f]{6}$/i.test(x?.theme?.text||"")?x.theme.text:"#45383d"},navLabels:{desk:String(x?.navLabels?.desk||"工作台").slice(0,12),orders:String(x?.navLabels?.orders||"订单").slice(0,12),schedule:String(x?.navLabels?.schedule||"排单").slice(0,12),money:String(x?.navLabels?.money||"财务").slice(0,12),time:String(x?.navLabels?.time||"时间").slice(0,12),profile:String(x?.navLabels?.profile||"我的").slice(0,12),settings:String(x?.navLabels?.settings||"设置").slice(0,12)},navOrder:(()=>{const d=["desk","orders","schedule","money","time","profile","settings"];const a=Array.isArray(x?.navOrder)?x.navOrder.filter(k=>d.includes(k)):[];return [...new Set([...a,...d])].slice(0,d.length)})(),mobileNavMode:x?.mobileNavMode==="left"?"left":"top",customSections:Array.isArray(x?.customSections)?x.customSections.filter(s=>s&&typeof s.id==="string").slice(0,20).map(s=>({id:s.id,name:String(s.name||"未命名分区").slice(0,20),emoji:String(s.emoji||"🌸").slice(0,4),content:String(s.content||"").slice(0,20000)})):[]});
 const cacheKey=()=>user?"berry-workbench-cloud-cache:"+user.id:OLD_KEY;
 
 function setSync(text,kind=""){
@@ -359,6 +386,14 @@ function renderNavOrderSettings(){
     };
   });
 }
+function applyMobileNavMode(){
+  const mode=S.mobileNavMode==="left"?"left":"top";
+  document.body.classList.toggle("mobile-nav-left",mode==="left");
+  document.body.classList.toggle("mobile-nav-top",mode==="top");
+  document.querySelectorAll("[data-mobile-nav-mode]").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.mobileNavMode===mode);
+  });
+}
 function applyNavLabels(){
   const defaults={desk:"工作台",orders:"订单",schedule:"排单",money:"财务",time:"时间",profile:"我的",settings:"设置"};
   const labels={...defaults,...(S.navLabels||{})};
@@ -374,6 +409,7 @@ function applyNavLabels(){
   });
   applyNavOrder();
   renderNavOrderSettings();
+  applyMobileNavMode();
 }
 function applyPersonalText(){
   const now=new Date(),hour=now.getHours();
@@ -811,6 +847,14 @@ $("resetNavLabelsBtn").onclick=()=>{
   applyNavLabels();
   persist();
 };
+
+document.querySelectorAll("[data-mobile-nav-mode]").forEach(btn=>{
+  btn.onclick=()=>{
+    S.mobileNavMode=btn.dataset.mobileNavMode==="left"?"left":"top";
+    applyMobileNavMode();
+    persist();
+  };
+});
 
 const STYLE_PRESETS={
   cute:{
@@ -1413,6 +1457,7 @@ async function applySession(session){
 applyTheme();
 applyAvatar();
 applyNavLabels();
+applyMobileNavMode();
 renderCustomSections();
 
 applyPersonalText();
