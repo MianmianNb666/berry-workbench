@@ -58,14 +58,14 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
   </section>
 
   <div id="customerNav" class="customer-nav hidden">
-    <button class="ghost active" type="button" data-customer-view="dashboard">🍓 我的排单</button>
+    <button class="ghost active" type="button" data-customer-view="dashboard"><span id="customerQueueNavIcon">🍓</span> 我的排单</button>
     <button class="ghost customer-profile-heart" type="button" data-customer-view="customerProfile">我的</button>
     <button class="ghost" type="button" data-customer-view="customerSettings">⚙️ 设置</button>
   </div>
 
   <div id="dashboard" class="customer-view">
     <section class="hero">
-      <h1>我的排单 🍓</h1>
+      <h1>我的排单 <span id="customerQueueHeroIcon">🍓</span></h1>
       <p id="welcomeText">查看这位美工为你记录的排单、进度和预计完成时间。</p>
     </section>
     <section class="card" style="margin-top:14px">
@@ -118,6 +118,34 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
         <button class="ghost" id="resetCustomerThemeBtn" type="button">恢复默认</button>
       </div>
       <div id="customerThemeHint" class="meta" style="margin-top:8px"></div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>我的排单图标 ✨</h2>
+      <div class="meta">可以把“我的排单”旁边的小草莓换成你喜欢的 emoji。</div>
+      <div class="settings-grid" style="margin-top:10px">
+        <div class="color-setting">
+          <label>排单图标
+            <input id="customerQueueIconInput" type="text" maxlength="8" value="🍓" style="width:88px;text-align:center;font-size:22px">
+          </label>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="ghost" id="resetCustomerQueueIconBtn" type="button">恢复 🍓</button>
+      </div>
+      <div id="customerQueueIconHint" class="meta" style="margin-top:8px"></div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>开发者联系 💌</h2>
+      <div class="meta">遇到问题、发现小虫子或者有新想法，都可以联系开发者。</div>
+      <div class="profile-item" style="margin-top:10px">
+        <span>联系方式</span>
+        <b>i-Sooong</b>
+      </div>
+      <div class="actions">
+        <button class="ghost" id="copyCustomerDeveloperContactBtn" type="button">复制开发者联系</button>
+      </div>
     </section>
   </section>
 
@@ -288,7 +316,7 @@ async function loadPublicShare(token){
     :'<div class="empty">目前还没有可显示的排单。</div>';
 }
 
-const DEFAULT_CUSTOMER_PREFS={accent:"#e9789d",bg:"#fff8fb",panel:"#ffffff",text_color:"#45383d"};
+const DEFAULT_CUSTOMER_PREFS={accent:"#e9789d",bg:"#fff8fb",panel:"#ffffff",text_color:"#45383d",queue_icon:"🍓"};
 const CUSTOMER_THEME_PRESETS={
   berry:{accent:"#e9789d",bg:"#fff8fb",panel:"#ffffff",text_color:"#45383d"},
   mint:{accent:"#79bfa6",bg:"#f7fcfa",panel:"#ffffff",text_color:"#34453f"},
@@ -315,6 +343,10 @@ function applyCustomerTheme(){
   ["customerAccentColor","customerBgColor","customerPanelColor","customerTextColor"].forEach((id,i)=>{
     const el=$(id); if(el) el.value=[customerPrefs.accent,customerPrefs.bg,customerPrefs.panel,customerPrefs.text_color][i];
   });
+  const icon=(customerPrefs.queue_icon||"🍓").trim()||"🍓";
+  if($("customerQueueNavIcon"))$("customerQueueNavIcon").textContent=icon;
+  if($("customerQueueHeroIcon"))$("customerQueueHeroIcon").textContent=icon;
+  if($("customerQueueIconInput"))$("customerQueueIconInput").value=icon;
 }
 async function loadCustomerPreferences(){
   if(!user){customerPrefs={...DEFAULT_CUSTOMER_PREFS};applyCustomerTheme();return}
@@ -324,12 +356,12 @@ async function loadCustomerPreferences(){
     if(cached)customerPrefs={...DEFAULT_CUSTOMER_PREFS,...cached};
   }catch(_){}
   applyCustomerTheme();
-  const {data,error}=await supabase.from("customer_preferences").select("accent,bg,panel,text_color").eq("user_id",user.id).maybeSingle();
+  const {data,error}=await supabase.from("customer_preferences").select("accent,bg,panel,text_color,queue_icon").eq("user_id",user.id).maybeSingle();
   if(error){console.warn("customer preferences:",error.message);return}
   if(data){
     customerPrefs={...DEFAULT_CUSTOMER_PREFS,...data};
   }else{
-    const created=await supabase.from("customer_preferences").insert({user_id:user.id,...customerPrefs}).select("accent,bg,panel,text_color").single();
+    const created=await supabase.from("customer_preferences").insert({user_id:user.id,...customerPrefs}).select("accent,bg,panel,text_color,queue_icon").single();
     if(created.data)customerPrefs={...DEFAULT_CUSTOMER_PREFS,...created.data};
   }
   localStorage.setItem(localKey,JSON.stringify(customerPrefs));
@@ -368,10 +400,36 @@ document.querySelectorAll("[data-customer-view]").forEach(btn=>{
   });
 });
 document.querySelectorAll("[data-customer-theme]").forEach(btn=>btn.onclick=()=>{
-  customerPrefs={...CUSTOMER_THEME_PRESETS[btn.dataset.customerTheme]};
+  customerPrefs={...customerPrefs,...CUSTOMER_THEME_PRESETS[btn.dataset.customerTheme]};
   saveCustomerPreferences();
 });
-$("resetCustomerThemeBtn").onclick=()=>{customerPrefs={...DEFAULT_CUSTOMER_PREFS};saveCustomerPreferences()};
+$("resetCustomerThemeBtn").onclick=()=>{
+  customerPrefs={...customerPrefs,...CUSTOMER_THEME_PRESETS.berry};
+  saveCustomerPreferences();
+};
+
+$("customerQueueIconInput").addEventListener("input",()=>{
+  const raw=$("customerQueueIconInput").value.trim();
+  customerPrefs.queue_icon=(raw||"🍓").slice(0,8);
+  saveCustomerPreferences();
+  if($("customerQueueIconHint"))$("customerQueueIconHint").textContent="已保存到当前顾客账号 ✓";
+});
+$("resetCustomerQueueIconBtn").onclick=()=>{
+  customerPrefs.queue_icon="🍓";
+  saveCustomerPreferences();
+  if($("customerQueueIconHint"))$("customerQueueIconHint").textContent="已恢复小草莓 🍓";
+};
+$("copyCustomerDeveloperContactBtn").onclick=async()=>{
+  const contact="i-Sooong";
+  try{
+    await navigator.clipboard.writeText(contact);
+    const btn=$("copyCustomerDeveloperContactBtn"),old=btn.textContent;
+    btn.textContent="已复制 ✓";
+    setTimeout(()=>btn.textContent=old,1000);
+  }catch(_){
+    prompt("复制开发者联系方式：",contact);
+  }
+};
 
 $("backBtn").onclick=()=>{const u=new URL(location.href);u.searchParams.delete("artist");u.searchParams.set("view","profile");location.href=u.pathname+u.search};
 
