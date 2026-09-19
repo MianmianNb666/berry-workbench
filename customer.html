@@ -59,6 +59,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
         <div class="stack">
           <input id="bindCode" autocomplete="off" autocapitalize="characters" placeholder="输入美工编号">
           <button class="primary" id="bindBtn">绑定美工</button>
+          <button class="ghost hidden" id="bindSelfTestBtn" type="button">🧪 绑定我的美工身份（测试）</button>
           <div id="bindHint" class="authhint"></div>
         </div>
       </section>
@@ -231,7 +232,7 @@ async function bindArtist(){
     .eq("artist_code",code).maybeSingle();
   if(error){$("bindHint").textContent="暂时无法查询，请确认顾客端数据库已经初始化。";return}
   if(!artist){$("bindHint").textContent="没有找到这个美工，请检查编号。";return}
-  if(artist.artist_user_id===user.id){$("bindHint").textContent="不能把自己的美工账号绑定成自己的美工。";return}
+  if(artist.artist_user_id===user.id && !(await isOwner())){$("bindHint").textContent="不能把自己的美工账号绑定成自己的美工。";return}
   const {error:bindError}=await supabase.from("customer_artist_bindings").insert({
     customer_user_id:user.id,artist_user_id:artist.artist_user_id
   });
@@ -244,7 +245,29 @@ async function bindArtist(){
   $("bindHint").textContent="✅ 已绑定 "+(artist.public_name||"这个美工");
   loadBindings();
 }
+async function bindOwnArtistForTest(){
+  if(!user || !(await isOwner()))return;
+  $("bindHint").textContent="正在绑定你的美工身份…";
+  const {data:artist,error}=await supabase.from("artist_profiles")
+    .select("artist_user_id,artist_code,public_name")
+    .eq("artist_user_id",user.id)
+    .maybeSingle();
+  if(error){$("bindHint").textContent="读取自己的美工资料失败："+error.message;return}
+  if(!artist){$("bindHint").textContent="还没有生成你的美工资料，请先打开美工端 → 我的。";return}
+  const {error:bindError}=await supabase.from("customer_artist_bindings").insert({
+    customer_user_id:user.id,artist_user_id:user.id
+  });
+  if(bindError){
+    if((bindError.code||"")==="23505")$("bindHint").textContent="你的美工身份已经绑定过啦。";
+    else if((bindError.message||"").toLowerCase().includes("check constraint"))$("bindHint").textContent="还差一步：请先运行“主用户自绑测试补丁”SQL。";
+    else $("bindHint").textContent="绑定失败："+bindError.message;
+    return;
+  }
+  $("bindHint").textContent="✅ 已绑定自己的美工身份（仅主用户测试）";
+  loadBindings();
+}
 $("bindBtn").onclick=bindArtist;
+$("bindSelfTestBtn").onclick=bindOwnArtistForTest;
 $("bindCode").addEventListener("keydown",e=>{if(e.key==="Enter")bindArtist()});
 
 async function login(){
@@ -329,12 +352,14 @@ async function applySession(session){
     $("customerAccountBar").classList.remove("hidden");
     $("customerAccountEmail").textContent=user.email||"顾客";
     $("welcomeText").textContent=(user.email||"顾客")+" · 可以同时绑定多个美工查看自己的排单。";
+    $("bindSelfTestBtn").classList.toggle("hidden",!(await isOwner()));
     await ensureCustomerRole();
     if(artistCode)await loadArtistPublic(artistCode); else await loadBindings();
   }else{
     $("logoutBtn").classList.add("hidden");
     $("customerAccountBar").classList.add("hidden");
     $("customerAccountEmail").textContent="";
+    $("bindSelfTestBtn").classList.add("hidden");
     if(CUSTOMER_PORTAL_MAINTENANCE){
       $("authGate").classList.add("hidden");
       $("maintenanceGate").classList.remove("hidden");
