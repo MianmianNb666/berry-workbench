@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f292b2"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="莓桃工作台"><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon.svg"><title>莓桃工作台</title>
 <style>
-:root{--bg:#fff9fb;--panel:#fff;--soft:#fff0f5;--pink:#f292b2;--deep:#d96f95;--rose:#a75370;--text:#45383d;--muted:#9b858d;--line:#f0dfe5}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:ui-rounded,"SF Pro Rounded","PingFang SC",system-ui,sans-serif}.app{max-width:1450px;margin:auto;padding:14px}.layout{display:grid;grid-template-columns:180px minmax(0,1fr) 240px;gap:14px}.side,.card,.work{background:var(--panel);border:1px solid var(--line);border-radius:22px}.side{padding:14px;position:sticky;top:12px;background:linear-gradient(var(--soft),var(--bg))}.brand{display:flex;gap:10px;align-items:center;padding:4px 4px 16px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#ffd7e5,#f5a6c0);display:grid;place-items:center;overflow:hidden;flex:0 0 auto}.logo img{width:100%;height:100%;object-fit:cover;display:block}.logo:not(.has-avatar) img{display:none}.logo.has-avatar span{display:none}.avatar-actions{display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px}.avatar-actions .ghost{min-height:34px;font-size:11px}.avatar-reset{border:0;background:transparent;color:var(--muted);font-size:10px;padding:2px 0;cursor:pointer}.custom-nav-add{width:100%;margin-top:6px;border:1px dashed var(--line);background:transparent;color:var(--rose);border-radius:13px;min-height:38px;font-weight:750;cursor:pointer}.custom-nav-wrap{display:grid;gap:7px}.custom-section-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.custom-section-actions{display:flex;gap:6px;flex-wrap:wrap}.custom-note{width:100%;min-height:280px;resize:vertical;line-height:1.7}.emoji-input{font-size:22px;text-align:center}.brand strong{color:var(--rose)}.brand small{display:block;color:var(--muted);font-size:11px}.nav{display:grid;gap:7px}.nav button,.chip,.ghost,.primary,.danger{border-radius:13px;min-height:42px;font-weight:750}.nav button{border:1px solid transparent;background:transparent;text-align:left;color:var(--muted);padding:0 11px}.nav button.active{background:#fff;color:var(--rose);border-color:var(--line)}.main{min-width:0;display:grid;gap:13px}.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.top h1{margin:0;font-size:24px}.top p{margin:4px 0 0;color:var(--muted);font-size:12px}.primary{border:0;background:linear-gradient(135deg,var(--pink),var(--deep));color:#fff;padding:0 15px}.ghost{border:1px solid var(--line);background:var(--panel);color:var(--rose);padding:0 12px}.danger{border:1px solid #f2ccd5;background:#fff;color:#bf677e;padding:0 10px}.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}.stat b{display:block;font-size:28px;margin-top:8px}.stat span{font-size:12px;color:var(--muted)}.work{padding:15px;min-height:420px}.tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.chip{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:0 12px}.chip.active{background:#473e42;color:#fff}.search{margin-bottom:12px}input,select,textarea{width:100%;border:1px solid var(--line);background:#fffbfd;border-radius:12px;padding:10px 11px;font-size:16px;color:var(--text)}.orders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.order{border:1px solid var(--line);border-radius:17px;padding:13px;background:linear-gradient(#fff,#fffafd)}.order h3{margin:0;font-size:15px}.meta{color:var(--muted);font-size:11px;margin-top:4px}.order-note{margin-top:9px;padding:9px 10px;border:1px dashed var(--line);border-radius:12px;background:var(--soft);font-size:11px;line-height:1.55;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}.order-note b{color:var(--rose);margin-right:4px}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--soft);color:var(--deep);font-size:10px;margin:8px 5px 8px 0}.money{font-size:20px;font-weight:850}.row{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:11px;color:var(--muted)}.row select{width:auto;padding:5px 7px;font-size:11px}.empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:16px;padding:36px;text-align:center;color:var(--muted);background:#fffafd}.panel{display:none}.panel.active{display:block}.right{display:grid;gap:10px}.card{padding:14px}.card h3{font-size:13px;margin:0 0 10px}.mini{background:#fff8fb;border-radius:13px;padding:10px;font-size:12px;line-height:1.6}.dead{padding:9px;border-radius:12px;background:#fffafb;margin-top:7px}.dead b{font-size:12px}.dead small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.top-ddl{margin-top:9px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}.top-ddl-item{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:7px 10px;border:1px solid #f2a7ae;border-radius:12px;background:#fff0f1;color:#c83f4f;font-size:11px;font-weight:750;box-shadow:0 3px 10px rgba(200,63,79,.05)}.top-ddl-item strong{color:#ad2638}.top-ddl-item.overdue{background:#ffe3e6;border-color:#e97884;color:#a91f31}.top-ddl-item.soon{background:#fff0f1;border-color:#f2a7ae}.top-ddl-item.normal{background:#fff7f8;border-color:#f3cbd0;color:#b85a66}.top-ddl-empty{color:#c36b76;font-weight:650}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.formgrid label{font-size:11px;color:var(--muted)}.formgrid label>*{margin-top:5px}.list{display:grid;gap:8px}.item{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px}.item small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.timer{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:linear-gradient(135deg,#fff0f5,#fff);border:1px solid var(--line);border-radius:18px;padding:16px}.clock{font-size:32px;font-weight:850;color:var(--deep);font-variant-numeric:tabular-nums}.modalbg{position:fixed;inset:0;background:rgba(70,45,55,.22);display:none;place-items:start center;padding:55px 14px;z-index:50;overflow:auto}.modalbg.show{display:grid}.modal{width:min(540px,100%);background:var(--panel);border-radius:22px;border:1px solid var(--line);padding:17px}.modalhead{display:flex;justify-content:space-between;align-items:center}.modalhead h2{margin:0;font-size:18px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.note{font-size:10px;color:var(--muted)}.accountbox{margin-top:16px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.syncdot{display:flex;align-items:center;gap:6px;margin-top:5px;color:var(--muted);font-size:10px}.syncdot span:first-child{width:8px;height:8px;border-radius:50%;background:#c9bfc3}.syncdot.ok span:first-child{background:#73b48b}.syncdot.busy span:first-child{background:#d4b45e}.syncdot.err span:first-child{background:#cf7e87}.authbg{position:fixed;inset:0;z-index:80;background:rgba(255,246,250,.92);backdrop-filter:blur(10px);display:grid;place-items:center;padding:18px}.authbg.hidden{display:none}.authcard{width:min(420px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 25px 70px rgba(125,76,95,.14)}.authcard h2{margin:0;color:var(--rose);font-size:22px}.authcard p{color:var(--muted);font-size:12px;line-height:1.65}.authcard label{display:block;font-size:11px;color:var(--muted);margin-top:10px}.password-field{position:relative;margin-top:5px}.password-field input{padding-right:64px;margin-top:0!important}.password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--rose);font-size:12px;font-weight:750;padding:7px 8px;cursor:pointer;border-radius:9px}.password-toggle:hover{background:var(--soft)}.save-password-note{margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5}.authhint{min-height:20px;margin-top:10px;font-size:11px;color:var(--rose);line-height:1.5}.authactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.authlink{border:0;background:transparent;color:var(--rose);padding:8px 0 0;text-decoration:underline;text-underline-offset:3px;font-size:12px}.hidden{display:none!important}.resetbox{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}.themegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.colorfield{border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--panel)}.colorfield label{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--muted)}.colorfield input[type="color"]{width:48px;height:38px;padding:2px;border-radius:10px;background:var(--panel);cursor:pointer}.presetrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.preset{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:9px 12px;font-weight:700;cursor:pointer}.theme-preview{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--soft)}.settings-account{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--soft);display:flex;justify-content:space-between;gap:12px;align-items:center}.settings-account-actions{display:flex;flex-wrap:wrap;gap:7px}.settings-account-actions .ghost,.settings-account-actions .danger{min-height:36px;font-size:11px}.profile-card{margin-top:14px;border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--panel)}.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}.profile-item{border:1px solid var(--line);border-radius:14px;padding:11px;background:var(--soft);min-width:0}.profile-item span{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}.profile-item b{display:block;font-size:13px;overflow-wrap:anywhere}.access-badge{display:inline-flex!important;width:max-content;padding:4px 8px;border-radius:999px;background:var(--soft);color:var(--rose);font-size:11px!important}.access-badge.permanent{background:#eef8f0;color:#4e8a62}.access-badge.expired{background:#fff0f1;color:#b83d4d}.copy-mini{border:0;background:transparent;color:var(--rose);padding:4px 0;font-size:10px;cursor:pointer;text-decoration:underline;text-underline-offset:2px}.pwa-status{display:flex;align-items:center;gap:7px;margin-top:10px;padding:10px 11px;border:1px solid var(--line);border-radius:13px;background:var(--soft);font-size:11px}.pwa-status-dot{width:8px;height:8px;border-radius:50%;background:#c9bfc3;flex:0 0 auto}.pwa-status.ok .pwa-status-dot{background:#73b48b}.pwa-status.warn .pwa-status-dot{background:#d4b45e}.pwa-status.err .pwa-status-dot{background:#cf7e87}@media(max-width:720px){.themegrid{grid-template-columns:1fr}}@media(max-width:1000px){.layout{grid-template-columns:160px 1fr}.right{grid-column:2;grid-template-columns:repeat(3,1fr)}}@media(max-width:720px){
+:root{--bg:#fff9fb;--panel:#fff;--soft:#fff0f5;--pink:#f292b2;--deep:#d96f95;--rose:#a75370;--text:#45383d;--muted:#9b858d;--line:#f0dfe5}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:ui-rounded,"SF Pro Rounded","PingFang SC",system-ui,sans-serif}.app{max-width:1450px;margin:auto;padding:14px}.layout{display:grid;grid-template-columns:180px minmax(0,1fr) 240px;gap:14px}.side,.card,.work{background:var(--panel);border:1px solid var(--line);border-radius:22px}.side{padding:14px;position:sticky;top:12px;background:linear-gradient(var(--soft),var(--bg))}.brand{display:flex;gap:10px;align-items:center;padding:4px 4px 16px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,#ffd7e5,#f5a6c0);display:grid;place-items:center;overflow:hidden;flex:0 0 auto}.logo img{width:100%;height:100%;object-fit:cover;display:block}.logo:not(.has-avatar) img{display:none}.logo.has-avatar span{display:none}.avatar-actions{display:grid;grid-template-columns:1fr;gap:6px;margin-top:8px}.avatar-actions .ghost{min-height:34px;font-size:11px}.avatar-reset{border:0;background:transparent;color:var(--muted);font-size:10px;padding:2px 0;cursor:pointer}.custom-nav-add{width:100%;margin-top:6px;border:1px dashed var(--line);background:transparent;color:var(--rose);border-radius:13px;min-height:38px;font-weight:750;cursor:pointer}.custom-nav-wrap{display:grid;gap:7px}.custom-section-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.custom-section-actions{display:flex;gap:6px;flex-wrap:wrap}.custom-note{width:100%;min-height:280px;resize:vertical;line-height:1.7}.emoji-input{font-size:22px;text-align:center}.brand strong{color:var(--rose)}.brand small{display:block;color:var(--muted);font-size:11px}.nav{display:grid;gap:7px}.nav button,.chip,.ghost,.primary,.danger{border-radius:13px;min-height:42px;font-weight:750}.nav button{border:1px solid transparent;background:transparent;text-align:left;color:var(--muted);padding:0 11px}.nav button.active{background:#fff;color:var(--rose);border-color:var(--line)}.main{min-width:0;display:grid;gap:13px}.top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.top h1{margin:0;font-size:24px}.top p{margin:4px 0 0;color:var(--muted);font-size:12px}.primary{border:0;background:linear-gradient(135deg,var(--pink),var(--deep));color:#fff;padding:0 15px}.ghost{border:1px solid var(--line);background:var(--panel);color:var(--rose);padding:0 12px}.danger{border:1px solid #f2ccd5;background:#fff;color:#bf677e;padding:0 10px}.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.stat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px}.stat b{display:block;font-size:28px;margin-top:8px}.stat span{font-size:12px;color:var(--muted)}.work{padding:15px;min-height:420px}.tabs{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}.chip{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:0 12px}.chip.active{background:#473e42;color:#fff}.search{margin-bottom:12px}input,select,textarea{width:100%;border:1px solid var(--line);background:#fffbfd;border-radius:12px;padding:10px 11px;font-size:16px;color:var(--text)}.orders{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.order{border:1px solid var(--line);border-radius:17px;padding:13px;background:linear-gradient(#fff,#fffafd)}.order h3{margin:0;font-size:15px}.meta{color:var(--muted);font-size:11px;margin-top:4px}.order-note{margin-top:9px;padding:9px 10px;border:1px dashed var(--line);border-radius:12px;background:var(--soft);font-size:11px;line-height:1.55;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}.order-note b{color:var(--rose);margin-right:4px}.tag{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--soft);color:var(--deep);font-size:10px;margin:8px 5px 8px 0}.money{font-size:20px;font-weight:850}.row{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:11px;color:var(--muted)}.row select{width:auto;padding:5px 7px;font-size:11px}.empty{grid-column:1/-1;border:1px dashed var(--line);border-radius:16px;padding:36px;text-align:center;color:var(--muted);background:#fffafd}.panel{display:none}.panel.active{display:block}.right{display:grid;gap:10px}.card{padding:14px}.card h3{font-size:13px;margin:0 0 10px}.mini{background:#fff8fb;border-radius:13px;padding:10px;font-size:12px;line-height:1.6}.dead{padding:9px;border-radius:12px;background:#fffafb;margin-top:7px}.dead b{font-size:12px}.dead small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.top-ddl{margin-top:9px;display:flex;flex-wrap:wrap;gap:7px;align-items:center}.top-ddl-item{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:7px 10px;border:1px solid #f2a7ae;border-radius:12px;background:#fff0f1;color:#c83f4f;font-size:11px;font-weight:750;box-shadow:0 3px 10px rgba(200,63,79,.05)}.top-ddl-item strong{color:#ad2638}.top-ddl-item.overdue{background:#ffe3e6;border-color:#e97884;color:#a91f31}.top-ddl-item.soon{background:#fff0f1;border-color:#f2a7ae}.top-ddl-item.normal{background:#fff7f8;border-color:#f3cbd0;color:#b85a66}.top-ddl-empty{color:#c36b76;font-weight:650}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.formgrid label{font-size:11px;color:var(--muted)}.formgrid label>*{margin-top:5px}.list{display:grid;gap:8px}.item{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px}.item small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.timer{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;background:linear-gradient(135deg,#fff0f5,#fff);border:1px solid var(--line);border-radius:18px;padding:16px}.clock{font-size:32px;font-weight:850;color:var(--deep);font-variant-numeric:tabular-nums}.modalbg{position:fixed;inset:0;background:rgba(70,45,55,.22);display:none;place-items:start center;padding:55px 14px;z-index:50;overflow:auto}.modalbg.show{display:grid}.modal{width:min(540px,100%);background:var(--panel);border-radius:22px;border:1px solid var(--line);padding:17px}.modalhead{display:flex;justify-content:space-between;align-items:center}.modalhead h2{margin:0;font-size:18px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.note{font-size:10px;color:var(--muted)}.accountbox{margin-top:16px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.syncdot{display:flex;align-items:center;gap:6px;margin-top:5px;color:var(--muted);font-size:10px}.syncdot span:first-child{width:8px;height:8px;border-radius:50%;background:#c9bfc3}.syncdot.ok span:first-child{background:#73b48b}.syncdot.busy span:first-child{background:#d4b45e}.syncdot.err span:first-child{background:#cf7e87}.authbg{position:fixed;inset:0;z-index:80;background:rgba(255,246,250,.92);backdrop-filter:blur(10px);display:grid;place-items:center;padding:18px}.authbg.hidden{display:none}.authcard{width:min(420px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 25px 70px rgba(125,76,95,.14)}.authcard h2{margin:0;color:var(--rose);font-size:22px}.authcard p{color:var(--muted);font-size:12px;line-height:1.65}.authcard label{display:block;font-size:11px;color:var(--muted);margin-top:10px}.password-field{position:relative;margin-top:5px}.password-field input{padding-right:64px;margin-top:0!important}.password-toggle{position:absolute;right:7px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--rose);font-size:12px;font-weight:750;padding:7px 8px;cursor:pointer;border-radius:9px}.password-toggle:hover{background:var(--soft)}.save-password-note{margin-top:8px;font-size:10px;color:var(--muted);line-height:1.5}.authhint{min-height:20px;margin-top:10px;font-size:11px;color:var(--rose);line-height:1.5}.authactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.authlink{border:0;background:transparent;color:var(--rose);padding:8px 0 0;text-decoration:underline;text-underline-offset:3px;font-size:12px}.hidden{display:none!important}.resetbox{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}.themegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.colorfield{border:1px solid var(--line);border-radius:16px;padding:12px;background:var(--panel)}.colorfield label{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--muted)}.colorfield input[type="color"]{width:48px;height:38px;padding:2px;border-radius:10px;background:var(--panel);cursor:pointer}.presetrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.preset{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:9px 12px;font-weight:700;cursor:pointer}.theme-preview{margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:18px;background:var(--soft)}.settings-account{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--soft);display:flex;justify-content:space-between;gap:12px;align-items:center}.settings-account-actions{display:flex;flex-wrap:wrap;gap:7px}.settings-account-actions .ghost,.settings-account-actions .danger{min-height:36px;font-size:11px}.profile-card{margin-top:14px;border:1px solid var(--line);border-radius:18px;padding:16px;background:var(--panel)}.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:12px}.profile-item{border:1px solid var(--line);border-radius:14px;padding:11px;background:var(--soft);min-width:0}.profile-item span{display:block;font-size:10px;color:var(--muted);margin-bottom:5px}.profile-item b{display:block;font-size:13px;overflow-wrap:anywhere}.access-badge{display:inline-flex!important;width:max-content;padding:4px 8px;border-radius:999px;background:var(--soft);color:var(--rose);font-size:11px!important}.access-badge.permanent{background:#eef8f0;color:#4e8a62}.access-badge.expired{background:#fff0f1;color:#b83d4d}.copy-mini{border:0;background:transparent;color:var(--rose);padding:4px 0;font-size:10px;cursor:pointer;text-decoration:underline;text-underline-offset:2px}.pwa-status{display:flex;align-items:center;gap:7px;margin-top:10px;padding:10px 11px;border:1px solid var(--line);border-radius:13px;background:var(--soft);font-size:11px}.pwa-status-dot{width:8px;height:8px;border-radius:50%;background:#c9bfc3;flex:0 0 auto}.pwa-status.ok .pwa-status-dot{background:#73b48b}.pwa-status.warn .pwa-status-dot{background:#d4b45e}.pwa-status.err .pwa-status-dot{background:#cf7e87}.reminder-box{grid-column:1/-1;border:1px solid var(--line);border-radius:15px;padding:12px;background:var(--soft)}.reminder-box>span{display:block;font-size:11px;color:var(--muted);margin-bottom:8px}.reminder-checks{display:flex;flex-wrap:wrap;gap:8px}.reminder-check{display:flex!important;align-items:center;gap:7px;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--panel);color:var(--text)!important;font-size:11px!important}.reminder-check input{width:auto;margin:0}.reminder-custom{margin-top:9px}.order-reminder{margin-top:7px;font-size:10px;color:var(--rose);font-weight:700}@media(max-width:720px){.themegrid{grid-template-columns:1fr}}@media(max-width:1000px){.layout{grid-template-columns:160px 1fr}.right{grid-column:2;grid-template-columns:repeat(3,1fr)}}@media(max-width:720px){
   body{overflow-x:hidden}
   .app{padding:8px}
   .layout{display:block}
@@ -144,12 +144,13 @@
 <p class="note" id="footerText">♡ 粉白个人接单工作台 · 自动云同步 + 本地缓存</p></main>
 <aside class="right"><div class="card"><h3>🎨 收支概览</h3><div class="mini"><b id="sideIncome">¥0</b><br><span id="sideDone">已完成 0 单</span></div></div><div class="card"><h3>💬 小助手</h3><div class="mini" id="assistant">今天还没有单子。</div></div></aside>
 </div></div>
-<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>分类<input id="oCat" type="text" maxlength="30" placeholder="自己填写分类，例如：返图 / 文案 / 其他"></label><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
+<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>截止时间<input id="oDueTime" type="time" value="23:59"></label><label>分类<input id="oCat" type="text" maxlength="30" placeholder="自己填写分类，例如：返图 / 文案 / 其他"></label><div class="reminder-box"><span>系统提醒 🔔</span><div class="reminder-checks"><label class="reminder-check"><input id="oRemind1d" type="checkbox"> 提前 1 天</label><label class="reminder-check"><input id="oRemind3h" type="checkbox"> 提前 3 小时</label></div><label class="reminder-custom">自定义提醒时间<input id="oRemindCustom" type="datetime-local"></label><div class="meta" style="margin-top:6px">可同时选择多个提醒。需要先在“我的 / 设置”开启系统通知。</div></div><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div><div id="authGate" class="authbg"><div class="authcard"><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const SUPABASE_URL="https://cwzeknrjetwbczqgmdit.supabase.co";
 const SUPABASE_KEY="sb_publishable_kI3ZY_VCFSHIn1sVm1xJ1Q_b9zZAGV2";
+const VAPID_PUBLIC_KEY="BO6yiP9t-kiI25CvekcMFugOf1EokXKZyG1fM9ULQFCRsKy0MZALWGpiCY22XUM_B_hTqccxLG68iPaEPzsykkc";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 
 const $=id=>document.getElementById(id);
@@ -366,7 +367,7 @@ function createCustomSection(){
   setTimeout(()=>document.querySelector('[data-page="custom-'+id+'"]')?.click(),50);
 }
 
-function card(o){let d=dayLeft(o.due);return '<article class="order"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||"未填客户")+' · '+esc(o.cat||"未分类")+'</div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div>'+(o.note?'<div class="order-note"><b>备注：</b>'+esc(o.note)+'</div>':'')+'<div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="danger" data-del="'+o.id+'">删除</button></div></article>'}
+function card(o){let d=dayLeft(o.due),rl=orderReminderLabel(o);return '<article class="order"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||"未填客户")+' · '+esc(o.cat||"未分类")+'</div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+(o.dueTime?" "+esc(o.dueTime):"")+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div>'+(rl?'<div class="order-reminder">🔔 '+esc(rl)+'</div>':'')+(o.note?'<div class="order-note"><b>备注：</b>'+esc(o.note)+'</div>':'')+'<div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="danger" data-del="'+o.id+'">删除</button></div></article>'}
 
 function render(){
   let q=$("search").value.trim().toLowerCase(),os=S.orders,show=os.filter(o=>(filter==="全部"||o.status===filter)&&(!q||[o.name,o.client,o.note,o.cat].join(" ").toLowerCase().includes(q))).slice().reverse();
@@ -389,9 +390,91 @@ function render(){
   $("moneyList").innerHTML=os.length?os.slice().reverse().map(o=>'<div class="item"><div><b>'+esc(o.name)+'</b><small>'+esc(o.status)+'</small></div><b>'+money(o.money)+'</b></div>').join(""):'<div class="empty">暂无收入记录。</div>';
   bind();renderTimes();renderCustomSections();
 }
+function orderReminderLabel(o){
+  const parts=[];
+  if(o.remind1d)parts.push("提前1天");
+  if(o.remind3h)parts.push("提前3小时");
+  if(o.customReminder)parts.push("自定义");
+  return parts.join(" · ");
+}
+function orderDueDateTime(o){
+  if(!o?.due)return null;
+  const time=o.dueTime||"23:59";
+  const d=new Date(o.due+"T"+time+":00");
+  return Number.isNaN(d.getTime())?null:d;
+}
+function buildReminderRows(o){
+  if(!user||!o||o.status==="已完成")return [];
+  const due=orderDueDateTime(o);
+  if(!due)return [];
+  const now=Date.now();
+  const rows=[];
+  const add=(type,date,message)=>{
+    if(!date||Number.isNaN(date.getTime())||date.getTime()<=now)return;
+    rows.push({
+      user_id:user.id,
+      order_id:o.id,
+      order_name:o.name||"未命名需求",
+      reminder_type:type,
+      due_at:due.toISOString(),
+      remind_at:date.toISOString(),
+      message
+    });
+  };
+  if(o.remind1d)add("1d",new Date(due.getTime()-24*60*60*1000),"「"+(o.name||"未命名需求")+"」还有 1 天截止");
+  if(o.remind3h)add("3h",new Date(due.getTime()-3*60*60*1000),"「"+(o.name||"未命名需求")+"」还有 3 小时截止");
+  if(o.customReminder){
+    const custom=new Date(o.customReminder);
+    add("custom",custom,"「"+(o.name||"未命名需求")+"」到你设置的提醒时间啦");
+  }
+  return rows;
+}
+async function syncOrderReminders(o){
+  if(!user||!o)return;
+  try{
+    const {error:delError}=await supabase.from("order_reminders")
+      .delete()
+      .eq("user_id",user.id)
+      .eq("order_id",o.id)
+      .is("sent_at",null);
+    if(delError)throw delError;
+    const rows=buildReminderRows(o);
+    if(rows.length){
+      const {error}=await supabase.from("order_reminders").insert(rows);
+      if(error)throw error;
+    }
+  }catch(e){
+    console.error("Reminder sync failed",e);
+    setNotificationStatus("系统通知可用，但 DDL 提醒还需要完成数据库配置。","warn");
+  }
+}
+async function removeOrderReminders(orderId){
+  if(!user||!orderId)return;
+  try{
+    await supabase.from("order_reminders")
+      .delete()
+      .eq("user_id",user.id)
+      .eq("order_id",orderId)
+      .is("sent_at",null);
+  }catch(e){console.error(e)}
+}
+
 function bind(){
-  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{S.orders=S.orders.filter(o=>o.id!==b.dataset.del);render();persist()});
-  document.querySelectorAll("[data-status]").forEach(s=>s.onchange=()=>{let o=S.orders.find(x=>x.id===s.dataset.status);if(o){o.status=s.value;if(s.value==="已完成")o.progress=100}render();persist()});
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
+    const id=b.dataset.del;
+    S.orders=S.orders.filter(o=>o.id!==id);
+    render();persist();
+    await removeOrderReminders(id);
+  });
+  document.querySelectorAll("[data-status]").forEach(s=>s.onchange=async()=>{
+    let o=S.orders.find(x=>x.id===s.dataset.status);
+    if(o){
+      o.status=s.value;
+      if(s.value==="已完成")o.progress=100;
+      render();persist();
+      await syncOrderReminders(o);
+    }
+  });
 }
 function renderTimes(){
   let tm=S.times.filter(x=>x.date===T).reduce((a,b)=>a+b.min,0);
@@ -406,8 +489,34 @@ $("search").oninput=render;
 
 const mb=$("modalbg"),open=()=>mb.classList.add("show"),close=()=>mb.classList.remove("show");
 $("newBtn").onclick=open;$("newBtn2").onclick=open;$("closeModal").onclick=close;$("cancelModal").onclick=close;
-$("oStart").value=T;$("oDue").value=T;
-$("orderForm").onsubmit=e=>{e.preventDefault();S.orders.push({id:String(Date.now()),name:$("oName").value.trim(),client:$("oClient").value.trim(),money:+$("oMoney").value||0,status:$("oStatus").value,start:$("oStart").value,due:$("oDue").value,cat:$("oCat").value,progress:Math.max(0,Math.min(100,+$("oProgress").value||0)),note:$("oNote").value.trim()});e.target.reset();$("oStart").value=T;$("oDue").value=T;$("oProgress").value=0;close();render();persist()};
+$("oStart").value=T;$("oDue").value=T;$("oDueTime").value="23:59";
+$("orderForm").onsubmit=async e=>{
+  e.preventDefault();
+  const order={
+    id:String(Date.now()),
+    name:$("oName").value.trim(),
+    client:$("oClient").value.trim(),
+    money:+$("oMoney").value||0,
+    status:$("oStatus").value,
+    start:$("oStart").value,
+    due:$("oDue").value,
+    dueTime:$("oDueTime").value||"23:59",
+    cat:$("oCat").value.trim(),
+    progress:Math.max(0,Math.min(100,+$("oProgress").value||0)),
+    note:$("oNote").value.trim(),
+    remind1d:$("oRemind1d").checked,
+    remind3h:$("oRemind3h").checked,
+    customReminder:$("oRemindCustom").value||""
+  };
+  S.orders.push(order);
+  e.target.reset();
+  $("oStart").value=T;$("oDue").value=T;$("oDueTime").value="23:59";$("oProgress").value=0;
+  close();render();persist();
+  await syncOrderReminders(order);
+  if((order.remind1d||order.remind3h||order.customReminder)&&Notification.permission!=="granted"){
+    alert("订单已保存。你设置了提醒，但还没有开启系统通知，请到“我的 / 设置 → 系统通知”开启。");
+  }
+};
 
 $("rename").onclick=()=>{let n=prompt("给你的工作台起个名字：",S.title);if(n&&n.trim()){S.title=n.trim().slice(0,30);applyTitle();persist()}};
 
@@ -690,6 +799,43 @@ function setNotificationStatus(text,kind="warn"){
   $("notificationStatusText").textContent=text;
   $("notificationStatus").className="pwa-status "+kind;
 }
+function urlBase64ToUint8Array(base64String){
+  const padding="=".repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,"+").replace(/_/g,"/");
+  const raw=atob(base64);
+  return Uint8Array.from([...raw].map(c=>c.charCodeAt(0)));
+}
+async function syncPushSubscriptionToCloud(){
+  if(!user||!("serviceWorker" in navigator)||!("PushManager" in window)||Notification.permission!=="granted")return false;
+  try{
+    const reg=swRegistration||await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub){
+      sub=await reg.pushManager.subscribe({
+        userVisibleOnly:true,
+        applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+      });
+    }
+    const json=sub.toJSON();
+    const {error}=await supabase.rpc("register_push_subscription",{
+      p_endpoint:sub.endpoint,
+      p_p256dh:json.keys?.p256dh||"",
+      p_auth:json.keys?.auth||""
+    });
+    if(error)throw error;
+    setNotificationStatus("系统通知 + DDL 定时提醒已连接。","ok");
+    return true;
+  }catch(e){
+    console.error("Push subscription sync failed",e);
+    if(String(e?.message||e).includes("register_push_subscription")){
+      setNotificationStatus("系统通知已开启，还差一步数据库升级。","warn");
+    }else{
+      setNotificationStatus("系统通知已开启，但定时提醒连接失败。","warn");
+    }
+    return false;
+  }
+}
+
 async function registerPWA(){
   if(!("serviceWorker" in navigator)){
     setNotificationStatus("当前浏览器不支持后台通知。","err");
@@ -716,7 +862,7 @@ function updateNotificationStatus(){
     return;
   }
   if(Notification.permission==="granted"){
-    setNotificationStatus("系统通知已开启，可以发送测试通知。","ok");
+    setNotificationStatus("系统通知已开启，正在连接 DDL 定时提醒…","ok");
   }else if(Notification.permission==="denied"){
     setNotificationStatus("通知权限已被关闭，请到系统设置里重新允许。","err");
   }else{
@@ -737,6 +883,7 @@ async function enableSystemNotifications(){
     const permission=await Notification.requestPermission();
     updateNotificationStatus();
     if(permission==="granted"){
+      await syncPushSubscriptionToCloud();
       alert("系统通知已开启 ✅ 现在可以点“发送测试通知”试一下。");
     }
   }catch(e){
@@ -1004,6 +1151,9 @@ async function applySession(session){
   $("renewView").classList.add("hidden");
   $("authGate").classList.add("hidden");
   await loadWorkspace();
+  if("Notification" in window&&Notification.permission==="granted"){
+    syncPushSubscriptionToCloud();
+  }
 }
 
 applyTheme();
