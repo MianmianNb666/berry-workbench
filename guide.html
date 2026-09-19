@@ -70,7 +70,7 @@ a{color:inherit;text-decoration:none}
     <p>这份教程把美工端和顾客端放在同一套流程里。第一次使用建议先看「3 个东西不要混」和「美工 ↔ 顾客怎么连接」，之后再按自己的身份查对应功能。</p>
     <div class="quick">
       <a href="#connect"><b>🔗 美工 ↔ 顾客</b><span>最快搞懂两端怎么连接</span></a>
-      <a href="#artist"><b>🎨 美工端教程</b><span>接单、顾客、余额、提醒、分享</span></a>
+      <a href="#artist"><b>🎨 美工端教程</b><span>接单、顾客、余额、续期、提醒、分享</span></a>
       <a href="#customer"><b>👤 顾客端教程</b><span>登录、多美工、余额、匿名查看</span></a>
     </div>
   </section>
@@ -93,9 +93,9 @@ a{color:inherit;text-decoration:none}
     <p>它们长得都像“入口”，但用途完全不同。</p>
     <div class="code-grid">
       <div class="code-card">
-        <h3>① 美工邀请码</h3>
+        <h3>① 美工邀请码 / 续期码</h3>
         <code>BERRY-...</code>
-        <p>给美工自己注册或续期工作台使用。顾客不需要它。</p>
+        <p>给美工自己使用。注册邀请码用于第一次注册；续期码用于延长工作台使用期。顾客不需要它。</p>
       </div>
       <div class="code-card">
         <h3>② 美工专属顾客码</h3>
@@ -148,17 +148,18 @@ a{color:inherit;text-decoration:none}
 
     <div class="grid">
       <div class="card"><h3>第一次注册</h3><p>输入邮箱、密码和美工邀请码。邀请码只在第一次注册需要。之后正常登录不需要邀请码。</p></div>
-      <div class="card"><h3>续期</h3><p>使用期快到时会提前两天弹窗提醒。到期后数据不会删除，但美工端会进入只读模式。</p></div>
+      <div class="card"><h3>续期</h3><p>左侧有独立「🎟️ 续期」入口，可以查看工作台名称、到期时间、剩余使用时长、续期方式和续期记录。使用期快到时也会提前提醒。</p></div>
     </div>
 
-    <div class="step"><div class="num">1</div><div><h3>先建立有顾客档案的顾客</h3><p>进入「顾客」页面，点“＋ 添加顾客”。可以设置顾客昵称、美工备注、关联顾客端账号和余额。</p><div class="path">美工端 → 顾客 → ＋ 添加顾客</div></div></div>
-    <div class="step"><div class="num">2</div><div><h3>给顾客充值 / 加预算</h3><p>进入顾客管理，填写“调整金额”和说明，点击“增加余额”。每一笔都会形成流水，不会覆盖历史。</p></div></div>
-    <div class="step"><div class="num">3</div><div><h3>新建需求 / 订单</h3><p>点击“新增需求”。填写需求名称、金额、状态、日期、分类、进度和备注。如果这位顾客已经建立档案，在“用户 / 顾客”里直接选择她；如果没有建立顾客档案，就保持不关联。</p></div></div>
-    <div class="step"><div class="num">4</div><div><h3>保存订单时直接扣顾客余额</h3><p>选择有顾客档案的顾客后，“保存订单时直接扣除本单金额”会自动可用。系统会显示扣费后余额。如果余额不足，会拦住，不会让余额直接变成负数。</p></div></div>
-    <div class="step"><div class="num">5</div><div><h3>分享给顾客</h3><p>有顾客档案的顾客使用固定的“顾客匿名链接”；没有顾客档案的订单使用该订单自己的专属匿名链接。如果顾客有账号，也可以让她用 GC 顾客码登录顾客端。</p></div></div>
-    <div class="step"><div class="num">6</div><div><h3>更新进度</h3><p>订单状态可切换为“待处理 / 进行中 / 待付款 / 已完成”。顾客查看端读取的是公开进度信息，不会把你的美工备注和工作台原始数据暴露出去。</p></div></div>
-    <div class="step"><div class="num">7</div><div><h3>DDL 与系统通知</h3><p>订单可以设置提前 1 天、提前 3 小时或自定义提醒。手机安装到主屏幕后允许通知，提醒体验最好。</p></div></div>
-    <div class="step"><div class="num">8</div><div><h3>个性化</h3><p>可以改应用名称、通知名称、头像、应用图标、导航名称、导航排序、显示风格和主题颜色。设置会跟随账号同步。</p></div></div>
+    <div class="step"><div class="num">1</div><div><h3>查看使用期 / 续期</h3><p>点左侧「🎟️ 续期」。这里会显示当前工作台名称、到期时间和剩余使用时长。工作台名称会跟随你自己设置的名称同步变化。</p><div class="path">美工端 → 🎟️ 续期</div><p>需要续期时，可以联系代理或 <b>-Lveuoi</b> 获取续期码后直接输入；也可以复制自己的 <b>UUID</b> 给管理员，由管理员直接增加使用时长。</p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>先建立有顾客档案的顾客</h3><p>进入「顾客」页面，点“＋ 添加顾客”。可以设置顾客昵称、美工备注、关联顾客端账号和余额。</p><div class="path">美工端 → 顾客 → ＋ 添加顾客</div></div></div>
+    <div class="step"><div class="num">3</div><div><h3>给顾客增加余额 / 加预算</h3><p>进入顾客管理，填写“调整金额”和说明，点击“增加余额”。金额框可以直接输入算式，例如 <b>13+5</b>、<b>22+6</b>，系统会先算出结果再保存。每一笔都会形成流水，不会覆盖历史。</p></div></div>
+    <div class="step"><div class="num">4</div><div><h3>新建需求 / 订单</h3><p>点击“新增需求”。填写需求名称、金额、状态、日期、分类、进度和备注。如果这位顾客已经建立档案，在“用户 / 顾客”里直接选择她；如果没有建立顾客档案，就保持不关联。</p></div></div>
+    <div class="step"><div class="num">5</div><div><h3>保存订单时直接扣顾客余额</h3><p>选择有顾客档案的顾客后，“保存订单时直接扣除本单金额”会自动可用。系统会显示扣费后余额。如果余额不足，会拦住，不会让余额直接变成负数。</p></div></div>
+    <div class="step"><div class="num">6</div><div><h3>分享给顾客</h3><p>有顾客档案的顾客使用固定的“顾客匿名链接”；没有顾客档案的订单使用该订单自己的专属匿名链接。如果顾客有账号，也可以让她用 GC 顾客码登录顾客端。</p></div></div>
+    <div class="step"><div class="num">7</div><div><h3>更新进度</h3><p>订单状态可切换为“待处理 / 进行中 / 待付款 / 已完成”。顾客查看端读取的是公开进度信息，不会把你的美工备注和工作台原始数据暴露出去。</p></div></div>
+    <div class="step"><div class="num">8</div><div><h3>DDL 与系统通知</h3><p>订单可以设置提前 1 天、提前 3 小时或自定义提醒。手机安装到主屏幕后允许通知，提醒体验最好。</p></div></div>
+    <div class="step"><div class="num">9</div><div><h3>个性化</h3><p>可以改应用名称、通知名称、头像、应用图标、导航名称、导航排序、显示风格和主题颜色。设置会跟随账号同步。</p></div></div>
   </section>
 
   <section class="section" id="customer">
@@ -216,12 +217,14 @@ a{color:inherit;text-decoration:none}
   </section>
 
   <section class="section" id="expiry">
-    <h2>美工使用期到期会发生什么？ ⏳</h2>
+    <h2>使用期与续期怎么用？ ⏳</h2>
     <div class="grid">
-      <div class="card"><h3>不会发生的事</h3><p>不会删除数据，不会把顾客踢掉，不会让已经生成的顾客匿名链接失效。</p></div>
-      <div class="card"><h3>会发生的事</h3><p>美工端到期后仍可以登录查看已有内容，但不能继续新增或修改内容。续期后即可恢复正常使用。</p></div>
+      <div class="card"><h3>去哪里续期</h3><p>美工端左侧有独立的「🎟️ 续期」入口。打开后可以看到工作台名称、到期时间、剩余时长、可续期时长和历史续期记录。</p></div>
+      <div class="card"><h3>怎么续期</h3><p>可以输入续期码直接续期；也可以把自己的 UUID 提供给管理员，由管理员直接给账号增加使用时长。</p></div>
+      <div class="card"><h3>续期码从哪里拿</h3><p>需要续期码时，请联系代理或 <b>-Lveuoi</b>。拿到后在「🎟️ 续期」页面直接输入即可。</p></div>
+      <div class="card"><h3>到期后会怎样</h3><p>数据不会删除，顾客关系和已经生成的匿名链接也不会消失。美工端仍可登录查看，但会进入只读模式，续期后恢复编辑。</p></div>
     </div>
-    <div class="note good">续期成功后会恢复编辑权限。到期前 48 小时内，系统会弹窗提醒续期。</div>
+    <div class="note good">工作台名称不是固定写死的，会跟随美工自己设置的工作台名称同步更新。到期前 48 小时内，系统也会提醒续期。</div>
   </section>
 
   <section class="section faq" id="faq">
@@ -232,7 +235,9 @@ a{color:inherit;text-decoration:none}
     <details><summary>什么时候使用“一单一链接”？</summary><p>当这笔订单没有关联顾客档案时，就使用该订单自己的专属匿名链接。</p></details>
     <details><summary>顾客能看到美工美工备注吗？</summary><p>匿名查看不会。公开读取只返回清洗后的订单字段。</p></details>
     <details><summary>美工到期后顾客还能看吗？</summary><p>可以。已有的顾客端关系和匿名链接继续有效，美工端只是不能继续写入。</p></details>
-    <details><summary>遇到问题找谁？</summary><p>开发者联系：<b>i-Sooong</b>。美工端和顾客端设置里都可以直接复制。</p></details>
+    <details><summary>续期一定要输入续期码吗？</summary><p>不一定。可以自己在「🎟️ 续期」里输入续期码，也可以把 UUID 发给管理员，由管理员直接增加使用时长。</p></details>
+    <details><summary>续期页面里的工作台名称会自动变化吗？</summary><p>会。它读取的是当前账号自己设置的工作台名称，改名后续期页面也会跟着更新。</p></details>
+    <details><summary>遇到问题找谁？</summary><p>一般功能反馈可联系开发者 <b>i-Sooong</b>；需要购买 / 获取续期码时，联系代理或 <b>-Lveuoi</b>。</p></details>
   </section>
 
   <div class="footer">🍓 莓桃工作台 · 使用教程 · 开发者联系 i-Sooong</div>
