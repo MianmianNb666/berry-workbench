@@ -179,6 +179,7 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
         <div class="meta">注册邀请码固定赠送 7 天；续期码支持 7 / 30 / 90 / 365 天和永久。邀请码明文只会在生成这一刻显示，请立即复制。</div>
         <div class="formgrid">
           <div class="field"><label>用途</label><select id="invitePurpose"><option value="signup">注册邀请码</option><option value="renewal">续期码</option></select></div>
+          <div class="field hidden" id="inviteRenewalEditionField"><label>续费版本</label><select id="inviteRenewalEdition"><option value="artist">🎨 美工版</option><option value="full">🍓 完整版</option></select></div>
           <div class="field"><label>时长</label><select id="inviteDuration"><option value="7">7 天</option><option value="30">30 天</option><option value="90">90 天</option><option value="365">365 天</option><option value="permanent">永久</option></select></div>
           <div class="field"><label>使用方式</label><select id="inviteMode"><option value="single">单次使用</option><option value="multi">多人通用</option></select></div>
           <div class="field"><label>最多使用次数</label><input id="inviteMaxUses" type="number" min="1" value="10" disabled></div>
@@ -526,6 +527,8 @@ function syncInviteForm(){
   const signup=$("invitePurpose").value==="signup";
   $("inviteDuration").disabled=signup;
   if(signup)$("inviteDuration").value="7";
+  $("inviteRenewalEdition").disabled=signup;
+  $("inviteRenewalEditionField").classList.toggle("hidden",signup);
   $("inviteMaxUses").disabled=$("inviteMode").value!=="multi";
 }
 async function createInvite(){
@@ -543,7 +546,8 @@ async function createInvite(){
     p_use_mode:mode,
     p_max_uses:maxUses,
     p_label:$("inviteLabel").value.trim()||null,
-    p_expires_at:expiresRaw?new Date(expiresRaw).toISOString():null
+    p_expires_at:expiresRaw?new Date(expiresRaw).toISOString():null,
+    p_renewal_edition:purpose==="renewal"?$("inviteRenewalEdition").value:null
   };
   $("createInviteBtn").disabled=true;
   const {data,error}=await supabase.rpc("admin_create_invite",args);
@@ -629,6 +633,9 @@ async function loadInvites(){
   };
   const rowHtml=i=>{
     const grant=i.grant_type==="permanent"?"永久":(i.duration_days||0)+"天";
+    const edition=i.purpose==="renewal"
+      ?(i.renewal_edition==="full"?"🍓 完整版":i.renewal_edition==="artist"?"🎨 美工版":"旧码 · 仅续时长")
+      :"";
     const mode=i.use_mode==="multi"?"多人":"单次";
     const usage=i.max_uses==null?(i.used_count+" / ∞"):(i.used_count+" / "+i.max_uses);
     const usable=isUsable(i);
@@ -638,7 +645,7 @@ async function loadInvites(){
     const oldCodeHint=usable&&!code?'<small style="display:block;margin-top:4px">旧邀请码未保存明文，无法恢复复制</small>':'';
     return '<div class="invite">'+
       '<input class="invite-check" type="checkbox" data-invite-select="'+esc(i.id)+'" aria-label="选择邀请码">'+
-      '<div class="main"><b>'+esc(i.label||"未备注")+'</b><br><small>'+esc(dt(i.created_at))+' · '+(i.purpose==="signup"?"注册":"续期")+'</small>'+codeLine+oldCodeHint+'</div>'+
+      '<div class="main"><b>'+esc(i.label||"未备注")+'</b><br><small>'+esc(dt(i.created_at))+' · '+(i.purpose==="signup"?"注册":"续期")+(edition?" · "+esc(edition):"")+'</small>'+codeLine+oldCodeHint+'</div>'+
       '<div><b style="font-size:11px">'+esc(grant)+'</b><br><small>'+mode+'</small></div>'+
       '<div><b style="font-size:11px">'+esc(usage)+'</b><br><small>已用 / 上限</small></div>'+
       '<div class="invite-actions">'+copyBtn+
