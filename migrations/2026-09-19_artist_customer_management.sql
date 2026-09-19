@@ -100,7 +100,7 @@ returns text
 language plpgsql
 security definer
 set search_path = public, auth, extensions
-as $
+as $$
 declare
   v_code text;
 begin
@@ -122,13 +122,13 @@ begin
           updated_at = now();
       exit;
     exception when unique_violation then
-      -- 极小概率碰撞，自动再生成一次。
+      null;
     end;
   end loop;
 
   return v_code;
 end;
-$;
+$$;
 
 revoke all on function public.rotate_customer_access_code() from public, anon;
 grant execute on function public.rotate_customer_access_code() to authenticated;
