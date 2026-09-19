@@ -428,6 +428,7 @@ function bindPageButtons(){
       document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x===b));
       document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
       $("p-"+b.dataset.page)?.classList.add("active");
+      if(b.dataset.page==="profile")refreshAccountProfile();
     };
   });
 }
@@ -1208,9 +1209,9 @@ async function refreshAccountProfile(){
   try{
     const status=await getAccessStatus();
     renderAccountProfile(status);
-    renderAccountProfile(status);
   }catch(e){
     console.error(e);
+    if($("profileAccessBadge"))$("profileAccessBadge").textContent="读取失败";
   }
 }
 function showRenewView(status={}){
@@ -1265,6 +1266,7 @@ async function applySession(session){
   let status;
   try{
     status=await getAccessStatus();
+    renderAccountProfile(status);
   }catch(e){
     console.error(e);
     showLoginView();
