@@ -105,7 +105,7 @@ a{color:inherit;text-decoration:none}
       <div class="code-card">
         <h3>③ 匿名链接</h3>
         <code>customer.html?share=SH-...</code>
-        <p>不用注册、不用登录。正式顾客一人一条长期链接；散客才是一单一条链接。</p>
+        <p>不用注册、不用登录。正式顾客一人一条长期链接；未建档顾客才是一单一条链接。</p>
       </div>
     </div>
     <div class="note warn"><b>最重要：</b>美工邀请码 ≠ 顾客码 ≠ 匿名链接。美工邀请码管“美工能不能用工作台”，顾客码管“顾客账号能不能解锁某位美工”，匿名链接管“无需登录直接看排单”。</div>
@@ -126,7 +126,7 @@ a{color:inherit;text-decoration:none}
     <div class="step"><div class="num">3</div><div><h3>一位顾客可以连接多个美工</h3><p>每位美工都需要各自的 GC 码。拿到 A 的码只会解锁 A，不会看到 B。</p></div></div>
     <div class="note good"><b>推荐：</b>如果这个顾客确定要用“登录顾客端”，最好先让她用 GC 码完成绑定。系统会出现对应的已绑定顾客档案，美工再去改昵称、备注、余额，会比较干净。</div>
 
-    <h3 style="font-size:15px;margin:18px 0 8px">场景 B：正式顾客，但她不想注册账号</h3>
+    <h3 style="font-size:15px;margin:18px 0 8px">场景 B：有顾客档案，不登录账号也可以</h3>
     <div class="flow">
       <div class="node"><b>美工</b><br><small>添加顾客档案</small></div><div class="arrow">→</div>
       <div class="node"><b>系统</b><br><small>生成这个顾客固定匿名链接</small></div><div class="arrow">→</div>
@@ -134,10 +134,10 @@ a{color:inherit;text-decoration:none}
     </div>
     <p class="note">以后美工新增订单时，只要在「用户 / 顾客」选择这个人，新订单就会自动出现在她原来的匿名链接里，不需要重新发链接。</p>
 
-    <h3 style="font-size:15px;margin:18px 0 8px">场景 C：真正的散客，只做这一单</h3>
+    <h3 style="font-size:15px;margin:18px 0 8px">场景 C：没有建立顾客档案</h3>
     <div class="flow">
-      <div class="node"><b>新建订单</b><br><small>选择“散客 / 不关联用户”</small></div><div class="arrow">→</div>
-      <div class="node"><b>订单卡</b><br><small>点“散客订单链接”</small></div><div class="arrow">→</div>
+      <div class="node"><b>新建订单</b><br><small>选择“未建档顾客 / 不关联用户”</small></div><div class="arrow">→</div>
+      <div class="node"><b>订单卡</b><br><small>点“订单专属匿名链接”</small></div><div class="arrow">→</div>
       <div class="node"><b>顾客</b><br><small>只看到这一单</small></div>
     </div>
   </section>
@@ -153,9 +153,9 @@ a{color:inherit;text-decoration:none}
 
     <div class="step"><div class="num">1</div><div><h3>先建立正式顾客</h3><p>进入「顾客」页面，点“＋ 添加顾客”。可以设置顾客昵称、内部备注、关联顾客端账号和余额。</p><div class="path">美工端 → 顾客 → ＋ 添加顾客</div></div></div>
     <div class="step"><div class="num">2</div><div><h3>给顾客充值 / 加预算</h3><p>进入顾客管理，填写“调整金额”和说明，点击“增加余额”。每一笔都会形成流水，不会覆盖历史。</p></div></div>
-    <div class="step"><div class="num">3</div><div><h3>新建需求 / 订单</h3><p>点击“新增需求”。填写需求名称、金额、状态、日期、分类、进度和备注。如果是已有顾客，在“用户 / 顾客”里直接选她；如果是一锤子买卖，选“散客 / 不关联用户”。</p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>新建需求 / 订单</h3><p>点击“新增需求”。填写需求名称、金额、状态、日期、分类、进度和备注。如果这位顾客已经建立档案，在“用户 / 顾客”里直接选择她；如果没有建立顾客档案，就保持不关联。</p></div></div>
     <div class="step"><div class="num">4</div><div><h3>保存订单时直接扣顾客余额</h3><p>选择正式顾客后，“保存订单时直接扣除本单金额”会自动可用。系统会显示扣费后余额。如果余额不足，会拦住，不会让余额直接变成负数。</p></div></div>
-    <div class="step"><div class="num">5</div><div><h3>分享给顾客</h3><p>正式顾客使用固定的“顾客匿名链接”；散客使用“散客订单链接”。如果顾客有账号，也可以让她用 GC 顾客码登录顾客端。</p></div></div>
+    <div class="step"><div class="num">5</div><div><h3>分享给顾客</h3><p>有顾客档案的顾客使用固定的“顾客匿名链接”；没有顾客档案的订单使用该订单自己的专属匿名链接。如果顾客有账号，也可以让她用 GC 顾客码登录顾客端。</p></div></div>
     <div class="step"><div class="num">6</div><div><h3>更新进度</h3><p>订单状态可切换为“待处理 / 进行中 / 待付款 / 已完成”。顾客查看端读取的是公开进度信息，不会把你的内部备注和工作台原始数据暴露出去。</p></div></div>
     <div class="step"><div class="num">7</div><div><h3>DDL 与系统通知</h3><p>订单可以设置提前 1 天、提前 3 小时或自定义提醒。手机安装到主屏幕后允许通知，提醒体验最好。</p></div></div>
     <div class="step"><div class="num">8</div><div><h3>个性化</h3><p>可以改应用名称、通知名称、头像、应用图标、导航名称、导航排序、显示风格和主题颜色。设置会跟随账号同步。</p></div></div>
@@ -173,7 +173,7 @@ a{color:inherit;text-decoration:none}
     <div class="step"><div class="num">5</div><div><h3>自定义顾客端</h3><p>设置里可以改主色、背景、卡片、文字颜色，也可以把“我的排单”旁边的小草莓 🍓 换成自己的 emoji。</p></div></div>
 
     <h3 style="font-size:15px;margin:18px 0 5px">匿名链接模式</h3>
-    <p class="note good">不需要邮箱、不需要密码、不需要注册。打开美工发来的匿名链接就能看。正式顾客用一条长期链接，散客只看对应的单笔订单。</p>
+    <p class="note good">不需要邮箱、不需要密码、不需要注册。打开美工发来的匿名链接就能看。正式顾客用一条长期链接，未建档顾客只看对应的单笔订单。</p>
   </section>
 
   <section class="section" id="anonymous">
@@ -228,8 +228,8 @@ a{color:inherit;text-decoration:none}
     <h2>常见问题 🧩</h2>
     <details open><summary>顾客一定要注册账号吗？</summary><p>不用。正式顾客可以只用自己的固定匿名链接。注册账号的好处是一个账号可以统一管理多个美工。</p></details>
     <details><summary>一个顾客能绑定多个美工吗？</summary><p>可以。每位美工需要单独的 GC 顾客码。不同美工的余额和数据是分开的。</p></details>
-    <details><summary>正式顾客每个订单都要重新发链接吗？</summary><p>不用。她只有一条固定匿名链接。以后新订单只要关联到她，就会自动出现。</p></details>
-    <details><summary>什么时候才需要“一单一链接”？</summary><p>只有散客。新增订单时选“散客 / 不关联用户”，这笔单才使用独立的散客订单链接。</p></details>
+    <details><summary>有顾客档案后，每个订单都要重新发链接吗？</summary><p>不用。她只有一条固定匿名链接。以后新订单只要关联到她，就会自动出现。</p></details>
+    <details><summary>什么时候使用“一单一链接”？</summary><p>当这笔订单没有关联顾客档案时，就使用该订单自己的专属匿名链接。</p></details>
     <details><summary>顾客能看到美工内部备注吗？</summary><p>匿名查看不会。公开读取只返回清洗后的订单字段。</p></details>
     <details><summary>美工到期后顾客还能看吗？</summary><p>可以。已有的顾客端关系和匿名链接继续有效，美工端只是不能继续写入。</p></details>
     <details><summary>遇到问题找谁？</summary><p>开发者联系：<b>i-Sooong</b>。美工端和顾客端设置里都可以直接复制。</p></details>
