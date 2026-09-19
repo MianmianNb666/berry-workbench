@@ -283,7 +283,7 @@
 <p class="note" id="footerText">♡ 粉白个人接单工作台 · 自动云同步 + 本地缓存</p></main>
 <aside class="right"><div class="card"><h3>🎨 收支概览</h3><div class="mini"><b id="sideIncome">¥0</b><br><span id="sideDone">已完成 0 单</span></div></div><div class="card"><h3>💬 小助手</h3><div class="mini" id="assistant">今天还没有单子。</div></div></aside>
 </div></div>
-<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>截止时间<input id="oDueTime" type="time" value="23:59"></label><label>分类<input id="oCat" type="text" maxlength="30" placeholder="自己填写分类，例如：返图 / 文案 / 其他"></label><div class="reminder-box"><span>系统提醒 🔔</span><div class="reminder-checks"><label class="reminder-check"><input id="oRemind1d" type="checkbox"> 提前 1 天</label><label class="reminder-check"><input id="oRemind3h" type="checkbox"> 提前 3 小时</label></div><label class="reminder-custom">自定义提醒时间<input id="oRemindCustom" type="datetime-local"></label><div class="meta" style="margin-top:6px">可同时选择多个提醒。需要先在“我的 / 设置”开启系统通知。</div></div><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="artistCustomerModalBg" class="modalbg"><div class="modal">
+<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>关联顾客<select id="oArtistCustomer"><option value="">不关联顾客档案</option></select></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>截止时间<input id="oDueTime" type="time" value="23:59"></label><label>分类<input id="oCat" type="text" maxlength="30" placeholder="自己填写分类，例如：返图 / 文案 / 其他"></label><div class="reminder-box"><span>系统提醒 🔔</span><div class="reminder-checks"><label class="reminder-check"><input id="oRemind1d" type="checkbox"> 提前 1 天</label><label class="reminder-check"><input id="oRemind3h" type="checkbox"> 提前 3 小时</label></div><label class="reminder-custom">自定义提醒时间<input id="oRemindCustom" type="datetime-local"></label><div class="meta" style="margin-top:6px">可同时选择多个提醒。需要先在“我的 / 设置”开启系统通知。</div></div><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="artistCustomerModalBg" class="modalbg"><div class="modal">
   <div class="modalhead">
     <div>
       <h2 id="artistCustomerModalTitle">添加顾客 👥</h2>
@@ -316,6 +316,14 @@
     <div id="artistCustomerBalanceHint" class="authhint"></div>
     <h3 style="font-size:13px;margin:14px 0 0">余额明细</h3>
     <div id="artistCustomerLedgerList" class="list" style="margin-top:8px"><div class="empty">新建顾客后即可记录余额。</div></div>
+  </div>
+  <div id="artistCustomerShareTools" class="profile-item" style="margin-top:12px">
+    <span>免登录入口 🔗</span>
+    <div class="meta" style="margin-top:4px">生成后顾客不需要注册或登录，只能看到这个顾客已关联的排单 / 订单，不会显示金额、内部备注或联系方式。</div>
+    <div class="actions" style="margin-top:9px">
+      <button class="ghost" id="generateArtistCustomerShareBtn" type="button">生成顾客排单链接</button>
+    </div>
+    <div id="artistCustomerShareHint" class="authhint"></div>
   </div>
   <div id="artistCustomerModalHint" class="authhint"></div>
   <div class="actions" style="justify-content:flex-end">
@@ -753,7 +761,7 @@ function createCustomSection(){
   setTimeout(()=>document.querySelector('[data-page="custom-'+id+'"]')?.click(),50);
 }
 
-function card(o){let d=dayLeft(o.due),rl=orderReminderLabel(o);return '<article class="order"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||"未填客户")+' · '+esc(o.cat||"未分类")+'</div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+(o.dueTime?" "+esc(o.dueTime):"")+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div>'+(rl?'<div class="order-reminder">🔔 '+esc(rl)+'</div>':'')+(o.note?'<div class="order-note"><b>备注：</b>'+esc(o.note)+'</div>':'')+'<div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="danger" data-del="'+o.id+'">删除</button></div></article>'}
+function card(o){let d=dayLeft(o.due),rl=orderReminderLabel(o);return '<article class="order"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||"未填客户")+' · '+esc(o.cat||"未分类")+'</div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+(o.dueTime?" "+esc(o.dueTime):"")+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div>'+(rl?'<div class="order-reminder">🔔 '+esc(rl)+'</div>':'')+(o.note?'<div class="order-note"><b>备注：</b>'+esc(o.note)+'</div>':'')+'<div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="ghost" data-share-order="'+o.id+'">🔗 免登录链接</button><button class="danger" data-del="'+o.id+'">删除</button></div></article>'}
 
 function render(){
   let q=$("search").value.trim().toLowerCase(),os=S.orders,show=os.filter(o=>(filter==="全部"||o.status===filter)&&(!q||[o.name,o.client,o.note,o.cat].join(" ").toLowerCase().includes(q))).slice().reverse();
@@ -853,6 +861,7 @@ function bind(){
     render();persist();
     await removeOrderReminders(id);
   });
+  document.querySelectorAll("[data-share-order]").forEach(b=>b.onclick=()=>generateOrderShare(b.dataset.shareOrder));
   document.querySelectorAll("[data-status]").forEach(s=>s.onchange=async()=>{
     let o=S.orders.find(x=>x.id===s.dataset.status);
     if(o){
@@ -874,15 +883,20 @@ bindPageButtons();
 document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));render()});
 $("search").oninput=render;
 
-const mb=$("modalbg"),open=()=>mb.classList.add("show"),close=()=>mb.classList.remove("show");
+const mb=$("modalbg"),open=async()=>{await loadOrderCustomerOptions();mb.classList.add("show")},close=()=>mb.classList.remove("show");
 $("newBtn").onclick=open;$("newBtn2").onclick=open;$("closeModal").onclick=close;$("cancelModal").onclick=close;
 $("oStart").value=T;$("oDue").value=T;$("oDueTime").value="23:59";
+$("oArtistCustomer").onchange=()=>{
+  const found=artistCustomers.find(x=>x.id===$("oArtistCustomer").value);
+  if(found)$("oClient").value=found.display_name||"";
+};
 $("orderForm").onsubmit=async e=>{
   e.preventDefault();
   const order={
     id:String(Date.now()),
     name:$("oName").value.trim(),
     client:$("oClient").value.trim(),
+    artistCustomerId:$("oArtistCustomer").value||"",
     money:+$("oMoney").value||0,
     status:$("oStatus").value,
     start:$("oStart").value,
@@ -1308,6 +1322,68 @@ async function renderArtistCustomerLedger(customerId){
     return '<div class="item"><div><b>'+(n>0?"+":"−")+artistCustomerMoney(Math.abs(n))+'</b><small>'+esc(row.note||"余额调整")+' · '+esc(formatAccessDate(row.created_at))+'</small></div><span class="tag">'+(n>0?"增加":"减少")+'</span></div>';
   }).join(""):'<div class="empty">还没有余额明细。</div>';
 }
+async function loadOrderCustomerOptions(){
+  const select=$("oArtistCustomer");
+  if(!select)return;
+  if(!(await isArtistBetaOwner())){
+    select.innerHTML='<option value="">不关联顾客档案</option>';
+    return;
+  }
+  if(!artistCustomers.length)await loadArtistCustomers();
+  const current=select.value;
+  select.innerHTML='<option value="">不关联顾客档案</option>'+artistCustomers.map(x=>
+    '<option value="'+esc(x.id)+'">'+esc(x.display_name||"顾客")+'</option>'
+  ).join("");
+  if(current&&artistCustomers.some(x=>x.id===current))select.value=current;
+}
+
+function publicShareUrl(token){
+  return new URL("./customer.html?share="+encodeURIComponent(token),location.href).href;
+}
+
+async function copyPublicShareLink(token,label="免登录链接"){
+  const link=publicShareUrl(token);
+  try{
+    await navigator.clipboard.writeText(link);
+    return label+"已复制 ✓";
+  }catch(_){
+    prompt("复制"+label+"：",link);
+    return label+"已生成";
+  }
+}
+
+async function createPublicCustomerShare(customerId,orderId=""){
+  if(!user||!(await isArtistBetaOwner()))return null;
+  const {data,error}=await supabase.rpc("create_customer_public_share",{
+    p_artist_customer_id:customerId||null,
+    p_order_id:orderId||null
+  });
+  if(error){
+    console.error(error);
+    const msg=(error.message||"").includes("只读")?"当前账号已到期，只读模式下不能生成新链接。":"生成失败："+error.message;
+    return {error:msg};
+  }
+  return {token:data};
+}
+
+async function generateArtistCustomerShare(){
+  if(!editingArtistCustomerId)return;
+  const hint=$("artistCustomerShareHint");
+  hint.textContent="正在生成免登录入口…";
+  const result=await createPublicCustomerShare(editingArtistCustomerId,"");
+  if(result?.error){hint.textContent=result.error;return}
+  hint.textContent=await copyPublicShareLink(result.token,"顾客排单链接");
+}
+
+async function generateOrderShare(orderId){
+  const order=S.orders.find(x=>x.id===orderId);
+  if(!order)return;
+  const result=await createPublicCustomerShare(order.artistCustomerId||null,order.id);
+  if(result?.error){alert(result.error);return}
+  const msg=await copyPublicShareLink(result.token,"订单查看链接");
+  alert(msg+"\n这个链接不用登录，只能查看这笔订单的公开进度。");
+}
+
 async function openArtistCustomerModal(customerId=null){
   if(!(await isArtistBetaOwner()))return;
   editingArtistCustomerId=customerId||null;
@@ -1324,6 +1400,8 @@ async function openArtistCustomerModal(customerId=null){
   $("deleteArtistCustomerBtn").classList.toggle("hidden",!customer);
   $("artistCustomerBudgetTools").classList.toggle("hidden",!customer);
   $("artistCustomerBalanceBox").classList.toggle("hidden",!customer);
+  $("artistCustomerShareTools").classList.toggle("hidden",!customer);
+  $("artistCustomerShareHint").textContent="";
   $("artistCustomerBalanceValue").textContent=artistCustomerMoney(customer?artistCustomerBalances.get(customer.id)||0:0);
   $("artistCustomerAmountInput").value="";
   $("artistCustomerAmountNoteInput").value="";
@@ -1509,6 +1587,7 @@ $("cancelArtistCustomerModalBtn").onclick=closeArtistCustomerModal;
 $("artistCustomerModalBg").addEventListener("click",e=>{if(e.target===$("artistCustomerModalBg"))closeArtistCustomerModal()});
 $("saveArtistCustomerBtn").onclick=saveArtistCustomer;
 $("deleteArtistCustomerBtn").onclick=deleteArtistCustomer;
+$("generateArtistCustomerShareBtn").onclick=generateArtistCustomerShare;
 $("artistCustomerAddBalanceBtn").onclick=()=>adjustArtistCustomerBalance("add");
 $("artistCustomerSubtractBalanceBtn").onclick=()=>adjustArtistCustomerBalance("subtract");
 $("openCustomersFromProfileBtn").onclick=async()=>{
