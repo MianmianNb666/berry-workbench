@@ -132,6 +132,7 @@
     <button id="copyArtistCodeBtn" class="ghost" type="button">复制美工编号</button>
     <button id="copyArtistLinkBtn" class="primary" type="button">复制顾客链接</button>
     <a id="openArtistCustomerPageBtn" class="ghost" href="./customer.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">打开顾客页面</a>
+    <button id="openBudgetManagerBtn" class="ghost" type="button">💰 预算管理</button>
   </div>
   <label style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);cursor:pointer">
     <input id="artistAutoUnbindInput" type="checkbox" style="width:auto;margin-top:2px">
@@ -259,7 +260,37 @@
 <p class="note" id="footerText">♡ 粉白个人接单工作台 · 自动云同步 + 本地缓存</p></main>
 <aside class="right"><div class="card"><h3>🎨 收支概览</h3><div class="mini"><b id="sideIncome">¥0</b><br><span id="sideDone">已完成 0 单</span></div></div><div class="card"><h3>💬 小助手</h3><div class="mini" id="assistant">今天还没有单子。</div></div></aside>
 </div></div>
-<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>截止时间<input id="oDueTime" type="time" value="23:59"></label><label>分类<input id="oCat" type="text" maxlength="30" placeholder="自己填写分类，例如：返图 / 文案 / 其他"></label><div class="reminder-box"><span>系统提醒 🔔</span><div class="reminder-checks"><label class="reminder-check"><input id="oRemind1d" type="checkbox"> 提前 1 天</label><label class="reminder-check"><input id="oRemind3h" type="checkbox"> 提前 3 小时</label></div><label class="reminder-custom">自定义提醒时间<input id="oRemindCustom" type="datetime-local"></label><div class="meta" style="margin-top:6px">可同时选择多个提醒。需要先在“我的 / 设置”开启系统通知。</div></div><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div><div id="authGate" class="authbg"><div class="authcard"><div class="portal-switch"><span class="active">🎨 美工端</span><a href="./customer.html">👤 顾客端</a></div><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div class="meta" style="margin-top:6px;text-align:center">为避免频繁发送，密码重置邮件每小时最多发送 2 次，请确认邮箱填写正确后再点击。</div><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
+<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>截止时间<input id="oDueTime" type="time" value="23:59"></label><label>分类<input id="oCat" type="text" maxlength="30" placeholder="自己填写分类，例如：返图 / 文案 / 其他"></label><div class="reminder-box"><span>系统提醒 🔔</span><div class="reminder-checks"><label class="reminder-check"><input id="oRemind1d" type="checkbox"> 提前 1 天</label><label class="reminder-check"><input id="oRemind3h" type="checkbox"> 提前 3 小时</label></div><label class="reminder-custom">自定义提醒时间<input id="oRemindCustom" type="datetime-local"></label><div class="meta" style="margin-top:6px">可同时选择多个提醒。需要先在“我的 / 设置”开启系统通知。</div></div><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="budgetModalBg" class="modalbg"><div class="modal">
+  <div class="modalhead">
+    <div><h2>顾客预算 💰</h2><div class="meta">给已绑定顾客增加或减少预算，顾客端会同步看到余额和明细。</div></div>
+    <button class="ghost" id="closeBudgetModal" type="button">×</button>
+  </div>
+  <div style="margin-top:14px">
+    <label style="display:block;font-size:11px;color:var(--muted)">选择顾客
+      <select id="budgetCustomerSelect" style="margin-top:6px;width:100%">
+        <option value="">正在读取…</option>
+      </select>
+    </label>
+    <div class="profile-item" style="margin-top:10px">
+      <span>当前预算余额</span>
+      <b id="budgetCurrentBalance">¥0.00</b>
+    </div>
+    <div class="formgrid" style="margin-top:10px">
+      <label>调整金额 ¥<input id="budgetAmountInput" type="number" min="0.01" step="0.01" placeholder="例如 100"></label>
+      <label>说明<input id="budgetNoteInput" maxlength="80" placeholder="例如：追加预算 / 海报扣款"></label>
+    </div>
+    <div class="actions">
+      <button class="primary" id="addBudgetBtn" type="button">＋ 增加预算</button>
+      <button class="danger" id="subtractBudgetBtn" type="button">－ 减少预算</button>
+    </div>
+    <div id="budgetHint" class="authhint"></div>
+    <div style="margin-top:14px">
+      <h3 style="font-size:13px;margin:0">预算明细</h3>
+      <div id="budgetHistoryList" class="list" style="margin-top:8px"><div class="empty">请选择顾客。</div></div>
+    </div>
+  </div>
+</div></div>
+<div id="redeemModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>兑换邀请码 🎟️</h2><div class="meta">可兑换 7天 / 30天 / 90天 / 365天 / 永久续期码</div></div><button class="ghost" id="closeRedeemModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">邀请码<input id="redeemCode" type="text" autocomplete="off" placeholder="输入续期邀请码" style="margin-top:6px"></label><div id="redeemModalHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelRedeemModal" type="button">取消</button><button class="primary" id="redeemModalBtn" type="button">兑换</button></div></div></div><div id="authGate" class="authbg"><div class="authcard"><div class="portal-switch"><span class="active">🎨 美工端</span><a href="./customer.html">👤 顾客端</a></div><div class="logo" id="authLogo" style="margin-bottom:12px"><span>🍓</span><img id="authAvatar" alt="自定义头像"></div><div id="loginView"><h2>登录莓桃工作台</h2><p>同一个账号在手机、电脑、iPad会自动同步。自己的邮箱注册，数据会完全分开。首次注册需要注册码；使用期到期后输入续期码，正常登录不用邀请码。</p><form id="loginForm" autocomplete="on"><label>邮箱<input id="authEmail" name="username" type="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="name@example.com"></label><label>密码<div class="password-field"><input id="authPassword" name="password" type="password" autocomplete="current-password" minlength="6" placeholder="至少 6 位"><button id="toggleAuthPassword" class="password-toggle" type="button" aria-label="显示密码">显示</button></div></label><label>邀请码 <span style="font-size:10px;color:var(--muted)">仅第一次注册需要</span><input id="inviteCode" type="text" autocomplete="off" placeholder="例如：BERRY-XXXX"></label><div class="authactions"><button id="loginBtn" class="primary" type="submit">登录</button><button id="signupBtn" class="ghost" type="button">第一次使用 · 注册</button></div></form><div class="save-password-note">🔐 登录后可使用浏览器 / 手机自带的密码保存与自动填充功能。</div><button id="forgotBtn" class="authlink" type="button">忘记密码？发送重置邮件</button><div class="meta" style="margin-top:6px;text-align:center">为避免频繁发送，密码重置邮件每小时最多发送 2 次，请确认邮箱填写正确后再点击。</div><div id="authHint" class="authhint">正在连接云端…</div></div><div id="resetView" class="hidden"><h2>设置新密码</h2><p>你已经通过密码重置链接进入。设置一个新的密码后，就可以继续登录和同步。</p><label>新密码<input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"></label><label>再次输入新密码<input id="newPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"></label><div class="actions"><button id="savePasswordBtn" class="primary" type="button" style="width:100%">保存新密码</button></div><div id="resetHint" class="authhint"></div></div><div id="renewView" class="hidden"><h2>使用期已结束 🌷</h2><p id="renewText">你的工作台数据仍然完整保留。输入新的续期邀请码即可恢复使用。</p><label>续期邀请码<input id="renewCode" type="text" autocomplete="off" placeholder="请输入 7天 / 30天 / 90天 / 365天 / 永久码"></label><div class="actions"><button id="renewBtn" class="primary" type="button" style="width:100%">兑换并继续使用</button><button id="renewLogoutBtn" class="ghost" type="button" style="width:100%">退出账号</button></div><div id="renewHint" class="authhint"></div></div></div></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -1111,6 +1142,89 @@ $("copyDeveloperContactBtn").onclick=async()=>{
   }
 };
 
+let budgetCustomers=[];
+function moneyBudget(v){
+  return "¥"+Number(v||0).toLocaleString("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+async function loadBudgetCustomers(){
+  $("budgetCustomerSelect").innerHTML='<option value="">正在读取…</option>';
+  $("budgetHint").textContent="";
+  const {data,error}=await supabase.rpc("get_artist_bound_customers");
+  if(error){
+    console.error(error);
+    $("budgetCustomerSelect").innerHTML='<option value="">读取失败</option>';
+    $("budgetHistoryList").innerHTML='<div class="empty">请先运行最新的预算 SQL。</div>';
+    $("budgetHint").textContent="预算功能还没有完成数据库升级。";
+    return;
+  }
+  budgetCustomers=data||[];
+  if(!budgetCustomers.length){
+    $("budgetCustomerSelect").innerHTML='<option value="">暂无已绑定顾客</option>';
+    $("budgetCurrentBalance").textContent="¥0.00";
+    $("budgetHistoryList").innerHTML='<div class="empty">顾客绑定美工后，才可以在这里调整预算。</div>';
+    return;
+  }
+  $("budgetCustomerSelect").innerHTML=budgetCustomers.map(x=>'<option value="'+esc(x.customer_user_id)+'">'+esc(x.customer_label)+' · '+moneyBudget(x.budget_balance)+'</option>').join("");
+  await loadBudgetHistory();
+}
+async function loadBudgetHistory(){
+  const customerId=$("budgetCustomerSelect").value;
+  if(!customerId){
+    $("budgetCurrentBalance").textContent="¥0.00";
+    $("budgetHistoryList").innerHTML='<div class="empty">请选择顾客。</div>';
+    return;
+  }
+  const known=budgetCustomers.find(x=>x.customer_user_id===customerId);
+  if(known)$("budgetCurrentBalance").textContent=moneyBudget(known.budget_balance);
+  const {data,error}=await supabase.from("customer_budget_entries")
+    .select("id,amount,note,created_at")
+    .eq("artist_user_id",user.id)
+    .eq("customer_user_id",customerId)
+    .order("created_at",{ascending:false});
+  if(error){
+    console.error(error);
+    $("budgetHistoryList").innerHTML='<div class="empty">读取预算明细失败。</div>';
+    return;
+  }
+  $("budgetHistoryList").innerHTML=(data||[]).length?(data||[]).map(x=>{
+    const n=Number(x.amount||0);
+    const sign=n>0?"+":"−";
+    return '<div class="item"><div><b>'+sign+moneyBudget(Math.abs(n))+'</b><small>'+esc(x.note||"预算调整")+' · '+esc(formatAccessDate(x.created_at))+'</small></div><b>'+(n>0?"增加":"减少")+'</b></div>';
+  }).join(""):'<div class="empty">还没有预算明细。</div>';
+}
+async function adjustBudget(direction){
+  if(!user)return;
+  const customerId=$("budgetCustomerSelect").value;
+  const raw=Number($("budgetAmountInput").value||0);
+  if(!customerId){$("budgetHint").textContent="请先选择顾客。";return}
+  if(!(raw>0)){$("budgetHint").textContent="请输入大于 0 的金额。";return}
+  const amount=direction==="subtract"?-Math.abs(raw):Math.abs(raw);
+  const note=$("budgetNoteInput").value.trim()||(direction==="subtract"?"减少预算":"增加预算");
+  $("budgetHint").textContent="正在保存…";
+  const {error}=await supabase.from("customer_budget_entries").insert({
+    artist_user_id:user.id,
+    customer_user_id:customerId,
+    amount,
+    note
+  });
+  if(error){
+    console.error(error);
+    $("budgetHint").textContent="保存失败："+error.message;
+    return;
+  }
+  $("budgetAmountInput").value="";
+  $("budgetNoteInput").value="";
+  $("budgetHint").textContent="已同步到顾客端 ✓";
+  await loadBudgetCustomers();
+}
+function openBudgetModal(){
+  $("budgetModalBg").classList.add("show");
+  loadBudgetCustomers();
+}
+function closeBudgetModal(){
+  $("budgetModalBg").classList.remove("show");
+}
+
 $("artistAutoUnbindInput").onchange=async()=>{
   if(!user||!currentArtistProfile)return;
   const wanted=$("artistAutoUnbindInput").checked;
@@ -1128,6 +1242,13 @@ $("artistAutoUnbindInput").onchange=async()=>{
   }
   renderArtistPortalProfile(data);
 };
+$("openBudgetManagerBtn").onclick=openBudgetModal;
+$("closeBudgetModal").onclick=closeBudgetModal;
+$("budgetModalBg").addEventListener("click",e=>{if(e.target===$("budgetModalBg"))closeBudgetModal()});
+$("budgetCustomerSelect").onchange=loadBudgetHistory;
+$("addBudgetBtn").onclick=()=>adjustBudget("add");
+$("subtractBudgetBtn").onclick=()=>adjustBudget("subtract");
+
 $("copyArtistCodeBtn").onclick=async()=>{
   const code=currentArtistProfile?.artist_code;
   if(!code){await loadArtistPortalProfile();return}
