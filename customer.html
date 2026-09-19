@@ -634,7 +634,7 @@ async function loadCustomerHomeSchedules(){
     const body=!isPublic
       ?(orders.length?orders.map(renderCustomerHomeScheduleOrder).join(""):'<div class="empty" style="margin-top:10px">这位美工暂时还没有排单。</div>')
       :(orders.length?orders.map(renderCustomerHomeScheduleOrder).join(""):'<div class="empty" style="margin-top:10px">这位美工暂时还没有排单。</div>');
-    return '<div class="artist" style="display:block"><div class="artist-head"><div><div class="artist-name">'+esc(group.artist_name||"莓桃美工")+'</div><div class="code">'+esc(group.artist_code||"")+'</div></div><span class="badge '+(isPublic?"":"private")+'">'+badge+'</span></div>'+body+'</div>';
+    return '<div class="artist" style="display:block"><div class="artist-head"><div><div class="artist-name">'+esc(group.artist_name||"莓桃美工")+'</div><div class="code">美工编号：'+esc(group.artist_code||"未设置")+'</div></div><span class="badge '+(isPublic?"":"private")+'">'+badge+'</span></div>'+body+'</div>';
   }).join("");
 }
 function startCustomerHomeScheduleSync(){
