@@ -480,7 +480,16 @@ let deferredInstallPrompt=null;
 let swRegistration=null;
 let dynamicManifestUrl="";
 const ARTIST_BETA_OWNER_HASH="f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8";
-const CLIENT_EMERGENCY_LOCK=true;
+let clientFrontendOpenCache=null;
+async function getClientFrontendOpen(){
+  const {data,error}=await supabase.rpc("client_frontend_open");
+  if(error){
+    console.warn("Global frontend switch unavailable",error);
+    return false;
+  }
+  clientFrontendOpenCache=data===true;
+  return clientFrontendOpenCache;
+}
 async function sha256HexOwner(text){
   const data=new TextEncoder().encode(String(text||""));
   const digest=await crypto.subtle.digest("SHA-256",data);
@@ -2539,12 +2548,15 @@ async function applySession(session){
   }
 
   const isOwner=await isArtistBetaOwner();
-  if(CLIENT_EMERGENCY_LOCK&&!isOwner){
-    if(channel){supabase.removeChannel(channel);channel=null}
-    currentAccessStatus=null;
-    setSync("暂时锁定","err");
-    showMaintenanceView();
-    return;
+  if(!isOwner){
+    const frontendOpen=await getClientFrontendOpen();
+    if(!frontendOpen){
+      if(channel){supabase.removeChannel(channel);channel=null}
+      currentAccessStatus=null;
+      setSync("暂时锁定","err");
+      showMaintenanceView();
+      return;
+    }
   }
 
   $("accountEmail").textContent=user.email||"已登录";
@@ -2592,6 +2604,22 @@ updateNotificationStatus();
 
 const {data:{session}}=await supabase.auth.getSession();
 await applySession(session);
+
+setInterval(async()=>{
+  if(!user)return;
+  if(await isArtistBetaOwner())return;
+  const open=await getClientFrontendOpen();
+  const maintenanceVisible=$("maintenanceView")&&!$("maintenanceView").classList.contains("hidden");
+  if(!open&&!maintenanceVisible){
+    if(channel){supabase.removeChannel(channel);channel=null}
+    setSync("暂时锁定","err");
+    showMaintenanceView();
+  }else if(open&&maintenanceVisible){
+    const {data:{session:currentSession}}=await supabase.auth.getSession();
+    await applySession(currentSession);
+  }
+},15000);
+
 supabase.auth.onAuthStateChange(async (event,newSession)=>{
   if(event==="PASSWORD_RECOVERY"){
     user=newSession?.user||null;
