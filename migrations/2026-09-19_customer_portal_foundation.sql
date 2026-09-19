@@ -175,8 +175,8 @@ create or replace function public.handle_new_user_access()
 returns trigger
 language plpgsql
 security definer
-set search_path = public, auth
-as $$
+set search_path = public, auth, extensions
+as $
 declare
   v_role text;
   v_code text;
@@ -206,7 +206,7 @@ begin
     raise exception '注册需要有效邀请码';
   end if;
 
-  v_hash := encode(digest(v_code, 'sha256'), 'hex');
+  v_hash := encode(extensions.digest(v_code, 'sha256'), 'hex');
 
   update public.invite_codes ic
   set used_count = ic.used_count + 1,
