@@ -1325,3 +1325,20 @@ grant execute on function public.get_customer_public_share(text) to anon, authen
 
 commit;
 
+
+
+-- =========================================================
+-- PART 4 · 顾客端“我的排单”图标自定义
+-- =========================================================
+
+begin;
+
+alter table public.customer_preferences
+  add column if not exists queue_icon text not null default '🍓';
+
+update public.customer_preferences
+set queue_icon = '🍓'
+where queue_icon is null
+   or trim(queue_icon) = '';
+
+commit;
