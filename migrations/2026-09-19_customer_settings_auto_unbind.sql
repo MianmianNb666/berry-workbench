@@ -19,8 +19,12 @@ create table if not exists public.customer_preferences (
   bg text not null default '#fff8fb',
   panel text not null default '#ffffff',
   text_color text not null default '#45383d',
+  queue_icon text not null default '🍓',
   updated_at timestamptz not null default now()
 );
+
+alter table public.customer_preferences
+  add column if not exists queue_icon text not null default '🍓';
 
 alter table public.customer_preferences enable row level security;
 
