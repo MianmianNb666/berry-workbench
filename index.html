@@ -133,6 +133,14 @@
     <button id="copyArtistLinkBtn" class="primary" type="button">复制顾客链接</button>
     <a id="openArtistCustomerPageBtn" class="ghost" href="./customer.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">打开顾客页面</a>
   </div>
+  <label style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--soft);cursor:pointer">
+    <input id="artistAutoUnbindInput" type="checkbox" style="width:auto;margin-top:2px">
+    <span>
+      <b style="display:block;font-size:12px">排单结束自动解绑顾客</b>
+      <span class="meta" style="display:block;margin-top:3px">开启后，顾客在你这里最后一笔关联订单完成时，会自动解除绑定。以后再次下单可以重新绑定。</span>
+    </span>
+  </label>
+  <div id="artistAutoUnbindHint" class="meta" style="margin-top:7px"></div>
   <div class="meta" style="margin-top:8px">顾客登录后也可以直接输入你的美工编号进行绑定。</div>
 </div>
 <div class="profile-card">
@@ -1103,6 +1111,23 @@ $("copyDeveloperContactBtn").onclick=async()=>{
   }
 };
 
+$("artistAutoUnbindInput").onchange=async()=>{
+  if(!user||!currentArtistProfile)return;
+  const wanted=$("artistAutoUnbindInput").checked;
+  $("artistAutoUnbindHint").textContent="正在保存…";
+  const {data,error}=await supabase.from("artist_profiles")
+    .update({auto_unbind_on_finish:wanted,updated_at:new Date().toISOString()})
+    .eq("artist_user_id",user.id)
+    .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
+    .single();
+  if(error){
+    console.error(error);
+    $("artistAutoUnbindInput").checked=!wanted;
+    $("artistAutoUnbindHint").textContent="保存失败，请先运行顾客端最新 SQL。";
+    return;
+  }
+  renderArtistPortalProfile(data);
+};
 $("copyArtistCodeBtn").onclick=async()=>{
   const code=currentArtistProfile?.artist_code;
   if(!code){await loadArtistPortalProfile();return}
@@ -1421,6 +1446,8 @@ function renderArtistPortalProfile(profile){
   if($("artistCode"))$("artistCode").textContent=code;
   if($("artistCustomerLink"))$("artistCustomerLink").textContent=link;
   if($("openArtistCustomerPageBtn"))$("openArtistCustomerPageBtn").href=profile?.artist_code?link:"./customer.html";
+  if($("artistAutoUnbindInput"))$("artistAutoUnbindInput").checked=!!profile?.auto_unbind_on_finish;
+  if($("artistAutoUnbindHint"))$("artistAutoUnbindHint").textContent=profile?.auto_unbind_on_finish?"已开启：完成顾客最后一笔关联订单后自动解绑。":"当前关闭：完成订单后仍保留绑定。";
   if($("artistPortalStatus")){
     $("artistPortalStatus").textContent=profile?.artist_code?"已启用":"未初始化";
     $("artistPortalStatus").className="access-badge "+(profile?.artist_code?"permanent":"expired");
@@ -1430,14 +1457,14 @@ async function loadArtistPortalProfile(){
   if(!user)return;
   try{
     let {data,error}=await supabase.from("artist_profiles")
-      .select("artist_user_id,artist_code,public_name,privacy_mode")
+      .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
       .eq("artist_user_id",user.id)
       .maybeSingle();
     if(error)throw error;
     if(!data){
       const created=await supabase.from("artist_profiles")
         .insert({artist_user_id:user.id,public_name:S.title||"莓桃美工"})
-        .select("artist_user_id,artist_code,public_name,privacy_mode")
+        .select("artist_user_id,artist_code,public_name,privacy_mode,auto_unbind_on_finish")
         .single();
       if(created.error)throw created.error;
       data=created.data;
