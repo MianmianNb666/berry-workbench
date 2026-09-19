@@ -70,13 +70,13 @@ a{color:inherit;text-decoration:none}
     <p>这份教程把美工端和顾客端放在同一套流程里。第一次使用建议先看「3 个东西不要混」和「美工 ↔ 顾客怎么连接」，之后再按自己的身份查对应功能。</p>
     <div class="quick">
       <a href="#connect"><b>🔗 美工 ↔ 顾客</b><span>最快搞懂两端怎么连接</span></a>
-      <a href="#artist"><b>🎨 美工端教程</b><span>接单、顾客、余额、续期、提醒、分享</span></a>
-      <a href="#customer"><b>👤 顾客端教程</b><span>登录、多美工、余额、匿名查看</span></a>
+      <a href="#artist"><b>🎨 美工端教程</b><span>接单、顾客、消息、余额、续期、提醒</span></a>
+      <a href="#customer"><b>👤 顾客端教程</b><span>名字头像、消息、多美工、备注、余额</span></a>
     </div>
   </section>
 
   <nav class="nav">
-    <a href="#codes">3种码</a>
+    <a href="#codes">4种码</a>
     <a href="#connect">连接流程</a>
     <a href="#artist">美工端</a>
     <a href="#customer">顾客端</a>
@@ -89,99 +89,102 @@ a{color:inherit;text-decoration:none}
   </nav>
 
   <section class="section" id="codes">
-    <h2>先分清 3 个东西，不然后面很容易串线 🎟️</h2>
-    <p>它们长得都像“入口”，但用途完全不同。</p>
+    <h2>先分清 4 个东西，不然后面很容易串线 🎟️</h2>
+    <p>它们都像“码 / 入口”，但用途完全不一样。</p>
     <div class="code-grid">
       <div class="code-card">
         <h3>① 美工邀请码 / 续期码</h3>
         <code>BERRY-...</code>
-        <p>给美工自己使用。注册邀请码用于第一次注册；续期码用于延长工作台使用期。顾客不需要它。</p>
+        <p>给美工自己注册或续期工作台使用，顾客不需要。</p>
       </div>
       <div class="code-card">
-        <h3>② 美工专属顾客码</h3>
+        <h3>② 美工通用顾客码</h3>
         <code>GC-...</code>
-        <p>美工发给顾客。顾客注册/登录顾客端后输入它，就能解锁这位美工。一个顾客可以解锁多个美工。</p>
+        <p>顾客先来、还没有提前建档时使用。输入后先绑定到这位美工，系统会建立对应顾客关系。</p>
       </div>
       <div class="code-card">
-        <h3>③ 匿名链接</h3>
+        <h3>③ 顾客专属码</h3>
+        <code>CC-...</code>
+        <p>美工先建立某位顾客档案后自动生成。顾客输入后，会直接绑定到这位美工和这份指定档案，不会多长出一份档案。</p>
+      </div>
+      <div class="code-card">
+        <h3>④ 匿名链接</h3>
         <code>customer.html?share=SH-...</code>
-        <p>不用注册、不用登录。有顾客档案的顾客一人一条长期链接；未建档顾客才是一单一条链接。</p>
+        <p>不用注册、不用登录。有顾客档案时一人一条长期链接；未建档订单才使用该订单自己的链接。</p>
       </div>
     </div>
-    <div class="note warn"><b>最重要：</b>美工邀请码 ≠ 顾客码 ≠ 匿名链接。美工邀请码管“美工能不能用工作台”，顾客码管“顾客账号能不能解锁某位美工”，匿名链接管“无需登录直接看排单”。</div>
+    <div class="note warn"><b>最重要：</b>BERRY 管美工账号；GC / CC 管顾客账号和美工之间的绑定；匿名链接只负责免登录查看。</div>
   </section>
 
   <section class="section" id="connect">
-    <h2>美工 ↔ 顾客到底怎么连接？ 🔗</h2>
-    <p>有 3 种常用场景。选对场景以后，整个系统会很顺。</p>
+    <h2>美工 ↔ 顾客怎么连接？ 🔗</h2>
+    <p>现在有两条登录绑定路线，再加一条免登录匿名路线。</p>
 
-    <h3 style="font-size:15px;margin:16px 0 8px">场景 A：顾客愿意注册顾客端账号</h3>
+    <h3 style="font-size:15px;margin:16px 0 8px">路线 A：美工先建立顾客档案</h3>
     <div class="flow">
-      <div class="node"><b>美工</b><br><small>复制专属 GC 顾客码</small></div><div class="arrow">→</div>
-      <div class="node"><b>顾客</b><br><small>注册/登录并输入 GC 码</small></div><div class="arrow">→</div>
-      <div class="node"><b>系统</b><br><small>建立美工与顾客的授权关系</small></div>
+      <div class="node"><b>美工</b><br><small>顾客 → ＋ 添加顾客</small></div><div class="arrow">→</div>
+      <div class="node"><b>系统</b><br><small>生成 CC 顾客专属码</small></div><div class="arrow">→</div>
+      <div class="node"><b>顾客</b><br><small>注册 / 登录并输入 CC 码</small></div>
     </div>
-    <div class="step"><div class="num">1</div><div><h3>美工找到顾客码</h3><p>进入「我的 → 顾客端」，复制“专属顾客码”或“顾客入口”。</p><div class="path">美工端 → 我的 → 顾客端 → 复制顾客码</div></div></div>
-    <div class="step"><div class="num">2</div><div><h3>顾客注册或登录</h3><p>第一次注册必须带至少一位美工的 GC 码。已经有顾客账号时，进入「我的 → 添加美工」输入新的 GC 码即可。</p><div class="path">顾客端 → 我的 → ＋ 添加美工 → 输入 GC-...</div></div></div>
-    <div class="step"><div class="num">3</div><div><h3>一位顾客可以连接多个美工</h3><p>每位美工都需要各自的 GC 码。拿到 A 的码只会解锁 A，不会看到 B。</p></div></div>
-    <div class="note good">如果顾客使用登录模式，输入美工提供的 GC 顾客码完成绑定后，就可以在自己的顾客账号里查看这位美工。</div>
+    <p class="note good">CC 码会把顾客直接绑定到对应美工和已经建立好的那份顾客档案。顾客以后自己设置名字和头像，美工端会同步显示。</p>
 
-    <h3 style="font-size:15px;margin:18px 0 8px">场景 B：有顾客档案，不登录账号也可以</h3>
+    <h3 style="font-size:15px;margin:18px 0 8px">路线 B：顾客先来，档案以后再完善</h3>
     <div class="flow">
-      <div class="node"><b>美工</b><br><small>添加顾客档案</small></div><div class="arrow">→</div>
-      <div class="node"><b>系统</b><br><small>生成这个顾客固定匿名链接</small></div><div class="arrow">→</div>
-      <div class="node"><b>顾客</b><br><small>一直用同一条链接查看</small></div>
+      <div class="node"><b>美工</b><br><small>复制上方 GC 通用顾客码</small></div><div class="arrow">→</div>
+      <div class="node"><b>顾客</b><br><small>注册 / 登录并输入 GC 码</small></div><div class="arrow">→</div>
+      <div class="node"><b>系统</b><br><small>先绑定美工并建立顾客关系</small></div>
     </div>
-    <p class="note">以后美工新增订单时，只要在「用户 / 顾客」选择这个人，新订单就会自动出现在她原来的匿名链接里，不需要重新发链接。</p>
+    <p class="note">之后美工可以在「顾客」里继续完善档案、余额、备注等信息。顾客也可以在自己的「我的」里设置名字和头像。</p>
 
-    <h3 style="font-size:15px;margin:18px 0 8px">场景 C：没有建立顾客档案</h3>
+    <h3 style="font-size:15px;margin:18px 0 8px">路线 C：不注册，只看排单</h3>
     <div class="flow">
-      <div class="node"><b>新建订单</b><br><small>不关联顾客档案</small></div><div class="arrow">→</div>
-      <div class="node"><b>订单卡</b><br><small>点“订单专属匿名链接”</small></div><div class="arrow">→</div>
-      <div class="node"><b>顾客</b><br><small>只看到这一单</small></div>
+      <div class="node"><b>美工</b><br><small>生成顾客匿名链接</small></div><div class="arrow">→</div>
+      <div class="node"><b>顾客</b><br><small>直接打开</small></div><div class="arrow">→</div>
+      <div class="node"><b>系统</b><br><small>只展示允许公开的排单信息</small></div>
     </div>
   </section>
 
   <section class="section" id="artist">
     <h2>美工端详细教程 🎨</h2>
-    <p>从第一次注册到完整接单流程。</p>
+    <p>顾客档案和消息现在是两个独立分类，找东西会更清楚。</p>
 
     <div class="grid">
-      <div class="card"><h3>第一次注册</h3><p>输入邮箱、密码和美工邀请码。邀请码只在第一次注册需要。之后正常登录不需要邀请码。</p></div>
-      <div class="card"><h3>续期</h3><p>左侧有独立「🎟️ 续期」入口，可以查看工作台名称、到期时间、剩余使用时长、续期方式和续期记录。使用期快到时也会提前提醒。</p></div>
+      <div class="card"><h3>顾客中心</h3><p>「顾客」里保留顾客档案。顶部“顾客端入口与顾客码”可以单独展开 / 收起，但顾客档案不会一起消失。</p></div>
+      <div class="card"><h3>消息</h3><p>左侧「💬 消息」是单独分类，用来实时聊天、看未读红点和已读状态。</p></div>
     </div>
 
-    <div class="step"><div class="num">1</div><div><h3>查看使用期 / 续期</h3><p>点左侧「🎟️ 续期」。这里会显示当前工作台名称、到期时间和剩余使用时长。工作台名称会跟随你自己设置的名称同步变化。</p><div class="path">美工端 → 🎟️ 续期</div><p>需要续期时，可以联系代理或 <b>-Lveuoi</b> 获取续期码后直接输入；也可以复制自己的 <b>UUID</b> 给管理员，由管理员直接增加使用时长。</p></div></div>
-    <div class="step"><div class="num">3</div><div><h3>先建立有顾客档案的顾客</h3><p>进入「顾客」页面，点“＋ 添加顾客”。可以设置顾客昵称、美工备注、关联顾客端账号和余额。</p><div class="path">美工端 → 顾客 → ＋ 添加顾客</div></div></div>
-    <div class="step"><div class="num">3</div><div><h3>给顾客增加余额 / 加预算</h3><p>进入顾客管理，填写“调整金额”和说明，点击“增加余额”。金额框可以直接输入算式，例如 <b>13+5</b>、<b>22+6</b>，系统会先算出结果再保存。每一笔都会形成流水，不会覆盖历史。</p></div></div>
-    <div class="step"><div class="num">4</div><div><h3>新建需求 / 订单</h3><p>点击“新增需求”。填写需求名称、金额、状态、日期、分类、进度和备注。如果这位顾客已经建立档案，在“用户 / 顾客”里直接选择她；如果没有建立顾客档案，就保持不关联。</p></div></div>
-    <div class="step"><div class="num">5</div><div><h3>保存订单时直接扣顾客余额</h3><p>选择有顾客档案的顾客后，“保存订单时直接扣除本单金额”会自动可用。系统会显示扣费后余额。如果余额不足，会拦住，不会让余额直接变成负数。</p></div></div>
-    <div class="step"><div class="num">6</div><div><h3>分享给顾客</h3><p>有顾客档案的顾客使用固定的“顾客匿名链接”；没有顾客档案的订单使用该订单自己的专属匿名链接。如果顾客有账号，也可以让她用 GC 顾客码登录顾客端。</p></div></div>
-    <div class="step"><div class="num">7</div><div><h3>更新进度</h3><p>订单状态可切换为“待处理 / 进行中 / 待付款 / 已完成”。顾客查看端读取的是公开进度信息，不会把你的美工备注和工作台原始数据暴露出去。</p></div></div>
-    <div class="step"><div class="num">8</div><div><h3>DDL 与系统通知</h3><p>订单可以设置提前 1 天、提前 3 小时或自定义提醒。手机安装到主屏幕后允许通知，提醒体验最好。</p></div></div>
-    <div class="step"><div class="num">9</div><div><h3>个性化</h3><p>可以改应用名称、通知名称、头像、应用图标、导航名称、导航排序、显示风格和主题颜色。设置会跟随账号同步。</p></div></div>
+    <div class="step"><div class="num">1</div><div><h3>查看使用期 / 续期</h3><p>左侧点「🎟️ 续期」，查看工作台名称、到期时间、剩余时长和续期记录。可输入续期码，也可复制 UUID 给管理员直接加时。</p></div></div>
+    <div class="step"><div class="num">2</div><div><h3>建立顾客档案</h3><p>进入「顾客 → ＋ 添加顾客」。如果顾客还没注册，保存后会自动生成她的 <b>CC 顾客专属码</b>；如果顾客已经先用 GC 码绑定，就直接关联她现有的顾客账号。</p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>顾客名字、头像和美工备注</h3><p>顾客绑定账号后，她自己在顾客端设置的名字和头像会优先显示在美工端和聊天里。美工仍可以在顾客档案里写一条「仅自己可见」的备注。</p></div></div>
+    <div class="step"><div class="num">4</div><div><h3>实时聊天</h3><p>左侧进入「💬 消息」。双方头像会同步，顾客自己的名字会显示在聊天列表；新消息有未读红点，打开后自动标记已读。</p><div class="path">美工端 → 💬 消息</div></div></div>
+    <div class="step"><div class="num">5</div><div><h3>给顾客增加余额</h3><p>顾客档案里可以增加 / 减少余额并记录明细。金额支持直接输入 <b>13+5</b>、<b>22+6</b> 这类算式。</p></div></div>
+    <div class="step"><div class="num">6</div><div><h3>新建订单</h3><p>填写需求、金额、状态、日期、分类和进度。有顾客档案时直接选择该顾客，还可以按订单金额从余额扣费。</p></div></div>
+    <div class="step"><div class="num">7</div><div><h3>分享与排单</h3><p>有顾客档案时使用固定匿名链接；未关联档案的订单使用订单专属链接。顾客有账号时，也可以直接登录查看。</p></div></div>
+    <div class="step"><div class="num">8</div><div><h3>DDL 与系统通知</h3><p>订单可设置提前 1 天、提前 3 小时或自定义提醒。安装到手机主屏幕后允许通知，体验最好。</p></div></div>
+    <div class="step"><div class="num">9</div><div><h3>个性化</h3><p>可以改工作台名称、头像、应用图标、导航、主题颜色等。美工头像也会同步到顾客端聊天和「我的美工」。</p></div></div>
   </section>
 
   <section class="section" id="customer">
     <h2>顾客端详细教程 👤</h2>
-    <p>顾客可以选择“登录账号模式”或“匿名链接模式”。</p>
+    <p>顾客端分成「我的排单 / 消息 / 我的 / 设置」。页面之间切换会保留已经读取的数据，不需要每次重新加载头像和美工列表。</p>
 
-    <h3 style="font-size:15px;margin:14px 0 5px">登录账号模式</h3>
-    <div class="step"><div class="num">1</div><div><h3>第一次注册</h3><p>输入邮箱、密码和美工发来的 GC 顾客码。没有顾客码不能注册进入对应美工。</p></div></div>
-    <div class="step"><div class="num">2</div><div><h3>添加第二位、第三位美工</h3><p>一个顾客账号可以对应多个美工。进入「我的 → ＋ 添加美工」，输入另一位美工自己的 GC 码即可。</p></div></div>
-    <div class="step"><div class="num">3</div><div><h3>查看不同美工</h3><p>「我的美工」会把已解锁的美工分别列出来。余额、排单和后续订单都按美工分开，不会串账。</p></div></div>
-    <div class="step"><div class="num">4</div><div><h3>查看余额明细</h3><p>如果美工为顾客建立了余额账本，顾客可以看到当前余额和每一笔增加 / 扣费记录，但不能自己修改。</p></div></div>
-    <div class="step"><div class="num">5</div><div><h3>自定义顾客端</h3><p>设置里可以改主色、背景、卡片、文字颜色，也可以把“我的排单”旁边的小草莓 🍓 换成自己的 emoji。</p></div></div>
+    <div class="step"><div class="num">1</div><div><h3>第一次绑定美工</h3><p>第一次注册时输入美工给你的 <b>GC 通用顾客码</b>，或者她提前建好档案后发来的 <b>CC 顾客专属码</b>。</p></div></div>
+    <div class="step"><div class="num">2</div><div><h3>设置自己的名字和头像</h3><p>进入「我的 → 我的资料」，设置名字和头像。之后美工端顾客列表、聊天窗口都会优先显示你自己设置的名字和头像。</p></div></div>
+    <div class="step"><div class="num">3</div><div><h3>和美工聊天</h3><p>进入「💬 消息」选择美工即可实时聊天。你能看到美工在工作台设置的头像，美工也能看到你的头像；发送后的消息会显示未读 / 已读。</p></div></div>
+    <div class="step"><div class="num">4</div><div><h3>给美工写备注</h3><p>「我的 → 我的美工」里可以点「✏️ 备注」，给每位美工写一个只在你自己账号里显示的备注，不会发给美工。</p></div></div>
+    <div class="step"><div class="num">5</div><div><h3>添加更多美工</h3><p>一个顾客账号可以绑定多个美工。每位美工都可以使用她的 GC 码，或者她为你生成的 CC 专属码。</p></div></div>
+    <div class="step"><div class="num">6</div><div><h3>查看余额和排单</h3><p>不同美工的余额、明细和排单各自分开，不会串到一起。顾客只能查看，不能自己修改余额。</p></div></div>
+    <div class="step"><div class="num">7</div><div><h3>自定义顾客端</h3><p>设置里可以修改主色、背景、卡片、文字颜色和“我的排单”图标。</p></div></div>
 
     <h3 style="font-size:15px;margin:18px 0 5px">匿名链接模式</h3>
-    <p class="note good">不需要邮箱、不需要密码、不需要注册。打开美工发来的匿名链接就能查看。有顾客档案时使用固定链接；没有建立顾客档案时，每笔订单使用自己的专属链接。</p>
+    <p class="note good">不想注册也可以直接使用美工发来的匿名链接查看排单。匿名模式不包含账号聊天、名字头像同步和联系人备注功能。</p>
   </section>
 
   <section class="section" id="anonymous">
     <h2>匿名入口到底会显示什么？ 🔐</h2>
     <div class="grid">
       <div class="card"><h3>会显示</h3><p>美工名称、顾客昵称、订单名称、分类、状态、完成进度、开始日期、截止日期和更新时间。</p></div>
-      <div class="card"><h3>不会显示</h3><p>订单金额、顾客余额、联系方式、美工美工备注、其他顾客的订单、工作台里的其他数据。</p></div>
+      <div class="card"><h3>不会显示</h3><p>订单金额、顾客余额、联系方式、美工备注、其他顾客的订单、工作台里的其他数据。</p></div>
     </div>
     <div class="note">匿名链接可以直接打开查看排单，不需要注册或登录。请保存好自己的链接，不要随意转发给其他人。</div>
   </section>
@@ -230,10 +233,13 @@ a{color:inherit;text-decoration:none}
   <section class="section faq" id="faq">
     <h2>常见问题 🧩</h2>
     <details open><summary>顾客一定要注册账号吗？</summary><p>不用。有顾客档案的顾客可以只用自己的固定匿名链接。注册账号的好处是一个账号可以统一管理多个美工。</p></details>
-    <details><summary>一个顾客能绑定多个美工吗？</summary><p>可以。每位美工需要单独的 GC 顾客码。不同美工的余额和数据是分开的。</p></details>
+    <details><summary>一个顾客能绑定多个美工吗？</summary><p>可以。每位美工都可以使用自己的 GC 通用码，或为该顾客生成的 CC 专属码。不同美工的余额和数据是分开的。</p></details>
+    <details><summary>聊天头像和名字从哪里来？</summary><p>美工头像读取美工端自己设置的头像；顾客名字和头像读取顾客端「我的资料」。双方更新后会同步到聊天和对应列表。</p></details>
+    <details><summary>双方的备注会互相看到吗？</summary><p>不会。美工写给顾客的备注只在美工端显示；顾客给美工写的备注只在自己的顾客账号里显示。</p></details>
+    <details><summary>为什么以前切换「我的排单 / 消息 / 我的」会闪一下？</summary><p>旧版每次切换都会重新读取并重画头像和列表。新版会保留已读取的数据，只有实际有新消息、头像或资料变化时才刷新。</p></details>
     <details><summary>有顾客档案后，每个订单都要重新发链接吗？</summary><p>不用。她只有一条固定匿名链接。以后新订单只要关联到她，就会自动出现。</p></details>
     <details><summary>什么时候使用“一单一链接”？</summary><p>当这笔订单没有关联顾客档案时，就使用该订单自己的专属匿名链接。</p></details>
-    <details><summary>顾客能看到美工美工备注吗？</summary><p>匿名查看不会。公开读取只返回清洗后的订单字段。</p></details>
+    <details><summary>顾客能看到美工备注吗？</summary><p>匿名查看不会。公开读取只返回清洗后的订单字段。</p></details>
     <details><summary>美工到期后顾客还能看吗？</summary><p>可以。已有的顾客端关系和匿名链接继续有效，美工端只是不能继续写入。</p></details>
     <details><summary>续期一定要输入续期码吗？</summary><p>不一定。可以自己在「🎟️ 续期」里输入续期码，也可以把 UUID 发给管理员，由管理员直接增加使用时长。</p></details>
     <details><summary>续期页面里的工作台名称会自动变化吗？</summary><p>会。它读取的是当前账号自己设置的工作台名称，改名后续期页面也会跟着更新。</p></details>
