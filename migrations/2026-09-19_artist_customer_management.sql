@@ -63,6 +63,14 @@ alter table public.customer_portal_access
   primary key (customer_user_id, artist_user_id);
 
 
+-- 把旧测试阶段已经存在的顾客-美工绑定同步成顾客端访问权限，
+-- 这样主账号之前的自绑测试不会被新顾客码机制挡在门外。
+insert into public.customer_portal_access(customer_user_id, artist_user_id, granted_at)
+select b.customer_user_id, b.artist_user_id, coalesce(b.created_at, now())
+from public.customer_artist_bindings b
+on conflict (customer_user_id, artist_user_id) do nothing;
+
+
 create index if not exists customer_portal_access_artist_idx
   on public.customer_portal_access(artist_user_id);
 
