@@ -294,6 +294,62 @@ async function sha256Hex(text){
 async function isOwner(){
   return !!user?.id && (await sha256Hex(user.id))===OWNER_USER_ID_HASH;
 }
+function squareCustomerImageData(file,size=192){
+  return new Promise((resolve,reject)=>{
+    if(!file||!file.type.startsWith("image/")){reject(new Error("请选择图片文件"));return}
+    if(file.size>12*1024*1024){reject(new Error("图片太大，请选择 12MB 以内的图片"));return}
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error("图片读取失败"));
+    reader.onload=()=>{
+      const img=new Image();
+      img.onerror=()=>reject(new Error("图片无法打开"));
+      img.onload=()=>{
+        const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");
+        canvas.width=size;canvas.height=size;
+        const side=Math.min(img.naturalWidth,img.naturalHeight);
+        const sx=(img.naturalWidth-side)/2,sy=(img.naturalHeight-side)/2;
+        ctx.drawImage(img,sx,sy,side,side,0,0,size,size);
+        resolve(canvas.toDataURL("image/jpeg",0.84));
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function chatAvatarMarkup(src,label="顾"){
+  if(src&&src.startsWith("data:image/"))return '<div class="artist-avatar"><img src="'+esc(src)+'" alt=""></div>';
+  return '<div class="artist-avatar">'+esc((label||"顾")[0])+'</div>';
+}
+function renderCustomerSelfAvatar(){
+  const box=$("customerSelfAvatarPreview");
+  if(!box)return;
+  box.innerHTML=customerChatAvatar?'<img src="'+esc(customerChatAvatar)+'" alt="">':esc(((user?.email||"顾")[0]||"顾").toUpperCase());
+}
+async function loadMyCustomerChatProfile(){
+  if(!user)return;
+  const {data,error}=await supabase.from("chat_profiles").select("avatar_data").eq("user_id",user.id).maybeSingle();
+  if(error){
+    console.warn("chat profile:",error.message);
+    customerChatAvatar="";
+  }else{
+    customerChatAvatar=data?.avatar_data||"";
+  }
+  renderCustomerSelfAvatar();
+}
+async function saveMyCustomerChatAvatar(){
+  if(!user)return false;
+  const {error}=await supabase.from("chat_profiles").upsert({
+    user_id:user.id,
+    avatar_data:customerChatAvatar||"",
+    updated_at:new Date().toISOString()
+  },{onConflict:"user_id"});
+  if(error){
+    $("customerSelfAvatarHint").textContent="头像保存失败："+error.message;
+    return false;
+  }
+  $("customerSelfAvatarHint").textContent="头像已保存，并会同步到聊天和已绑定美工 ✓";
+  return true;
+}
 
 function publicShareDate(value){
   if(!value)return "";
@@ -406,15 +462,16 @@ function saveCustomerPreferences(){
   },300);
 }
 function setCustomerView(view){
-  const id=view==="profile"?"customerProfile":view==="settings"?"customerSettings":"dashboard";
+  const id=view==="profile"?"customerProfile":view==="settings"?"customerSettings":view==="messages"?"customerMessages":"dashboard";
   document.querySelectorAll(".customer-view").forEach(x=>x.classList.toggle("hidden",x.id!==id));
   document.querySelectorAll("[data-customer-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.customerView===id));
   if(user)localStorage.setItem("berry-customer-view-"+user.id,view);
   if(user&&view==="profile")loadBindings();
+  if(user&&view==="messages")loadCustomerChatConversations();
 }
 document.querySelectorAll("[data-customer-view]").forEach(btn=>{
   btn.onclick=()=>{
-    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerSettings"?"settings":"dashboard";
+    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerSettings"?"settings":btn.dataset.customerView==="customerMessages"?"messages":"dashboard";
     const u=new URL(location.href);u.searchParams.delete("artist");u.searchParams.set("view",view);history.replaceState(null,"",u);
     $("artistPage").classList.add("hidden");$("customerNav").classList.remove("hidden");setCustomerView(view);
   };
@@ -445,6 +502,28 @@ $("resetCustomerQueueIconBtn").onclick=()=>{
   customerPrefs.queue_icon="🍓";
   saveCustomerPreferences();
   if($("customerQueueIconHint"))$("customerQueueIconHint").textContent="已恢复小草莓 🍓";
+};
+$("customerSelfAvatarBtn").onclick=()=>$("customerSelfAvatarInput").click();
+$("customerSelfAvatarInput").onchange=async e=>{
+  const file=e.target.files?.[0];
+  if(!file)return;
+  const btn=$("customerSelfAvatarBtn"),old=btn.textContent;
+  try{
+    btn.textContent="正在处理…";
+    customerChatAvatar=await squareCustomerImageData(file,192);
+    renderCustomerSelfAvatar();
+    await saveMyCustomerChatAvatar();
+  }catch(err){
+    $("customerSelfAvatarHint").textContent=err.message||"头像处理失败";
+  }finally{
+    btn.textContent=old;
+    e.target.value="";
+  }
+};
+$("customerSelfAvatarResetBtn").onclick=async()=>{
+  customerChatAvatar="";
+  renderCustomerSelfAvatar();
+  await saveMyCustomerChatAvatar();
 };
 $("copyCustomerDeveloperContactBtn").onclick=async()=>{
   const contact="i-Sooong";
