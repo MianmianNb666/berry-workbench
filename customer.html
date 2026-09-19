@@ -200,6 +200,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
     <div class="card" style="margin-top:10px">
       <div class="artist-head">
         <div><h2 id="artistPageName">美工排单</h2><div class="meta" id="artistPageCode"></div></div>
+        <span class="badge" id="artistPrivacyBadge">排单</span>
       </div>
       <div id="scheduleList" class="schedule"><div class="empty">暂无可查看的排单。</div></div>
     </div>
@@ -611,7 +612,7 @@ async function loadArtistPublic(code){
   $("artistPageCode").textContent=code;
 
   const {data:artist,error}=await supabase.from("artist_profiles")
-    .select("artist_user_id,artist_code,public_name")
+    .select("artist_user_id,artist_code,public_name,privacy_mode")
     .eq("artist_code",code)
     .maybeSingle();
 
@@ -635,6 +636,12 @@ async function loadArtistPublic(code){
 
   $("artistPageName").textContent=artist.public_name||"莓桃美工";
   $("artistPageCode").textContent="美工编号："+artist.artist_code;
+  const badge=$("artistPrivacyBadge");
+  if(badge){
+    badge.className="badge "+(artist.privacy_mode==="private"?"private":"");
+    badge.textContent=artist.privacy_mode==="private"?"🔒 隐私排单":"🌷 公开排单";
+  }
+
   $("scheduleList").innerHTML='<div class="empty">暂无可查看的排单。</div>';
 }
 
@@ -807,7 +814,7 @@ async function loadBindings(force=false){
 
   const [{data:artists,error:artistError},{data:records,error:recordError},{data:artistAvatars}]=await Promise.all([
     supabase.from("artist_profiles")
-      .select("artist_user_id,artist_code,public_name")
+      .select("artist_user_id,artist_code,public_name,privacy_mode")
       .in("artist_user_id",artistIds),
     supabase.from("artist_customers")
       .select("id,artist_user_id,display_name,linked_customer_user_id")
