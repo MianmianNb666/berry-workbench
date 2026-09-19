@@ -126,24 +126,29 @@
   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
     <div>
       <h3 style="font-size:14px;margin:0">顾客端 👥</h3>
-      <div class="meta" style="margin-top:4px">把美工编号或个人链接发给顾客，她就可以查看你的顾客端页面。</div>
+      <div class="meta" style="margin-top:4px">顾客必须拿到你的专属顾客码才能注册 / 使用顾客端。一个顾客账号只会绑定一个美工。</div>
     </div>
     <span id="artistPortalStatus" class="access-badge">读取中…</span>
   </div>
   <div class="profile-grid">
-    <div class="profile-item" style="grid-column:1/-1">
+    <div class="profile-item">
       <span>美工编号</span>
       <b id="artistCode">--</b>
     </div>
+    <div class="profile-item">
+      <span>专属顾客码</span>
+      <b id="artistCustomerAccessCode">--</b>
+    </div>
     <div class="profile-item" style="grid-column:1/-1">
-      <span>美工个人链接</span>
+      <span>顾客入口链接</span>
       <b id="artistCustomerLink" style="font-size:11px">--</b>
     </div>
   </div>
   <div class="actions">
-    <button id="copyArtistCodeBtn" class="ghost" type="button">复制美工编号</button>
-    <button id="copyArtistLinkBtn" class="primary" type="button">复制顾客链接</button>
-    <a id="openArtistCustomerPageBtn" class="ghost" href="./customer.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">打开顾客页面</a>
+    <button id="copyArtistCodeBtn" class="primary" type="button">复制顾客码</button>
+    <button id="rotateArtistCustomerCodeBtn" class="ghost" type="button">重新生成顾客码</button>
+    <button id="copyArtistLinkBtn" class="ghost" type="button">复制顾客入口</button>
+    <a id="openArtistCustomerPageBtn" class="ghost" href="./customer.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">打开顾客端</a>
     <button id="openCustomersFromProfileBtn" class="ghost" type="button">👥 顾客管理</button>
     <button id="openBudgetManagerBtn" class="hidden" type="button" aria-hidden="true" tabindex="-1">预算管理</button>
   </div>
@@ -155,7 +160,7 @@
     </span>
   </label>
   <div id="artistAutoUnbindHint" class="meta" style="margin-top:7px"></div>
-  <div class="meta" style="margin-top:8px">顾客登录后也可以直接输入你的美工编号进行绑定。</div>
+  <div class="meta" style="margin-top:8px">顾客码相当于顾客端的入场券。重新生成后，旧码会立即失效；已经绑定成功的顾客不会被踢出。</div>
 </div>
 <div id="artistCustomerBetaLocked" class="profile-card hidden">
   <h3 style="font-size:14px;margin:0">顾客端功能 🔒</h3>
@@ -1514,26 +1519,38 @@ $("subtractBudgetBtn").onclick=()=>adjustBudget("subtract");
 
 $("copyArtistCodeBtn").onclick=async()=>{
   if(!(await isArtistBetaOwner()))return;
-  const code=currentArtistProfile?.artist_code;
+  const code=currentArtistAccessCode;
   if(!code){await loadArtistPortalProfile();return}
   try{
     await navigator.clipboard.writeText(code);
     const btn=$("copyArtistCodeBtn"),old=btn.textContent;
-    btn.textContent="已复制 ✓";
+    btn.textContent="顾客码已复制 ✓";
     setTimeout(()=>btn.textContent=old,900);
-  }catch(_){prompt("复制美工编号：",code)}
+  }catch(_){prompt("复制顾客码：",code)}
+};
+$("rotateArtistCustomerCodeBtn").onclick=async()=>{
+  if(!(await isArtistBetaOwner()))return;
+  if(!confirm("重新生成后旧顾客码会立即失效。已经绑定成功的顾客不会受影响，确定继续吗？"))return;
+  const btn=$("rotateArtistCustomerCodeBtn");
+  const old=btn.textContent;
+  btn.textContent="生成中…";
+  const {data,error}=await supabase.rpc("rotate_customer_access_code");
+  btn.textContent=old;
+  if(error){alert("生成失败："+error.message);return}
+  currentArtistAccessCode=data||"";
+  renderArtistPortalProfile(currentArtistProfile,currentArtistAccessCode);
 };
 $("copyArtistLinkBtn").onclick=async()=>{
   if(!(await isArtistBetaOwner()))return;
-  const code=currentArtistProfile?.artist_code;
+  const code=currentArtistAccessCode;
   if(!code){await loadArtistPortalProfile();return}
   const link=customerPageLink(code);
   try{
     await navigator.clipboard.writeText(link);
     const btn=$("copyArtistLinkBtn"),old=btn.textContent;
-    btn.textContent="已复制 ✓";
+    btn.textContent="入口已复制 ✓";
     setTimeout(()=>btn.textContent=old,900);
-  }catch(_){prompt("复制顾客链接：",link)}
+  }catch(_){prompt("复制顾客入口：",link)}
 };
 
 $("copyUserIdBtn").onclick=async()=>{
@@ -1821,22 +1838,26 @@ function remainingAccessText(status){
   return days+" 天";
 }
 let currentArtistProfile=null;
-function customerPageLink(code){
-  if(!code)return "";
-  return new URL("./customer.html?artist="+encodeURIComponent(code),location.href).href;
+let currentArtistAccessCode="";
+function customerPageLink(accessCode){
+  if(!accessCode)return "";
+  return new URL("./customer.html?code="+encodeURIComponent(accessCode),location.href).href;
 }
-function renderArtistPortalProfile(profile){
+function renderArtistPortalProfile(profile,accessCode=""){
   currentArtistProfile=profile||null;
-  const code=profile?.artist_code||"--";
-  const link=profile?.artist_code?customerPageLink(profile.artist_code):"--";
-  if($("artistCode"))$("artistCode").textContent=code;
+  currentArtistAccessCode=accessCode||"";
+  const artistCode=profile?.artist_code||"--";
+  const code=currentArtistAccessCode||"--";
+  const link=currentArtistAccessCode?customerPageLink(currentArtistAccessCode):"--";
+  if($("artistCode"))$("artistCode").textContent=artistCode;
+  if($("artistCustomerAccessCode"))$("artistCustomerAccessCode").textContent=code;
   if($("artistCustomerLink"))$("artistCustomerLink").textContent=link;
-  if($("openArtistCustomerPageBtn"))$("openArtistCustomerPageBtn").href=profile?.artist_code?link:"./customer.html";
+  if($("openArtistCustomerPageBtn"))$("openArtistCustomerPageBtn").href=currentArtistAccessCode?link:"./customer.html";
   if($("artistAutoUnbindInput"))$("artistAutoUnbindInput").checked=!!profile?.auto_unbind_on_finish;
   if($("artistAutoUnbindHint"))$("artistAutoUnbindHint").textContent=profile?.auto_unbind_on_finish?"已开启：完成顾客最后一笔关联订单后自动解绑。":"当前关闭：完成订单后仍保留绑定。";
   if($("artistPortalStatus")){
-    $("artistPortalStatus").textContent=profile?.artist_code?"已启用":"未初始化";
-    $("artistPortalStatus").className="access-badge "+(profile?.artist_code?"permanent":"expired");
+    $("artistPortalStatus").textContent=currentArtistAccessCode?"顾客码已启用":"等待数据库升级";
+    $("artistPortalStatus").className="access-badge "+(currentArtistAccessCode?"permanent":"expired");
   }
 }
 async function loadArtistPortalProfile(){
@@ -1855,10 +1876,26 @@ async function loadArtistPortalProfile(){
       if(created.error)throw created.error;
       data=created.data;
     }
-    renderArtistPortalProfile(data);
+
+    let accessCode="";
+    const access=await supabase.from("artist_customer_access_codes")
+      .select("access_code")
+      .eq("artist_user_id",user.id)
+      .maybeSingle();
+
+    if(access.error){
+      console.warn("customer access code:",access.error.message);
+    }else if(access.data?.access_code){
+      accessCode=access.data.access_code;
+    }else{
+      const rotated=await supabase.rpc("rotate_customer_access_code");
+      if(!rotated.error&&rotated.data)accessCode=rotated.data;
+    }
+
+    renderArtistPortalProfile(data,accessCode);
   }catch(e){
     console.error("artist portal profile:",e);
-    renderArtistPortalProfile(null);
+    renderArtistPortalProfile(null,"");
     if($("artistPortalStatus"))$("artistPortalStatus").textContent="读取失败";
   }
 }
