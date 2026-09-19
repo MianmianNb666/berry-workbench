@@ -2064,6 +2064,7 @@ async function applySession(session){
 
   setAccessReadOnly(!status?.has_access,status);
   await loadWorkspace();
+  if(accessReadOnly)setSync("只读模式","err");
   const betaOwner=await applyArtistBetaAccess();
   if(betaOwner)await loadArtistPortalProfile();
   if(status?.has_access)maybeShowExpiryWarning(status);
