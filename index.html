@@ -32,14 +32,14 @@
   body.mobile-nav-top #addSectionBtn{order:999;min-width:52px!important;padding:0 7px!important;font-size:10px!important}
   body.mobile-nav-left .app{padding:6px}
   body.mobile-nav-left .layout{display:grid;grid-template-columns:94px minmax(0,1fr);gap:8px;align-items:start}
-  body.mobile-nav-left .side{grid-column:1;grid-row:1 / span 2;position:sticky;top:6px;margin:0;padding:7px 5px;border-radius:18px;height:calc(100vh - 12px);height:calc(100dvh - 12px);max-height:none;overflow:hidden;display:flex;flex-direction:column}
+  body.mobile-nav-left .side{grid-column:1;grid-row:1 / span 2;position:sticky;top:6px;margin:0;padding:7px 5px;border-radius:18px;height:calc(100vh - 12px);height:calc(100svh - 12px);max-height:none;overflow:hidden;display:flex;flex-direction:column;background:var(--panel);box-shadow:none}
   body.mobile-nav-left .brand{display:flex;justify-content:center;padding:3px 0 8px;margin-bottom:2px}
   body.mobile-nav-left .brand>div:last-child{display:none}
   body.mobile-nav-left .brand .logo{width:40px;height:40px;border-radius:13px}
   body.mobile-nav-left .nav{display:flex;flex-direction:column;gap:5px;overflow:hidden;padding:0;min-height:0;flex:1}
-  body.mobile-nav-left .nav-scroll{display:flex;flex-direction:column;gap:5px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  body.mobile-nav-left .nav-scroll{display:flex;flex-direction:column;gap:5px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
   body.mobile-nav-left .nav-scroll::-webkit-scrollbar{display:none}
-  body.mobile-nav-left .nav-bottom{display:grid;gap:5px;flex:0 0 auto;margin-top:4px;padding-top:6px;border-top:1px solid var(--line);background:linear-gradient(to bottom,rgba(255,255,255,0),var(--bg) 18%)}
+  body.mobile-nav-left .nav-bottom{display:grid;gap:5px;flex:0 0 auto;margin-top:4px;padding-top:6px;border-top:1px solid var(--line);background:var(--panel)}
   body.mobile-nav-left #addSectionBtn{margin:0}
   body.mobile-nav-left .nav button,
   body.mobile-nav-left .custom-nav-add{width:100%;min-width:0;min-height:44px;padding:6px 3px!important;text-align:center!important;font-size:10px!important;line-height:1.25;white-space:normal;border-radius:12px}
@@ -3101,11 +3101,12 @@ async function redeemFromModal(){
       :"邀请码无效、已经使用或已经过期。";
     return;
   }
+  const upgradeNote=data.upgraded?" 🍓 已解锁完整版。":"";
   if(data.access_type==="permanent"){
-    $("redeemModalHint").textContent="🎀 兑换成功，当前账号已获得永久使用权限。";
+    $("redeemModalHint").textContent="🎀 兑换成功，当前账号已获得永久使用权限。"+upgradeNote;
   }else{
     const date=data.valid_until?(" 新到期时间："+formatAccessDate(data.valid_until)):"";
-    $("redeemModalHint").textContent="🎟️ 兑换成功，已增加 "+(data.added_days||"")+" 天。"+date;
+    $("redeemModalHint").textContent="🎟️ 兑换成功，已增加 "+(data.added_days||"")+" 天。"+date+upgradeNote;
   }
   $("redeemCode").value="";
   await refreshAccountProfile();
@@ -3236,9 +3237,10 @@ async function loadProfileRenewalHistory(){
   }
   host.innerHTML=rows.map(row=>{
     const grant=row.grant_type==="permanent"?"永久":("＋"+(row.duration_days||0)+" 天");
+    const edition=row.renewal_edition==="full"?"🍓 完整版":row.renewal_edition==="artist"?"🎨 美工版":"旧码 · 仅续时长";
     const when=row.redeemed_at?formatAccessDate(row.redeemed_at):"--";
     const until=row.grant_type==="permanent"?"永久有效":(row.new_valid_until?formatAccessDate(row.new_valid_until):"--");
-    return '<div class="renewal-entry"><div><b>'+esc(grant)+'</b><small>'+esc(when)+'</small></div><div style="text-align:right"><span class="tag">'+esc(until)+'</span></div></div>';
+    return '<div class="renewal-entry"><div><b>'+esc(grant)+'</b><small>'+esc(edition)+' · '+esc(when)+'</small></div><div style="text-align:right"><span class="tag">'+esc(until)+'</span></div></div>';
   }).join("");
 }
 function renderAccountProfile(status=currentAccessStatus){
@@ -3383,10 +3385,11 @@ async function redeemRenewal(){
       :"邀请码无效、已经使用或已经过期。";
     return;
   }
+  const upgradeNote=data.upgraded?" 🍓 已解锁完整版。":"";
   if(data.access_type==="permanent"){
-    $("renewHint").textContent="🎀 激活成功，当前账号已获得永久使用权限。";
+    $("renewHint").textContent="🎀 激活成功，当前账号已获得永久使用权限。"+upgradeNote;
   }else{
-    $("renewHint").textContent="🎟️ 续期成功，已增加 "+(data.added_days||"")+" 天。";
+    $("renewHint").textContent="🎟️ 续期成功，已增加 "+(data.added_days||"")+" 天。"+upgradeNote;
   }
   $("renewCode").value="";
   setTimeout(async()=>{
