@@ -24,7 +24,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
 .empty{padding:20px;border:1px dashed var(--line);border-radius:16px;text-align:center;color:var(--muted);font-size:12px;background:#fffbfd}
 .authbg{position:fixed;inset:0;z-index:50;background:rgba(255,247,250,.95);backdrop-filter:blur(10px);display:grid;place-items:center;padding:18px}.authbg.hidden{display:none}.authcard{width:min(430px,100%);max-height:calc(100dvh - 28px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 25px 70px rgba(125,76,95,.14)}
 .portal-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;padding:5px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}.portal-switch a,.portal-switch span{display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:10px;font-size:12px;font-weight:800;text-decoration:none;color:var(--muted)}.portal-switch .active{background:var(--panel);color:var(--rose);box-shadow:0 3px 10px rgba(125,76,95,.08)}
-.authcard h2{font-size:22px;color:var(--rose);margin:0}.authcard p{font-size:12px;line-height:1.65;color:var(--muted)}.authcard label{display:block;font-size:11px;color:var(--muted);margin-top:10px}.authactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.authhint{min-height:20px;margin-top:10px;color:var(--rose);font-size:11px;line-height:1.5}.authlink{border:0;background:transparent;color:var(--rose);padding:10px 0 0;text-decoration:underline;text-underline-offset:3px;font-size:12px}
+.authcard h2{font-size:22px;color:var(--rose);margin:0}.authcard p{font-size:12px;line-height:1.65;color:var(--muted)}.authcard label{display:block;font-size:11px;color:var(--muted);margin-top:10px}.authactions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.authhint{min-height:20px;margin-top:10px;color:var(--rose);font-size:11px;line-height:1.5}.authlink{border:0;background:transparent;color:var(--rose);padding:10px 0 0;text-decoration:underline;text-underline-offset:3px;font-size:12px}.maintenance{position:fixed;inset:0;z-index:60;background:rgba(255,247,250,.97);backdrop-filter:blur(12px);display:grid;place-items:center;padding:18px}.maintenance.hidden{display:none}.maintenance-card{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:24px;text-align:center;box-shadow:0 25px 70px rgba(125,76,95,.14)}.maintenance-card .berry{font-size:42px}.maintenance-card h2{margin:8px 0 6px;color:var(--rose);font-size:22px}.maintenance-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
 .lookup{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}.lookup-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}.hidden{display:none!important}
 .artist-page{margin-top:14px}.artist-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.schedule{margin-top:12px}
 @media(max-width:680px){.wrap{padding:12px 10px 34px}.grid{grid-template-columns:1fr}.hero{padding:17px;border-radius:20px}.hero h1{font-size:22px}.topbar{align-items:flex-start}.artist{align-items:flex-start;flex-direction:column}.artist-actions{width:100%;justify-content:stretch}.artist-actions>*{flex:1}.lookup-row{grid-template-columns:1fr}.lookup-row button{width:100%}}
@@ -77,6 +77,17 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:#fff;bo
   </section>
 </div>
 
+<div id="maintenanceGate" class="maintenance hidden">
+  <div class="maintenance-card">
+    <div class="berry">🍓</div>
+    <h2>顾客端正在完善中</h2>
+    <p>暂时还没有开放，请稍后再来～</p>
+    <div class="actions" style="margin-top:16px">
+      <button class="ghost" id="ownerLoginBtn" type="button">主用户登录测试</button>
+    </div>
+  </div>
+</div>
+
 <div id="authGate" class="authbg">
   <div class="authcard">
     <div class="portal-switch"><a href="./index.html">🎨 美工端</a><span class="active">👤 顾客端</span></div>
@@ -119,6 +130,9 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const normCode=v=>String(v||"").trim().toUpperCase();
 let user=null;
+const CUSTOMER_PORTAL_MAINTENANCE=true;
+const OWNER_USER_ID="bc777ca3-a093-4eb9-8711-21d6898ffa7b";
+const isOwner=()=>user?.id===OWNER_USER_ID;
 
 function openArtist(code){
   const c=normCode(code);
@@ -264,7 +278,19 @@ async function savePassword(){
   if(!error)setTimeout(()=>{ $("resetView").classList.add("hidden");$("loginView").classList.remove("hidden");$("authGate").classList.add("hidden"); },500);
 }
 $("authForm").onsubmit=e=>{e.preventDefault();login()};
-$("signupBtn").onclick=signup;$("forgotBtn").onclick=forgot;$("savePasswordBtn").onclick=savePassword;
+$("signupBtn").onclick=()=>{
+  if(CUSTOMER_PORTAL_MAINTENANCE){
+    $("authHint").textContent="顾客端正在完善中，暂时不开放新顾客注册。";
+    return;
+  }
+  signup();
+};
+$("forgotBtn").onclick=forgot;$("savePasswordBtn").onclick=savePassword;
+$("ownerLoginBtn").onclick=()=>{
+  $("maintenanceGate").classList.add("hidden");
+  $("authGate").classList.remove("hidden");
+  $("authHint").textContent="主用户可以登录测试顾客端。";
+};
 const logout=()=>supabase.auth.signOut();
 $("logoutBtn").onclick=logout;
 $("logoutBtn2").onclick=logout;
@@ -272,6 +298,24 @@ $("logoutBtn2").onclick=logout;
 async function applySession(session){
   user=session?.user||null;
   const artistCode=normCode(new URL(location.href).searchParams.get("artist"));
+
+  if(CUSTOMER_PORTAL_MAINTENANCE && !isOwner()){
+    $("dashboard").classList.remove("hidden");
+    $("artistPage").classList.add("hidden");
+    $("logoutBtn").classList.add("hidden");
+    $("customerAccountBar").classList.add("hidden");
+    $("customerAccountEmail").textContent="";
+    $("authGate").classList.add("hidden");
+    $("maintenanceGate").classList.remove("hidden");
+    if(user){
+      await supabase.auth.signOut();
+      user=null;
+    }
+    return;
+  }
+
+  $("maintenanceGate").classList.add("hidden");
+
   if(user){
     $("authGate").classList.add("hidden");
     $("logoutBtn").classList.remove("hidden");
@@ -284,7 +328,10 @@ async function applySession(session){
     $("logoutBtn").classList.add("hidden");
     $("customerAccountBar").classList.add("hidden");
     $("customerAccountEmail").textContent="";
-    if(artistCode){
+    if(CUSTOMER_PORTAL_MAINTENANCE){
+      $("authGate").classList.add("hidden");
+      $("maintenanceGate").classList.remove("hidden");
+    }else if(artistCode){
       $("authGate").classList.add("hidden");
       await loadArtistPublic(artistCode);
     }else{
