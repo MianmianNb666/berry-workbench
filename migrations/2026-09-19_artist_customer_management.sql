@@ -41,7 +41,10 @@ on public.artist_customers
 for select
 to authenticated
 using (
-  auth.uid() = artist_user_id
+  (
+    auth.uid() = artist_user_id
+    and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+  )
   or auth.uid() = linked_customer_user_id
 );
 
@@ -51,7 +54,10 @@ create policy "artists_insert_customers"
 on public.artist_customers
 for insert
 to authenticated
-with check (auth.uid() = artist_user_id);
+with check (
+  auth.uid() = artist_user_id
+  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+);
 
 drop policy if exists "artists_update_customers"
 on public.artist_customers;
@@ -59,8 +65,14 @@ create policy "artists_update_customers"
 on public.artist_customers
 for update
 to authenticated
-using (auth.uid() = artist_user_id)
-with check (auth.uid() = artist_user_id);
+using (
+  auth.uid() = artist_user_id
+  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+)
+with check (
+  auth.uid() = artist_user_id
+  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+);
 
 drop policy if exists "artists_delete_customers"
 on public.artist_customers;
@@ -68,7 +80,10 @@ create policy "artists_delete_customers"
 on public.artist_customers
 for delete
 to authenticated
-using (auth.uid() = artist_user_id);
+using (
+  auth.uid() = artist_user_id
+  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+);
 
 
 create table if not exists public.artist_customer_ledger (
@@ -95,7 +110,10 @@ on public.artist_customer_ledger
 for select
 to authenticated
 using (
-  auth.uid() = artist_user_id
+  (
+    auth.uid() = artist_user_id
+    and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
+  )
   or exists (
     select 1
     from public.artist_customers c
@@ -112,6 +130,7 @@ for insert
 to authenticated
 with check (
   auth.uid() = artist_user_id
+  and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
   and exists (
     select 1
     from public.artist_customers c
@@ -136,6 +155,7 @@ as $$
     '顾客 · ' || right(b.customer_user_id::text, 4) as customer_label
   from public.customer_artist_bindings b
   where b.artist_user_id = auth.uid()
+    and encode(digest(auth.uid()::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
   order by b.created_at;
 $$;
 
@@ -151,6 +171,10 @@ security definer
 set search_path = public, auth
 as $$
 begin
+  if encode(digest(new.artist_user_id::text, 'sha256'), 'hex') <> 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8' then
+    return new;
+  end if;
+
   insert into public.artist_customers(
     artist_user_id,
     display_name,
@@ -187,6 +211,7 @@ select
   '顾客 · ' || right(b.customer_user_id::text, 4),
   b.customer_user_id
 from public.customer_artist_bindings b
+where encode(digest(b.artist_user_id::text, 'sha256'), 'hex') = 'f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8'
 on conflict do nothing;
 
 commit;
