@@ -71,9 +71,9 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
       <p id="welcomeText">查看这位美工为你记录的排单、进度和预计完成时间。</p>
     </section>
     <section class="card" style="margin-top:14px">
-      <h2>订单进度</h2>
-      <div class="meta">订单和排单数据接入后，会集中显示在这里。</div>
-      <div class="empty" style="margin-top:12px">目前还没有可显示的排单。</div>
+      <h2>我的美工 · 排单</h2>
+      <div class="meta">已绑定的美工和她为你记录的订单会自动同步到这里。公开排单会直接显示进度，隐私排单只显示状态。</div>
+      <div id="customerHomeSchedules" class="artist-list"><div class="empty">正在同步排单…</div></div>
     </section>
   </div>
 
@@ -330,6 +330,7 @@ let activeCustomerChat=null;
 let customerChatChannel=null;
 let customerChatLoaded=false;
 let customerBindingsLoaded=false;
+let customerHomeScheduleTimer=null;
 const CUSTOMER_PORTAL_MAINTENANCE=false;
 const OWNER_USER_ID_HASH="f45d4be87faee1e0f37f0c835d250606ae7587130a96a90c245e74856f1fada8";
 async function sha256Hex(text){
@@ -602,6 +603,44 @@ async function ensureCustomerRole(){
   if(!user)return;
   const {error}=await supabase.from("user_roles").insert({user_id:user.id,role:"customer"});
   if(error && error.code!=="23505")console.warn("customer role:",error.message);
+}
+
+function renderCustomerHomeScheduleOrder(order){
+  const status=esc(order.status||"待处理");
+  const progress=Math.max(0,Math.min(100,Number(order.progress||0)));
+  const due=[order.due||"",order.dueTime||""].filter(Boolean).join(" ");
+  return '<div class="artist" style="margin-top:8px"><div class="artist-main"><div class="artist-name">'+esc(order.name||"未命名订单")+'</div><div class="code">'+esc(order.cat||"未分类")+'</div><div class="meta" style="margin-top:5px">状态：'+status+' · 进度 '+progress+'%</div><div class="meta">开始：'+esc(order.start||"未填写")+' · 截止：'+esc(due||"未填写")+'</div></div><span class="badge">'+status+'</span></div>';
+}
+async function loadCustomerHomeSchedules(){
+  if(!user||!$("customerHomeSchedules"))return;
+  const {data,error}=await supabase.rpc("get_my_customer_schedules");
+  if(error){
+    console.error("customer schedule sync:",error);
+    $("customerHomeSchedules").innerHTML='<div class="empty">排单同步功能还没启用，请先运行最新的顾客排单同步 SQL。</div>';
+    return;
+  }
+  const groups=Array.isArray(data)?data:[];
+  if(!groups.length){
+    $("customerHomeSchedules").innerHTML='<div class="empty">还没有绑定美工。去“我的”添加美工后，她会出现在这里。</div>';
+    return;
+  }
+  $("customerHomeSchedules").innerHTML=groups.map(group=>{
+    const isPublic=group.privacy_mode==="public";
+    const orders=Array.isArray(group.orders)?group.orders:[];
+    const badge=isPublic?"🌷 公开排单":"🔒 隐私排单";
+    const body=!isPublic
+      ?'<div class="empty" style="margin-top:10px">这位美工当前设置为隐私排单。</div>'
+      :(orders.length?orders.map(renderCustomerHomeScheduleOrder).join(""):'<div class="empty" style="margin-top:10px">这位美工暂时还没有为你记录排单。</div>');
+    return '<div class="artist" style="display:block"><div class="artist-head"><div><div class="artist-name">'+esc(group.artist_name||"莓桃美工")+'</div><div class="code">'+esc(group.artist_code||"")+'</div></div><span class="badge '+(isPublic?"":"private")+'">'+badge+'</span></div>'+body+'</div>';
+  }).join("");
+}
+function startCustomerHomeScheduleSync(){
+  if(customerHomeScheduleTimer)clearInterval(customerHomeScheduleTimer);
+  loadCustomerHomeSchedules();
+  customerHomeScheduleTimer=setInterval(()=>loadCustomerHomeSchedules(),15000);
+}
+function stopCustomerHomeScheduleSync(){
+  if(customerHomeScheduleTimer){clearInterval(customerHomeScheduleTimer);customerHomeScheduleTimer=null}
 }
 
 async function loadArtistPublic(code){
@@ -1183,6 +1222,7 @@ async function applySession(session){
     await loadMyCustomerChatProfile();
     await loadBindings();
     await loadCustomerChatConversations();
+    startCustomerHomeScheduleSync();
     startCapacityHeartbeat();
 
     if(artistCode){
@@ -1197,6 +1237,7 @@ async function applySession(session){
     }
   }else{
     stopCapacityHeartbeat();
+    stopCustomerHomeScheduleSync();
     if(customerChatChannel){supabase.removeChannel(customerChatChannel);customerChatChannel=null}
     customerChatConversations=[];activeCustomerChat=null;customerChatAvatar="";customerDisplayName="";
     customerChatLoaded=false;customerBindingsLoaded=false;
