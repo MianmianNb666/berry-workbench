@@ -4,6 +4,10 @@
 
 begin;
 
+-- 顾客档案头像字段也一起补齐，避免聊天头像依赖旧迁移。
+alter table public.artist_customers
+  add column if not exists avatar_data text not null default '';
+
 create table if not exists public.chat_profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
   avatar_data text not null default '',
