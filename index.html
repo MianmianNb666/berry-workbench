@@ -128,7 +128,7 @@
         <button id="appIconBtn" class="ghost" type="button">🖼️ 上传应用图标</button>
         <button id="appIconResetBtn" class="ghost" type="button">恢复默认图标</button>
       </div>
-      <div class="meta" style="margin-top:6px">建议上传正方形图片。工作台内显示会立即更新；手机主屏幕上已经安装过的图标或名称，通常需要删除旧图标后重新“添加到主屏幕”才会刷新。</div>
+      <div class="meta" style="margin-top:6px">建议上传正方形图片。工作台内显示会立即更新；主屏幕图标会通过专用图片地址提供给手机。已经安装过的旧图标需要删除后，从 Safari 重新“添加到主屏幕”才会刷新。</div>
     </div>
     <input id="appIconInput" type="file" accept="image/*" hidden>
   </div>
@@ -176,7 +176,7 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true
 
 const $=id=>document.getElementById(id);
 const OLD_KEY="berry-workbench-v2";
-let S={orders:[],times:[],title:"莓桃工作台",avatar:"",appIcon:"",notificationName:"莓桃工作台",displayName:"创作者",welcomeText:"今天也要轻轻松松收工 ♡",footerText:"♡ 莓桃工作台 · 自动云同步 + 本地缓存",stylePreset:"custom",passwordChangedAt:"",theme:{accent:"#f292b2",bg:"#fff9fb",panel:"#ffffff",text:"#45383d"},customSections:[]},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false,currentAccessStatus=null;
+let S={orders:[],times:[],title:"莓桃工作台",avatar:"",appIcon:"",appIconToken:"",notificationName:"莓桃工作台",displayName:"创作者",welcomeText:"今天也要轻轻松松收工 ♡",footerText:"♡ 莓桃工作台 · 自动云同步 + 本地缓存",stylePreset:"custom",passwordChangedAt:"",theme:{accent:"#f292b2",bg:"#fff9fb",panel:"#ffffff",text:"#45383d"},customSections:[]},filter="全部",ts=null,timer=null,user=null,channel=null,saveTimer=null,isApplyingRemote=false,currentAccessStatus=null;
 let deferredInstallPrompt=null;
 let swRegistration=null;
 let dynamicManifestUrl="";
@@ -186,7 +186,7 @@ const T=today();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const money=n=>"¥"+(Number(n)||0).toFixed(2);
 const human=m=>{m=Math.max(0,Math.round(m||0));return m>=60?Math.floor(m/60)+"h "+m%60+"m":m+"m"};
-const normalize=x=>({orders:Array.isArray(x?.orders)?x.orders:[],times:Array.isArray(x?.times)?x.times:[],title:(x?.title||"莓桃工作台").slice(0,30),avatar:(typeof x?.avatar==="string"&&x.avatar.startsWith("data:image/")&&x.avatar.length<300000)?x.avatar:"",appIcon:(typeof x?.appIcon==="string"&&x.appIcon.startsWith("data:image/")&&x.appIcon.length<500000)?x.appIcon:"",notificationName:String(x?.notificationName||x?.title||"莓桃工作台").slice(0,30),displayName:String(x?.displayName||"创作者").slice(0,20),welcomeText:String(x?.welcomeText||"今天也要轻轻松松收工 ♡").slice(0,80),footerText:String(x?.footerText||"♡ 莓桃工作台 · 自动云同步 + 本地缓存").slice(0,100),stylePreset:["cute","simple","boss","custom"].includes(x?.stylePreset)?x.stylePreset:"custom",passwordChangedAt:typeof x?.passwordChangedAt==="string"?x.passwordChangedAt:"",theme:{accent:/^#[0-9a-f]{6}$/i.test(x?.theme?.accent||"")?x.theme.accent:"#f292b2",bg:/^#[0-9a-f]{6}$/i.test(x?.theme?.bg||"")?x.theme.bg:"#fff9fb",panel:/^#[0-9a-f]{6}$/i.test(x?.theme?.panel||"")?x.theme.panel:"#ffffff",text:/^#[0-9a-f]{6}$/i.test(x?.theme?.text||"")?x.theme.text:"#45383d"},customSections:Array.isArray(x?.customSections)?x.customSections.filter(s=>s&&typeof s.id==="string").slice(0,20).map(s=>({id:s.id,name:String(s.name||"未命名分区").slice(0,20),emoji:String(s.emoji||"🌸").slice(0,4),content:String(s.content||"").slice(0,20000)})):[]});
+const normalize=x=>({orders:Array.isArray(x?.orders)?x.orders:[],times:Array.isArray(x?.times)?x.times:[],title:(x?.title||"莓桃工作台").slice(0,30),avatar:(typeof x?.avatar==="string"&&x.avatar.startsWith("data:image/")&&x.avatar.length<300000)?x.avatar:"",appIcon:(typeof x?.appIcon==="string"&&x.appIcon.startsWith("data:image/")&&x.appIcon.length<500000)?x.appIcon:"",appIconToken:(typeof x?.appIconToken==="string"&&/^[A-Za-z0-9_-]{16,80}$/.test(x.appIconToken))?x.appIconToken:"",notificationName:String(x?.notificationName||x?.title||"莓桃工作台").slice(0,30),displayName:String(x?.displayName||"创作者").slice(0,20),welcomeText:String(x?.welcomeText||"今天也要轻轻松松收工 ♡").slice(0,80),footerText:String(x?.footerText||"♡ 莓桃工作台 · 自动云同步 + 本地缓存").slice(0,100),stylePreset:["cute","simple","boss","custom"].includes(x?.stylePreset)?x.stylePreset:"custom",passwordChangedAt:typeof x?.passwordChangedAt==="string"?x.passwordChangedAt:"",theme:{accent:/^#[0-9a-f]{6}$/i.test(x?.theme?.accent||"")?x.theme.accent:"#f292b2",bg:/^#[0-9a-f]{6}$/i.test(x?.theme?.bg||"")?x.theme.bg:"#fff9fb",panel:/^#[0-9a-f]{6}$/i.test(x?.theme?.panel||"")?x.theme.panel:"#ffffff",text:/^#[0-9a-f]{6}$/i.test(x?.theme?.text||"")?x.theme.text:"#45383d"},customSections:Array.isArray(x?.customSections)?x.customSections.filter(s=>s&&typeof s.id==="string").slice(0,20).map(s=>({id:s.id,name:String(s.name||"未命名分区").slice(0,20),emoji:String(s.emoji||"🌸").slice(0,4),content:String(s.content||"").slice(0,20000)})):[]});
 const cacheKey=()=>user?"berry-workbench-cloud-cache:"+user.id:OLD_KEY;
 
 function setSync(text,kind=""){
@@ -199,6 +199,17 @@ function localRead(key){
   try{return normalize(JSON.parse(localStorage.getItem(key)))}catch(e){return normalize(null)}
 }
 function localWrite(){try{localStorage.setItem(cacheKey(),JSON.stringify(S))}catch(e){}}
+function newAppIconToken(){
+  try{return crypto.randomUUID().replaceAll("-","")}catch(_){return Math.random().toString(36).slice(2)+Date.now().toString(36)+Math.random().toString(36).slice(2)}
+}
+function publicAppIconUrl(){
+  if(!S.appIcon||!S.appIconToken||!user?.id)return "";
+  const u=new URL(SUPABASE_URL+"/functions/v1/send-due-reminders");
+  u.searchParams.set("icon","1");
+  u.searchParams.set("uid",user.id);
+  u.searchParams.set("token",S.appIconToken);
+  return u.href;
+}
 function applyTitle(){
   const appName=S.title||"莓桃工作台";
   const notificationName=S.notificationName||appName;
@@ -208,7 +219,7 @@ function applyTitle(){
   if($("notificationNameInput"))$("notificationNameInput").value=notificationName;
   if($("appleAppTitle"))$("appleAppTitle").setAttribute("content",appName);
 
-  const icon=S.appIcon||new URL("./icon.svg",location.href).href;
+  const icon=publicAppIconUrl()||new URL("./icon.svg",location.href).href;
   const preview=$("appIconPreview"),previewImg=$("appIconPreviewImg");
   if(preview&&previewImg){
     if(S.appIcon){
@@ -328,6 +339,10 @@ async function loadWorkspace(){
   }
   if(data?.data){
     S=normalize(data.data);
+    if(S.appIcon&&!S.appIconToken){
+      S.appIconToken=newAppIconToken();
+      await saveCloud();
+    }
   }else{
     let seed=normalize(null);
     const old=localRead(OLD_KEY);
@@ -651,6 +666,7 @@ $("appIconInput").onchange=async e=>{
   try{
     btn.textContent="正在处理图标…";
     S.appIcon=await avatarDataFromFile(file);
+    S.appIconToken=newAppIconToken();
     applyTitle();
     persist();
     btn.textContent="✅ 图标已更新";
@@ -665,6 +681,7 @@ $("appIconInput").onchange=async e=>{
 $("appIconResetBtn").onclick=()=>{
   if(!S.appIcon)return;
   S.appIcon="";
+  S.appIconToken="";
   applyTitle();
   persist();
 };
