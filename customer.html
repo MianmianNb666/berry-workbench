@@ -59,6 +59,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
 
   <div id="customerNav" class="customer-nav hidden">
     <button class="ghost active" type="button" data-customer-view="dashboard"><span id="customerQueueNavIcon">🍓</span> 我的排单</button>
+    <button class="ghost" type="button" data-customer-view="customerArtists">👩‍🎨 我的美工</button>
     <button class="ghost" type="button" data-customer-view="customerMessages">💬 消息 <span id="customerChatNavUnread" class="customer-nav-unread hidden">0</span></button>
     <button class="ghost customer-profile-heart" type="button" data-customer-view="customerProfile">我的</button>
     <button class="ghost" type="button" data-customer-view="customerSettings">⚙️ 设置</button>
@@ -93,10 +94,8 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
         <div>
           <div class="meta">当前登录账号</div>
           <b id="customerAccountEmail" style="font-size:12px"></b>
-          <div class="meta" style="margin-top:7px">美工可以给你她的通用顾客码，也可以提前建立你的档案并生成顾客专属码。两种都可以完成绑定。</div>
-          <div style="margin-top:8px"><button class="ghost" id="openBindModalBtn" type="button">＋ 添加美工</button></div>
+          <div class="meta" style="margin-top:7px">这里管理你的顾客资料。已绑定美工已经单独放到「我的美工」分类。</div>
         </div>
-        <button class="danger" id="logoutBtn2" type="button">退出登录</button>
       </div>
     </section>
     <section class="card" style="margin-top:14px">
@@ -127,9 +126,21 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
         <a class="linkbtn" href="./guide.html#customer" target="_blank" rel="noopener">查看教程</a>
       </div>
     </section>
+  </section>
+
+  <section id="customerArtists" class="customer-view hidden">
+    <section class="hero">
+      <h1>我的美工 👩‍🎨</h1>
+      <p>管理已经绑定的美工，也可以继续添加新的美工。</p>
+    </section>
     <section class="card" style="margin-top:14px">
-      <h2>我的美工</h2>
-      <div class="meta">可以绑定多个美工。每位美工都可以用她的通用顾客码，或给你生成的顾客专属码来解锁。</div>
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div>
+          <h2 style="margin:0">已绑定美工</h2>
+          <div class="meta" style="margin-top:4px">每位美工都可以用她的 GC 通用顾客码，或为你生成的 CC 专属码来绑定。</div>
+        </div>
+        <button class="primary" id="openBindModalBtn" type="button">＋ 添加美工</button>
+      </div>
       <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
     </section>
   </section>
@@ -138,6 +149,15 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
     <section class="hero">
       <h1>设置 ⚙️</h1>
       <p>顾客端的颜色会跟随当前账号保存。</p>
+    </section>
+    <section class="card" style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div>
+          <h2 style="margin:0">账号</h2>
+          <div class="meta" style="margin-top:4px">退出当前顾客账号。</div>
+        </div>
+        <button class="danger" id="logoutBtn2" type="button">退出登录</button>
+      </div>
     </section>
     <section class="card" style="margin-top:14px">
       <h2>使用教程 📖</h2>
@@ -425,7 +445,7 @@ function renderPublicShareOrder(order){
 async function loadPublicShare(token){
   $("publicShareView").classList.remove("hidden");
   $("customerNav").classList.add("hidden");
-  ["dashboard","customerMessages","customerProfile","customerSettings","artistPage"].forEach(id=>$(id)?.classList.add("hidden"));
+  ["dashboard","customerArtists","customerMessages","customerProfile","customerSettings","artistPage"].forEach(id=>$(id)?.classList.add("hidden"));
   $("authGate").classList.add("hidden");
   $("maintenanceGate").classList.add("hidden");
   $("customerCodeGate").classList.add("hidden");
@@ -517,16 +537,16 @@ function saveCustomerPreferences(){
   },300);
 }
 function setCustomerView(view){
-  const id=view==="profile"?"customerProfile":view==="settings"?"customerSettings":view==="messages"?"customerMessages":"dashboard";
+  const id=view==="profile"?"customerProfile":view==="settings"?"customerSettings":view==="messages"?"customerMessages":view==="artists"?"customerArtists":"dashboard";
   document.querySelectorAll(".customer-view").forEach(x=>x.classList.toggle("hidden",x.id!==id));
   document.querySelectorAll("[data-customer-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.customerView===id));
   if(user)localStorage.setItem("berry-customer-view-"+user.id,view);
-  if(user&&view==="profile"&&!customerBindingsLoaded)loadBindings();
+  if(user&&view==="artists"&&!customerBindingsLoaded)loadBindings();
   if(user&&view==="messages"&&!customerChatLoaded)loadCustomerChatConversations();
 }
 document.querySelectorAll("[data-customer-view]").forEach(btn=>{
   btn.onclick=()=>{
-    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerSettings"?"settings":btn.dataset.customerView==="customerMessages"?"messages":"dashboard";
+    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerSettings"?"settings":btn.dataset.customerView==="customerMessages"?"messages":btn.dataset.customerView==="customerArtists"?"artists":"dashboard";
     const u=new URL(location.href);u.searchParams.delete("artist");u.searchParams.set("view",view);history.replaceState(null,"",u);
     $("artistPage").classList.add("hidden");$("customerNav").classList.remove("hidden");setCustomerView(view);
   };
@@ -1208,6 +1228,7 @@ async function applySession(session){
       $("customerAccountBar").classList.add("hidden");
       $("dashboard").classList.add("hidden");
       $("customerProfile").classList.add("hidden");
+      $("customerArtists")?.classList.add("hidden");
       $("customerSettings").classList.add("hidden");
       $("artistPage").classList.add("hidden");
       $("customerCodeGate").classList.remove("hidden");
