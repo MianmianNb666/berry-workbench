@@ -980,7 +980,7 @@ function card(o){
   const customer=artistCustomers.find(x=>x.id===o.artistCustomerId);
   const visual=orderStatusVisual(o,d);
   const leading=customer?customerAvatarMarkup(customer):'<div class="order-status-icon '+visual.cls+'">'+visual.icon+'</div>';
-  return '<article class="order"><div class="order-head">'+leading+'<div class="order-head-main"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||customer?.display_name||"未填客户")+' · '+esc(o.cat||"未分类")+'</div></div></div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+(o.dueTime?" "+esc(o.dueTime):"")+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div>'+(rl?'<div class="order-reminder">🔔 '+esc(rl)+'</div>':'')+(o.note?'<div class="order-note"><b>备注：</b>'+esc(o.note)+'</div>':'')+'<div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="ghost" data-share-order="'+o.id+'">'+shareLabel+'</button><button class="danger" data-del="'+o.id+'">删除</button></div></article>';
+  return '<article class="order"><div class="order-head">'+leading+'<div class="order-head-main"><h3>'+esc(o.name)+'</h3><div class="meta">'+esc(o.client||customer?.self_display_name||customer?.display_name||"未填客户")+' · '+esc(o.cat||"未分类")+'</div></div></div><span class="tag">'+esc(o.status)+'</span><div class="money">'+money(o.money)+'</div><div class="meta">进度 '+o.progress+'% · '+esc(o.due)+(o.dueTime?" "+esc(o.dueTime):"")+' · '+(d<0?"逾期 "+Math.abs(d)+" 天":d===0?"今天截止":"剩 "+d+" 天")+'</div>'+(rl?'<div class="order-reminder">🔔 '+esc(rl)+'</div>':'')+(o.note?'<div class="order-note"><b>备注：</b>'+esc(o.note)+'</div>':'')+'<div class="row"><select data-status="'+o.id+'">'+["待处理","进行中","待付款","已完成"].map(s=>'<option '+(s===o.status?"selected":"")+'>'+s+'</option>').join("")+'</select><button class="ghost" data-share-order="'+o.id+'">'+shareLabel+'</button><button class="danger" data-del="'+o.id+'">删除</button></div></article>';
 }
 
 function render(){
@@ -2263,7 +2263,7 @@ async function sendArtistChat(){
 }
 function ensureArtistChatRealtime(){
   if(!user)return;
-  if(artistChatChannel){supabase.removeChannel(artistChatChannel);artistChatChannel=null}
+  if(artistChatChannel)return;
   artistChatChannel=supabase.channel("artist-chat-"+user.id)
     .on("postgres_changes",{event:"*",schema:"public",table:"chat_messages",filter:"artist_user_id=eq."+user.id},async payload=>{
       await loadArtistChatConversations(true);
