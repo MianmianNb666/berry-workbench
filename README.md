@@ -18,8 +18,8 @@
 
 在 Supabase 打开 **Authentication → URL Configuration**。
 
-- Site URL: `https://jiaj200405-cmd.github.io/berry-workbench/`
-- Redirect URLs: 添加 `https://jiaj200405-cmd.github.io/berry-workbench/**`
+- Site URL: `https://mianmiannb666.github.io/berry-workbench/`
+- Redirect URLs: 添加 `https://mianmiannb666.github.io/berry-workbench/**`
 
 之后即可在工作台页面用邮箱 + 密码注册和登录。
 
