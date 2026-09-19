@@ -41,7 +41,7 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
 .customgrant{display:grid;grid-template-columns:100px auto;gap:7px;margin-top:8px;max-width:260px}.adminnote{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;margin-top:9px}.adminnote input{background:#fff}
 .formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.field label{font-size:10px;color:var(--muted);display:block;margin-bottom:5px}
 .output{margin-top:12px;border:1px dashed var(--pink);background:var(--soft);border-radius:14px;padding:13px}.code{font-size:14px;font-weight:850;word-break:break-all;margin:6px 0}
-.invite-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.invite-box{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fffafd}.invite-box h3{font-size:13px;margin:0 0 4px}.invite{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(70px,.7fr)) auto;gap:8px;align-items:center;border-top:1px solid #f7e2ea;padding:10px 0}.invite:first-child{border-top:0}.invite .main b{font-size:12px}.invite small{color:var(--muted);font-size:9px}
+.invite-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.invite-box{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fffafd}.invite-box h3{font-size:13px;margin:0 0 4px}.invite{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(70px,.7fr)) auto;gap:8px;align-items:center;border-top:1px solid #f7e2ea;padding:10px 0}.invite:first-child{border-top:0}.invite .main b{font-size:12px}.invite small{color:var(--muted);font-size:9px}.invite-code{display:block;margin-top:5px;font-size:10px;font-weight:850;color:var(--rose);word-break:break-all}.invite-actions{display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap}.invite-actions button{min-height:30px;padding:0 8px;font-size:9px}
 .log{display:grid;grid-template-columns:minmax(0,1.5fr) .7fr .8fr .9fr;gap:8px;border-top:1px solid #f7e2ea;padding:10px 0;font-size:10px}.log:first-child{border-top:0}
 .empty{padding:25px;text-align:center;color:var(--muted);font-size:11px;border:1px dashed var(--line);border-radius:14px}
 .gate{min-height:80vh;display:grid;place-items:center}.gatecard{width:min(410px,100%);background:#fff;border:1px solid var(--line);border-radius:23px;padding:22px;box-shadow:var(--shadow)}.gatecard h1{margin:0;font-size:21px}.stack{display:grid;gap:9px;margin-top:15px}.hint{font-size:11px;color:var(--muted);min-height:18px}.badtext{color:var(--bad)}
@@ -194,7 +194,7 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
       </div>
       <div class="card">
         <h2>邀请码记录</h2>
-        <div class="meta">左边是当前可以继续使用的，右边是已经停用、过期或使用次数已满的。</div>
+        <div class="meta">左边是当前可以继续使用的，右边是已经停用、过期或使用次数已满的。新生成的可用邀请码可以直接复制。</div>
         <div class="invite-columns">
           <div class="invite-box">
             <h3>✅ 可以使用</h3>
@@ -563,17 +563,33 @@ async function loadInvites(){
     const grant=i.grant_type==="permanent"?"永久":(i.duration_days||0)+"天";
     const mode=i.use_mode==="multi"?"多人":"单次";
     const usage=i.max_uses==null?(i.used_count+" / ∞"):(i.used_count+" / "+i.max_uses);
+    const usable=isUsable(i);
+    const code=i.invite_code||"";
+    const codeLine=code?'<span class="invite-code">'+esc(code)+'</span>':'';
+    const copyBtn=usable&&code?'<button class="ghost" data-copy-invite="'+esc(i.id)+'" data-code="'+esc(code)+'">📋 复制</button>':'';
+    const oldCodeHint=usable&&!code?'<small style="display:block;margin-top:4px">旧邀请码未保存明文，无法恢复复制</small>':'';
     return '<div class="invite">'+
-      '<div class="main"><b>'+esc(i.label||"未备注")+'</b><br><small>'+esc(dt(i.created_at))+' · '+(i.purpose==="signup"?"注册":"续期")+'</small></div>'+
+      '<div class="main"><b>'+esc(i.label||"未备注")+'</b><br><small>'+esc(dt(i.created_at))+' · '+(i.purpose==="signup"?"注册":"续期")+'</small>'+codeLine+oldCodeHint+'</div>'+
       '<div><b style="font-size:11px">'+esc(grant)+'</b><br><small>'+mode+'</small></div>'+
       '<div><b style="font-size:11px">'+esc(usage)+'</b><br><small>已用 / 上限</small></div>'+
+      '<div class="invite-actions">'+copyBtn+
       '<button class="'+(i.is_active?"danger":"ghost")+'" data-toggle-invite="'+esc(i.id)+'" data-next="'+(!i.is_active)+'">'+(i.is_active?"停用":"启用")+'</button>'+
-      '</div>';
+      '</div></div>';
   };
   const activeRows=rows.filter(isUsable);
   const inactiveRows=rows.filter(i=>!isUsable(i));
   $("inviteActiveList").innerHTML=activeRows.length?activeRows.map(rowHtml).join(""):'<div class="empty">暂无可用邀请码</div>';
   $("inviteInactiveList").innerHTML=inactiveRows.length?inactiveRows.map(rowHtml).join(""):'<div class="empty">暂无已停用邀请码</div>';
+  document.querySelectorAll("[data-copy-invite]").forEach(b=>b.onclick=async()=>{
+    const code=b.dataset.code||"";
+    if(!code)return;
+    try{
+      await navigator.clipboard.writeText(code);
+      toast("邀请码已复制 ✓");
+    }catch(_){
+      prompt("复制邀请码：",code);
+    }
+  });
   document.querySelectorAll("[data-toggle-invite]").forEach(b=>b.onclick=async()=>{
     const active=b.dataset.next==="true";
     const {error}=await supabase.rpc("admin_set_invite_active",{p_invite_id:b.dataset.toggleInvite,p_active:active});
