@@ -39,6 +39,7 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
 
   <div id="customerNav" class="customer-nav hidden">
     <button class="ghost active" type="button" data-customer-view="dashboard">🍓 我的排单</button>
+    <button class="ghost" type="button" data-customer-view="customerBalance">💰 我的余额</button>
     <button class="ghost customer-profile-heart" type="button" data-customer-view="customerProfile">我的</button>
     <button class="ghost" type="button" data-customer-view="customerSettings">⚙️ 设置</button>
   </div>
@@ -75,9 +76,16 @@ input{width:100%;min-height:44px;border:1px solid var(--line);background:var(--p
       <div class="meta">绑定入口收在“我的”里，不占用排单首页。</div>
       <div id="artistList" class="artist-list"><div class="empty">正在读取…</div></div>
     </section>
+  </section>
+
+  <section id="customerBalance" class="customer-view hidden">
+    <section class="hero">
+      <h1>我的余额 💰</h1>
+      <p>查看不同美工为你记录的当前余额和每一笔变动。</p>
+    </section>
     <section class="card" style="margin-top:14px">
-      <h2>我的余额 💰</h2>
-      <div class="meta">美工增加或减少余额后，这里会同步显示当前余额和每一笔明细。顾客端只能查看，不能修改。</div>
+      <h2>余额明细</h2>
+      <div class="meta">顾客端只用于查看，余额的增加和减少由美工端记录。</div>
       <div id="customerBudgetList" class="artist-list"><div class="empty">正在读取…</div></div>
     </section>
   </section>
@@ -275,15 +283,16 @@ function saveCustomerPreferences(){
   },300);
 }
 function setCustomerView(view){
-  const id=view==="profile"?"customerProfile":view==="settings"?"customerSettings":"dashboard";
+  const id=view==="profile"?"customerProfile":view==="balance"?"customerBalance":view==="settings"?"customerSettings":"dashboard";
   document.querySelectorAll(".customer-view").forEach(x=>x.classList.toggle("hidden",x.id!==id));
   document.querySelectorAll("[data-customer-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.customerView===id));
   if(user)localStorage.setItem("berry-customer-view-"+user.id,view);
-  if(user&&view==="profile"){loadBindings();loadCustomerBudgets();}
+  if(user&&view==="profile")loadBindings();
+  if(user&&view==="balance")loadCustomerBudgets();
 }
 document.querySelectorAll("[data-customer-view]").forEach(btn=>{
   btn.onclick=()=>{
-    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerSettings"?"settings":"dashboard";
+    const view=btn.dataset.customerView==="customerProfile"?"profile":btn.dataset.customerView==="customerBalance"?"balance":btn.dataset.customerView==="customerSettings"?"settings":"dashboard";
     const u=new URL(location.href);u.searchParams.delete("artist");u.searchParams.set("view",view);history.replaceState(null,"",u);
     $("artistPage").classList.add("hidden");$("customerNav").classList.remove("hidden");setCustomerView(view);
   };
