@@ -283,7 +283,7 @@
 <p class="note" id="footerText">♡ 粉白个人接单工作台 · 自动云同步 + 本地缓存</p></main>
 <aside class="right"><div class="card"><h3>🎨 收支概览</h3><div class="mini"><b id="sideIncome">¥0</b><br><span id="sideDone">已完成 0 单</span></div></div><div class="card"><h3>💬 小助手</h3><div class="mini" id="assistant">今天还没有单子。</div></div></aside>
 </div></div>
-<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>关联顾客<select id="oArtistCustomer"><option value="">不关联顾客档案</option></select></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>截止时间<input id="oDueTime" type="time" value="23:59"></label><label>分类<input id="oCat" type="text" maxlength="30" placeholder="自己填写分类，例如：返图 / 文案 / 其他"></label><div class="reminder-box"><span>系统提醒 🔔</span><div class="reminder-checks"><label class="reminder-check"><input id="oRemind1d" type="checkbox"> 提前 1 天</label><label class="reminder-check"><input id="oRemind3h" type="checkbox"> 提前 3 小时</label></div><label class="reminder-custom">自定义提醒时间<input id="oRemindCustom" type="datetime-local"></label><div class="meta" style="margin-top:6px">可同时选择多个提醒。需要先在“我的 / 设置”开启系统通知。</div></div><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="artistCustomerModalBg" class="modalbg"><div class="modal">
+<div id="modalbg" class="modalbg"><form id="orderForm" class="modal"><div class="modalhead"><div><h2>新增需求 ♡</h2><div class="meta">把新单放进工作台</div></div><button class="ghost" type="button" id="closeModal">×</button></div><div class="formgrid"><label>需求名称<input id="oName" required></label><label>用户 / 顾客<select id="oArtistCustomer"><option value="">不关联用户</option></select><span id="oCustomerBalanceHint" class="meta" style="display:block;margin-top:5px">选择顾客后可直接从余额扣费</span></label><label>客户 / 昵称<input id="oClient"></label><label>金额 ¥<input id="oMoney" type="number" min="0" step="0.01"></label><div class="reminder-box" id="oBalanceChargeBox"><span>顾客余额 💰</span><label class="reminder-check"><input id="oChargeBalance" type="checkbox" disabled> 保存订单时直接扣除本单金额</label><div class="meta" id="oChargeBalancePreview" style="margin-top:6px">未选择顾客，不扣余额。</div></div><label>状态<select id="oStatus"><option>待处理</option><option>进行中</option><option>待付款</option><option>已完成</option></select></label><label>开始日期<input id="oStart" type="date" required></label><label>截止日期<input id="oDue" type="date" required></label><label>截止时间<input id="oDueTime" type="time" value="23:59"></label><label>分类<input id="oCat" type="text" maxlength="30" placeholder="自己填写分类，例如：返图 / 文案 / 其他"></label><div class="reminder-box"><span>系统提醒 🔔</span><div class="reminder-checks"><label class="reminder-check"><input id="oRemind1d" type="checkbox"> 提前 1 天</label><label class="reminder-check"><input id="oRemind3h" type="checkbox"> 提前 3 小时</label></div><label class="reminder-custom">自定义提醒时间<input id="oRemindCustom" type="datetime-local"></label><div class="meta" style="margin-top:6px">可同时选择多个提醒。需要先在“我的 / 设置”开启系统通知。</div></div><label>完成进度 %<input id="oProgress" type="number" min="0" max="100" value="0"></label><label style="grid-column:1/-1">备注<textarea id="oNote" rows="3"></textarea></label></div><div class="actions" style="justify-content:flex-end"><button class="ghost" type="button" id="cancelModal">取消</button><button class="primary">保存订单</button></div></form></div><div id="changePasswordModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>修改登录密码 🔐</h2><div class="meta">不用输入旧密码。修改成功后，请用新密码登录。</div></div><button class="ghost" id="closeChangePasswordModal" type="button">×</button></div><label style="display:block;margin-top:14px;font-size:11px;color:var(--muted)">新密码<div class="password-field"><input id="settingsNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="至少 6 位"><button id="toggleSettingsNewPassword" class="password-toggle" type="button">显示</button></div></label><label style="display:block;margin-top:10px;font-size:11px;color:var(--muted)">再次输入<div class="password-field"><input id="settingsNewPassword2" type="password" autocomplete="new-password" minlength="6" placeholder="再输入一次"><button id="toggleSettingsNewPassword2" class="password-toggle" type="button">显示</button></div></label><div id="changePasswordHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelChangePasswordModal" type="button">取消</button><button class="primary" id="saveSettingsPasswordBtn" type="button">保存新密码</button></div></div></div><div id="sectionModalBg" class="modalbg"><div class="modal"><div class="modalhead"><div><h2>添加自定义分区 ✨</h2><div class="meta">会出现在左侧菜单，并跟随账号云同步。</div></div><button class="ghost" id="closeSectionModal" type="button">×</button></div><div class="formgrid" style="margin-top:14px"><label>图标<input id="sectionEmoji" class="emoji-input" maxlength="4" placeholder="🌸" value="🌸"></label><label>分区名称<input id="sectionName" maxlength="20" placeholder="例如：素材 / 客户 / 灵感"></label></div><div id="sectionHint" class="authhint"></div><div class="actions" style="justify-content:flex-end"><button class="ghost" id="cancelSectionModal" type="button">取消</button><button class="primary" id="createSectionBtn" type="button">添加分区</button></div></div></div><div id="artistCustomerModalBg" class="modalbg"><div class="modal">
   <div class="modalhead">
     <div>
       <h2 id="artistCustomerModalTitle">添加顾客 👥</h2>
@@ -857,6 +857,11 @@ async function removeOrderReminders(orderId){
 function bind(){
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
     const id=b.dataset.del;
+    const order=S.orders.find(o=>o.id===id);
+    if(order?.balanceCharged>0){
+      const ok=confirm("这笔订单已经从顾客余额扣过 "+artistCustomerMoney(order.balanceCharged)+"。\n删除订单不会自动退款，确定继续删除吗？");
+      if(!ok)return;
+    }
     S.orders=S.orders.filter(o=>o.id!==id);
     render();persist();
     await removeOrderReminders(id);
@@ -889,15 +894,36 @@ $("oStart").value=T;$("oDue").value=T;$("oDueTime").value="23:59";
 $("oArtistCustomer").onchange=()=>{
   const found=artistCustomers.find(x=>x.id===$("oArtistCustomer").value);
   if(found)$("oClient").value=found.display_name||"";
+  delete $("oChargeBalance").dataset.touched;
+  updateOrderChargePreview();
 };
+$("oMoney").addEventListener("input",updateOrderChargePreview);
+$("oChargeBalance").addEventListener("change",()=>{
+  $("oChargeBalance").dataset.touched="1";
+  updateOrderChargePreview();
+});
 $("orderForm").onsubmit=async e=>{
   e.preventDefault();
+
+  const customerId=$("oArtistCustomer").value||"";
+  const amount=Math.max(0,Number($("oMoney").value||0));
+  const chargeBalance=!!customerId && amount>0 && $("oChargeBalance").checked;
+  const selectedCustomer=artistCustomers.find(x=>x.id===customerId)||null;
+
+  if(chargeBalance){
+    const currentBalance=Number(artistCustomerBalances.get(customerId)||0);
+    if(currentBalance<amount){
+      alert("这个顾客余额不足。当前余额 "+artistCustomerMoney(currentBalance)+"，本单金额 "+artistCustomerMoney(amount)+"。\n可以先给顾客增加余额，或者取消“直接扣除本单金额”。");
+      return;
+    }
+  }
+
   const order={
     id:String(Date.now()),
     name:$("oName").value.trim(),
     client:$("oClient").value.trim(),
-    artistCustomerId:$("oArtistCustomer").value||"",
-    money:+$("oMoney").value||0,
+    artistCustomerId:customerId,
+    money:amount,
     status:$("oStatus").value,
     start:$("oStart").value,
     due:$("oDue").value,
@@ -907,15 +933,62 @@ $("orderForm").onsubmit=async e=>{
     note:$("oNote").value.trim(),
     remind1d:$("oRemind1d").checked,
     remind3h:$("oRemind3h").checked,
-    customReminder:$("oRemindCustom").value||""
+    customReminder:$("oRemindCustom").value||"",
+    balanceCharged:0,
+    balanceLedgerId:""
   };
+
+  if(chargeBalance){
+    const note="订单扣费 · "+(order.name||"未命名需求");
+    const {data:ledger,error:ledgerError}=await supabase.from("artist_customer_ledger")
+      .insert({
+        artist_customer_id:customerId,
+        artist_user_id:user.id,
+        amount:-amount,
+        note
+      })
+      .select("id")
+      .single();
+
+    if(ledgerError){
+      console.error(ledgerError);
+      alert("订单还没有保存，因为余额扣费失败："+ledgerError.message);
+      return;
+    }
+
+    order.balanceCharged=amount;
+    order.balanceLedgerId=ledger?.id||"";
+    artistCustomerBalances.set(
+      customerId,
+      Number(artistCustomerBalances.get(customerId)||0)-amount
+    );
+  }
+
   S.orders.push(order);
   e.target.reset();
-  $("oStart").value=T;$("oDue").value=T;$("oDueTime").value="23:59";$("oProgress").value=0;
-  close();render();persist();
+  $("oStart").value=T;
+  $("oDue").value=T;
+  $("oDueTime").value="23:59";
+  $("oProgress").value=0;
+  $("oChargeBalance").disabled=true;
+  $("oChargeBalance").checked=false;
+  delete $("oChargeBalance").dataset.touched;
+  $("oCustomerBalanceHint").textContent="选择顾客后可直接从余额扣费";
+  $("oChargeBalancePreview").textContent="未选择顾客，不扣余额。";
+
+  close();
+  render();
+  persist();
   await syncOrderReminders(order);
+
+  if(chargeBalance){
+    await loadArtistCustomers();
+  }
+
   if((order.remind1d||order.remind3h||order.customReminder)&&Notification.permission!=="granted"){
     alert("订单已保存。你设置了提醒，但还没有开启系统通知，请到“我的 / 设置 → 系统通知”开启。");
+  }else if(chargeBalance){
+    alert("订单已保存，并已从「"+(selectedCustomer?.display_name||"顾客")+"」余额扣除 "+artistCustomerMoney(amount)+" ✓");
   }
 };
 
@@ -1326,15 +1399,55 @@ async function loadOrderCustomerOptions(){
   const select=$("oArtistCustomer");
   if(!select)return;
   if(!(await isArtistBetaOwner())){
-    select.innerHTML='<option value="">不关联顾客档案</option>';
+    select.innerHTML='<option value="">不关联用户</option>';
+    updateOrderChargePreview();
     return;
   }
   if(!artistCustomers.length)await loadArtistCustomers();
   const current=select.value;
-  select.innerHTML='<option value="">不关联顾客档案</option>'+artistCustomers.map(x=>
-    '<option value="'+esc(x.id)+'">'+esc(x.display_name||"顾客")+'</option>'
+  select.innerHTML='<option value="">不关联用户</option>'+artistCustomers.map(x=>
+    '<option value="'+esc(x.id)+'">'+esc(x.display_name||"顾客")+' · 余额 '+esc(artistCustomerMoney(artistCustomerBalances.get(x.id)||0))+'</option>'
   ).join("");
   if(current&&artistCustomers.some(x=>x.id===current))select.value=current;
+  updateOrderChargePreview();
+}
+
+function updateOrderChargePreview(){
+  const customerId=$("oArtistCustomer")?.value||"";
+  const checkbox=$("oChargeBalance");
+  const hint=$("oCustomerBalanceHint");
+  const preview=$("oChargeBalancePreview");
+  if(!checkbox||!hint||!preview)return;
+
+  if(!customerId){
+    checkbox.checked=false;
+    checkbox.disabled=true;
+    hint.textContent="选择顾客后可直接从余额扣费";
+    preview.textContent="未选择顾客，不扣余额。";
+    return;
+  }
+
+  const customer=artistCustomers.find(x=>x.id===customerId);
+  const balance=Number(artistCustomerBalances.get(customerId)||0);
+  const amount=Math.max(0,Number($("oMoney")?.value||0));
+  checkbox.disabled=false;
+  if(!checkbox.dataset.touched)checkbox.checked=true;
+  hint.textContent=(customer?.display_name||"顾客")+"当前余额 "+artistCustomerMoney(balance);
+
+  if(!checkbox.checked){
+    preview.textContent="本单不会从顾客余额扣费。";
+    return;
+  }
+
+  if(amount<=0){
+    preview.textContent="填写订单金额后，会自动计算扣费后的余额。";
+    return;
+  }
+
+  const after=balance-amount;
+  preview.textContent=after<0
+    ?"余额不足：本单 "+artistCustomerMoney(amount)+"，当前只有 "+artistCustomerMoney(balance)
+    :"保存后扣 "+artistCustomerMoney(amount)+"，剩余 "+artistCustomerMoney(after);
 }
 
 function publicShareUrl(token){
