@@ -1751,8 +1751,8 @@ function artistCustomerMoney(v){
   return "¥"+Number(v||0).toLocaleString("zh-CN",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function customerAvatarMarkup(customer,sizeClass=""){
-  const name=(customer?.display_name||"顾客").trim();
-  const avatar=customer?.self_avatar_data||customer?.avatar_data||"";
+  const name=(customer?.self_display_name||customer?.display_name||"顾客").trim();
+  const avatar=customer?.self_avatar_data||"";
   const cls="customer-avatar"+(sizeClass?" "+sizeClass:"");
   if(avatar&&avatar.startsWith("data:image/"))return '<div class="'+cls+'"><img src="'+esc(avatar)+'" alt=""></div>';
   return '<div class="'+cls+' fallback">'+esc((name[0]||"顾").toUpperCase())+'</div>';
@@ -1774,9 +1774,11 @@ async function syncArtistChatProfile(){
 function renderCustomerAvatarPreview(){
   const box=$("artistCustomerAvatarPreview");
   if(!box)return;
-  const name=$("artistCustomerNameInput")?.value.trim()||"顾客";
-  box.className="customer-avatar"+(editingArtistCustomerAvatar?"":" fallback");
-  box.innerHTML=editingArtistCustomerAvatar?'<img src="'+esc(editingArtistCustomerAvatar)+'" alt="">':esc((name[0]||"顾").toUpperCase());
+  const customer=artistCustomers.find(x=>x.id===editingArtistCustomerId)||null;
+  const name=(customer?.self_display_name||$("artistCustomerNameInput")?.value.trim()||customer?.display_name||"顾客").trim();
+  const avatar=customer?.self_avatar_data||"";
+  box.className="customer-avatar"+(avatar?"":" fallback");
+  box.innerHTML=avatar?'<img src="'+esc(avatar)+'" alt="">':esc((name[0]||"顾").toUpperCase());
 }
 async function loadBoundCustomerAccounts(){
   const {data,error}=await supabase.rpc("get_artist_bound_customer_accounts");
@@ -2053,9 +2055,9 @@ async function openArtistCustomerModal(customerId=null){
   $("artistCustomerModalTitle").textContent=customer?"管理顾客 👥":"添加顾客 👥";
   $("artistCustomerNameInput").value=customer?.display_name||"";
   $("artistCustomerNoteInput").value=customer?.note||"";
-  editingArtistCustomerAvatar=customer?.avatar_data||"";
+  editingArtistCustomerAvatar="";
   renderCustomerAvatarPreview();
-  $("artistCustomerAvatarHint").textContent=artistCustomerAvatarReady?"":"头像功能需要先运行最新的顾客头像 SQL。";
+  $("artistCustomerAvatarHint").textContent=customer?.linked_customer_user_id?"头像由顾客自己设置并同步。":"顾客还没绑定账号，绑定后会显示她自己设置的头像。";
   const selected=customer?.linked_customer_user_id||"";
   $("artistCustomerLinkSelect").innerHTML='<option value="">暂不关联</option>'+boundCustomerAccounts.map(a=>
     '<option value="'+esc(a.customer_user_id)+'">'+esc(a.customer_label)+'</option>'
@@ -2100,7 +2102,6 @@ async function saveArtistCustomer(){
     linked_customer_user_id:linked,
     updated_at:new Date().toISOString()
   };
-  if(artistCustomerAvatarReady)payload.avatar_data=editingArtistCustomerAvatar||"";
   let result;
   if(editingArtistCustomerId){
     result=await supabase.from("artist_customers").update(payload).eq("id",editingArtistCustomerId).eq("artist_user_id",user.id).select("id,linked_customer_user_id").single();
@@ -2516,29 +2517,7 @@ $("copyArtistCustomerProfileCodeBtn").onclick=async()=>{
     prompt("复制顾客专属码：",code);
   }
 };
-$("artistCustomerNameInput").addEventListener("input",()=>{if(!editingArtistCustomerAvatar)renderCustomerAvatarPreview()});
-$("artistCustomerAvatarBtn").onclick=()=>$("artistCustomerAvatarInput").click();
-$("artistCustomerAvatarInput").onchange=async e=>{
-  const file=e.target.files?.[0];
-  if(!file)return;
-  const btn=$("artistCustomerAvatarBtn"),old=btn.textContent;
-  try{
-    btn.textContent="正在处理…";
-    editingArtistCustomerAvatar=await squareImageDataFromFile(file,192);
-    renderCustomerAvatarPreview();
-    $("artistCustomerAvatarHint").textContent=artistCustomerAvatarReady?"头像已选，保存顾客后生效。":"请先运行顾客头像 SQL 后再保存。";
-  }catch(err){
-    $("artistCustomerAvatarHint").textContent=err.message||"头像处理失败";
-  }finally{
-    btn.textContent=old;
-    e.target.value="";
-  }
-};
-$("artistCustomerAvatarResetBtn").onclick=()=>{
-  editingArtistCustomerAvatar="";
-  renderCustomerAvatarPreview();
-  $("artistCustomerAvatarHint").textContent="保存后恢复默认头像。";
-};
+$("artistCustomerNameInput").addEventListener("input",()=>renderCustomerAvatarPreview());
 $("deleteArtistCustomerBtn").onclick=deleteArtistCustomer;
 $("generateArtistCustomerShareBtn").onclick=generateArtistCustomerShare;
 $("artistCustomerAmountInput").addEventListener("input",()=>updateAmountCalc("artistCustomerAmountInput","artistCustomerAmountCalc"));
