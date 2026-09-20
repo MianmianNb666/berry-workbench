@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>莓桃工作台 · 功能总览</title>
+<meta name="theme-color" content="#fff7fa">
+<style>
+:root{
+  --rose:#d96f94;--deep:#bd5f83;--pink:#ef93b2;--bg:#fff8fb;--panel:#fff;
+  --soft:#fff0f5;--line:#f1cedb;--text:#493a40;--muted:#8f7b83;--good:#5e9c7d;
+  --shadow:0 18px 50px rgba(145,80,105,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:linear-gradient(180deg,#fff8fb 0,#fffdfd 50%,#fff8fb 100%);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.65
+}
+a{color:inherit;text-decoration:none}
+.wrap{width:min(1180px,100%);margin:auto;padding:24px 18px 70px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:48px;height:48px;border-radius:16px;background:var(--soft);
+  display:grid;place-items:center;font-size:26px;border:1px solid var(--line)
+}
+.brand b{display:block;font-size:18px}
+.brand small{color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  min-height:38px;padding:0 14px;border-radius:12px;border:1px solid var(--line);
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:750;background:#fff;color:var(--rose)
+}
+.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--pink),var(--deep))}
+.hero{
+  background:linear-gradient(135deg,#fff,#fff0f5);
+  border:1px solid var(--line);border-radius:26px;padding:25px;box-shadow:var(--shadow)
+}
+.hero h1{font-size:30px;line-height:1.25;margin:0}
+.hero p{margin:10px 0 0;color:var(--muted);max-width:850px}
+.tag{
+  display:inline-flex;align-items:center;border-radius:999px;background:var(--soft);
+  color:var(--rose);padding:4px 9px;font-size:10px;font-weight:800
+}
+.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}
+.quick a{
+  background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;
+  transition:.15s ease
+}
+.quick a:hover{transform:translateY(-1px);border-color:var(--pink)}
+.quick b{display:block;font-size:13px}
+.quick span{font-size:11px;color:var(--muted)}
+.nav{
+  position:sticky;top:8px;z-index:10;margin:16px 0;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(16px);
+  border:1px solid var(--line);border-radius:18px;padding:8px;
+  display:flex;gap:7px;overflow:auto;box-shadow:0 8px 30px rgba(130,75,96,.08)
+}
+.nav a{white-space:nowrap;padding:7px 11px;border-radius:11px;font-size:11px;color:var(--muted)}
+.nav a:hover{background:var(--soft);color:var(--rose)}
+.section{margin-top:18px}
+.section-head{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:12px;
+  margin-bottom:10px;padding:0 2px
+}
+.section-head h2{margin:0;font-size:21px}
+.section-head p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.count{font-size:10px;color:var(--rose);font-weight:800;background:var(--soft);padding:4px 8px;border-radius:999px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.card{
+  min-height:150px;border:1px solid var(--line);border-radius:18px;padding:16px;
+  background:linear-gradient(180deg,#fff,#fffbfd);
+  box-shadow:0 8px 28px rgba(130,75,96,.04)
+}
+.card .icon{font-size:24px;line-height:1;margin-bottom:10px}
+.card h3{margin:0 0 7px;font-size:14px}
+.card p{margin:0;color:var(--muted);font-size:12px}
+.card .mini{
+  display:inline-flex;margin-top:10px;padding:3px 7px;border-radius:999px;
+  background:var(--soft);color:var(--rose);font-size:9px;font-weight:800
+}
+.note{
+  border-left:4px solid var(--pink);background:var(--soft);border-radius:12px;
+  padding:11px 13px;font-size:12px;color:#725a64;margin-top:12px
+}
+.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:28px}
+@media(max-width:900px){
+  .quick{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:640px){
+  .wrap{padding:14px 10px 50px}
+  .hero{padding:18px;border-radius:21px}
+  .hero h1{font-size:24px}
+  .quick,.grid{grid-template-columns:1fr}
+  .card{min-height:0}
+  .section-head{align-items:flex-start}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="logo">🍓</div>
+      <div>
+        <b>莓桃工作台 · 功能总览</b>
+        <small>一个功能，一个卡片，一眼看全系统</small>
+      </div>
+    </div>
+    <div class="actions">
+      <a class="btn" href="./index.html">🎨 打开美工端</a>
+      <a class="btn primary" href="./customer.html">👤 打开顾客端</a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <span class="tag">当前正式功能</span>
+    <h1 style="margin-top:9px">莓桃工作台，到底能做什么？</h1>
+    <p>这里不讲长篇操作步骤，只按功能分类展示。每一块就是一个独立功能，适合老板快速盘点系统、给别人介绍产品，或者后续继续加功能时直接往对应区域补卡片。</p>
+
+    <div class="quick">
+      <a href="#artist"><b>🎨 美工端</b><span>接单、排单、顾客、财务、聊天</span></a>
+      <a href="#customer"><b>👤 顾客端</b><span>绑定美工、排单、余额、聊天</span></a>
+      <a href="#owner"><b>👑 Owner 后台</b><span>账号、邀请码、续费、系统控制</span></a>
+      <a href="#system"><b>🔐 系统能力</b><span>同步、权限、提醒、安装</span></a>
+    </div>
+  </section>
+
+  <nav class="nav">
+    <a href="#artist">🎨 美工端</a>
+    <a href="#customer">👤 顾客端</a>
+    <a href="#owner">👑 Owner 后台</a>
+    <a href="#system">🔐 系统能力</a>
+  </nav>
+
+
+  <section class="section" id="artist">
+    <div class="section-head">
+      <div>
+        <h2>🎨 美工端功能</h2>
+        <p>从接单、顾客管理，到续期和个性化。</p>
+      </div>
+      <span class="count">核心工作区</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <div class="icon">🏠</div>
+        <h3>工作台总览</h3>
+        <p>查看今日订单、订单数量、待办、截止提醒和当前工作状态。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🧾</div>
+        <h3>订单管理</h3>
+        <p>新增、修改、删除订单，可记录需求、金额、分类、状态、日期、进度和备注。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🗓️</div>
+        <h3>排单管理</h3>
+        <p>按照订单日期形成排单，快速查看当前和后续安排。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🌷</div>
+        <h3>公开 / 隐私排单状态</h3>
+        <p>美工自己设置排单状态。开启显示「🌷 公开排单」，关闭显示「🔒 隐私排单」。</p>
+        <span class="mini">状态会保存</span>
+      </div>
+
+      <div class="card">
+        <div class="icon">💰</div>
+        <h3>财务统计</h3>
+        <p>汇总订单金额与收入信息，查看接单相关财务数据。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">⏱️</div>
+        <h3>工作计时</h3>
+        <p>记录实际工作时间和任务用时，方便回看投入时长。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">👤</div>
+        <h3>顾客档案</h3>
+        <p>建立独立顾客档案，管理昵称、备注、余额、绑定账号等资料。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">💳</div>
+        <h3>顾客余额</h3>
+        <p>支持充值、扣款、余额流水；创建订单时也可以直接按订单金额扣余额。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">➕</div>
+        <h3>金额算式输入</h3>
+        <p>余额调整支持直接输入 13+5、22+6 这类简单算式。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔑</div>
+        <h3>GC 美工通用顾客码</h3>
+        <p>每位美工拥有自己的通用顾客码，顾客输入后即可绑定该美工。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎟️</div>
+        <h3>CC 顾客专属码</h3>
+        <p>为具体顾客档案生成专属码，顾客输入后直接绑定指定档案。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔗</div>
+        <h3>顾客固定匿名链接</h3>
+        <p>正式顾客拥有长期匿名链接，不登录也可以查看允许展示的排单。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔗</div>
+        <h3>订单专属匿名链接</h3>
+        <p>未关联顾客档案的订单，可以单独生成该订单自己的匿名查看链接。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">💬</div>
+        <h3>美工 ↔ 顾客实时聊天</h3>
+        <p>支持实时文字消息、头像、未读红点和已读状态。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🤝</div>
+        <h3>美工好友</h3>
+        <p>通过美工编号发送好友申请，对方接受后进入双方好友列表。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">💌</div>
+        <h3>美工好友聊天</h3>
+        <p>好友美工之间可以实时聊天，并显示未读消息。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔔</div>
+        <h3>DDL 提醒</h3>
+        <p>订单支持提前 1 天、提前 3 小时或自定义提醒时间。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎟️</div>
+        <h3>续期中心</h3>
+        <p>查看到期时间、剩余时长、续期历史，并直接输入续期码。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>美工版续费码</h3>
+        <p>只增加使用时长，不改变当前版本，完整版账号也不会被降级。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🍓</div>
+        <h3>完整版续费码</h3>
+        <p>增加使用时长；当前是美工版时，会同时升级为完整版。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🕰️</div>
+        <h3>旧续费码兼容</h3>
+        <p>以前生成的续费码继续可用，只续时长，不改变版本。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔒</div>
+        <h3>到期只读</h3>
+        <p>账号到期后历史数据仍完整保留，可查看但不能继续新增、修改或删除。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔁</div>
+        <h3>排单结束自动解绑</h3>
+        <p>可设置顾客最后一笔关联订单结束后自动解除绑定。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>主题美化</h3>
+        <p>可自定义主色、背景、卡片、文字颜色，并使用内置主题预设。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🖼️</div>
+        <h3>自定义头像</h3>
+        <p>美工可设置自己的头像，并同步显示到聊天与相关页面。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📱</div>
+        <h3>自定义应用图标</h3>
+        <p>安装到手机主屏幕后，可使用当前账号自己的工作台图标。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🧭</div>
+        <h3>自定义导航</h3>
+        <p>支持修改导航名称、调整顺序、新增自己的自定义分区。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📲</div>
+        <h3>手机版两种导航</h3>
+        <p>支持顶部横向导航和左侧竖向导航，两种模式都支持折叠。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📝</div>
+        <h3>自定义分区</h3>
+        <p>可以建立素材、备注、灵感等自己的页面，并跟随账号保存。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">☁️</div>
+        <h3>多端云同步</h3>
+        <p>同一账号在电脑、手机、平板之间同步工作台数据。</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <section class="section" id="customer">
+    <div class="section-head">
+      <div>
+        <h2>👤 顾客端功能</h2>
+        <p>顾客自己的账号、排单、余额和聊天中心。</p>
+      </div>
+      <span class="count">顾客使用区</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <div class="icon">🔐</div>
+        <h3>顾客注册 / 登录</h3>
+        <p>顾客使用自己的邮箱账号进入顾客中心。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">➕</div>
+        <h3>绑定美工</h3>
+        <p>使用 GC 通用顾客码或 CC 顾客专属码添加美工。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">👩‍🎨</div>
+        <h3>多美工管理</h3>
+        <p>一个顾客账号可以同时绑定多位不同美工，数据彼此独立。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🗓️</div>
+        <h3>我的排单</h3>
+        <p>查看自己在不同美工处对应的订单和排单信息。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🌷</div>
+        <h3>排单状态</h3>
+        <p>查看美工当前显示的是「公开排单」还是「隐私排单」。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">💰</div>
+        <h3>我的余额</h3>
+        <p>查看自己在每位美工处的余额和历史流水。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">💬</div>
+        <h3>联系美工</h3>
+        <p>与已经绑定的美工进行实时聊天，支持未读和已读状态。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🖼️</div>
+        <h3>顾客头像</h3>
+        <p>头像由顾客本人修改，美工端只能查看，不能替顾客更改。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">✏️</div>
+        <h3>顾客显示名称</h3>
+        <p>顾客可以设置自己的名字，并同步显示到美工端和聊天。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📝</div>
+        <h3>给美工写私人备注</h3>
+        <p>可给不同美工添加仅自己可见的备注，不会发送给对方。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>顾客端美化</h3>
+        <p>可修改主色、背景、卡片、文字颜色和“我的排单”图标。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔗</div>
+        <h3>免登录匿名查看</h3>
+        <p>不想注册时，也可以直接通过美工发送的匿名链接查看允许公开的信息。</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <section class="section" id="owner">
+    <div class="section-head">
+      <div>
+        <h2>👑 Owner 后台功能</h2>
+        <p>老板用于账号、邀请码、续费和系统运营管理。</p>
+      </div>
+      <span class="count">仅 Owner</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <div class="icon">👥</div>
+        <h3>账号管理</h3>
+        <p>查看系统中的美工账号和顾客账号。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔎</div>
+        <h3>搜索用户</h3>
+        <p>按账号信息快速查找对应用户。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🏷️</div>
+        <h3>管理员备注</h3>
+        <p>给账号写仅 Owner 自己可见的备注，例如微信名、昵称或身份说明。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">⏳</div>
+        <h3>直接增加使用时间</h3>
+        <p>通过账号 UUID 直接增加美工使用天数。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">♾️</div>
+        <h3>永久权限</h3>
+        <p>将指定美工账号直接设为永久使用。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎫</div>
+        <h3>生成注册邀请码</h3>
+        <p>创建新的美工注册邀请码，注册逻辑与续费逻辑相互独立。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎟️</div>
+        <h3>生成续费邀请码</h3>
+        <p>支持 7 天、30 天、90 天、365 天和永久续费。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>续费版本选择</h3>
+        <p>生成续费码时可选择「🎨 美工版」或「🍓 完整版」。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔢</div>
+        <h3>单次 / 多次邀请码</h3>
+        <p>邀请码可以设置仅使用一次，也可以允许多个账号使用。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📊</div>
+        <h3>邀请码使用次数</h3>
+        <p>查看邀请码已经使用多少次、最大次数和当前状态。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🟢</div>
+        <h3>启用 / 停用邀请码</h3>
+        <p>可随时关闭某个邀请码，使其立即停止使用。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📜</div>
+        <h3>权限调整历史</h3>
+        <p>查看之前对账号进行的加时、永久权限等调整记录。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🚧</div>
+        <h3>全面暂停普通美工端</h3>
+        <p>一键暂停普通美工进入工作台，Owner 自己不受影响。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📡</div>
+        <h3>系统容量监控</h3>
+        <p>查看活跃账号、实时连接等系统使用规模。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">💬</div>
+        <h3>聊天容量监控</h3>
+        <p>查看聊天消息数量和当前消息使用量。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>后台主题配色</h3>
+        <p>Owner 管理端拥有独立主题和颜色设置。</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <section class="section" id="system">
+    <div class="section-head">
+      <div>
+        <h2>🔐 系统与安全能力</h2>
+        <p>用户平时看不到，但一直在后台工作的基础能力。</p>
+      </div>
+      <span class="count">系统底层</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <div class="icon">🛡️</div>
+        <h3>账号数据隔离</h3>
+        <p>每个账号只能读取和修改自己有权限访问的数据。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔒</div>
+        <h3>服务端到期只读</h3>
+        <p>不是只把按钮变灰，数据库层也会阻止到期美工继续写数据。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">👥</div>
+        <h3>顾客 / 美工关系隔离</h3>
+        <p>顾客只能看到已绑定美工，美工只能管理自己的顾客关系。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">💾</div>
+        <h3>数据长期保留</h3>
+        <p>到期、续期和版本升级都不会删除订单、财务、顾客、聊天或好友数据。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔄</div>
+        <h3>Realtime 实时同步</h3>
+        <p>聊天、头像、部分状态变化可在不同设备之间及时更新。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">☁️</div>
+        <h3>Supabase 云同步</h3>
+        <p>工作台数据保存在云端，并保留本地缓存作为临时兜底。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📲</div>
+        <h3>PWA 安装</h3>
+        <p>支持添加到 iPhone、iPad 和 Android 主屏幕，像独立应用一样打开。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔔</div>
+        <h3>系统通知</h3>
+        <p>支持浏览器 / 手机系统通知和订单截止提醒。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🔑</div>
+        <h3>邮箱密码账号</h3>
+        <p>支持注册、登录、忘记密码、邮件重置密码和登录后修改密码。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📤</div>
+        <h3>数据导出</h3>
+        <p>支持导出 JSON / CSV，方便自行备份或整理。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">📖</div>
+        <h3>内置功能总览入口</h3>
+        <p>美工端多个位置可以直接打开本页面，随时查看当前系统有哪些能力。</p>
+      </div>
+
+      <div class="card">
+        <div class="icon">🧹</div>
+        <h3>旧权限逻辑清理</h3>
+        <p>已清理旧注册 Trigger 和旧 Owner-only 权限限制，避免历史逻辑重新干扰新系统。</p>
+      </div>
+
+    </div>
+
+    <div class="note"><b>版本说明：</b>现在系统已经支持美工版 / 完整版续费规则和账号版本字段。后续如果需要让两个版本拥有不同的具体功能，可以继续在对应功能卡片上加「美工版 / 完整版」标签。</div>
+  </section>
+
+  <div class="footer">🍓 莓桃工作台 · 功能总览 · 当前正式版本</div>
+
+</div>
+</body>
+</html>
