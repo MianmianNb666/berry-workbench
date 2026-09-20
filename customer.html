@@ -879,7 +879,7 @@ async function loadBindings(force=false){
       .select("artist_user_id,artist_code,public_name,privacy_mode")
       .in("artist_user_id",artistIds),
     supabase.from("artist_customers")
-      .select("id,artist_user_id,display_name,linked_customer_user_id")
+      .select("id,artist_user_id,display_name,gift_content,linked_customer_user_id")
       .eq("linked_customer_user_id",user.id)
       .in("artist_user_id",artistIds),
     supabase.from("chat_profiles")
@@ -937,7 +937,8 @@ async function loadBindings(force=false){
     const avatar=profile?.avatar_data||"";
     const shownArtistName=(profile?.display_name||"").trim()||artist.public_name||"莓桃美工";
     const myNote=artistNoteMap.get(id)||"";
-    return '<div class="artist"><div style="display:flex;align-items:center;gap:10px;min-width:0">'+chatAvatarMarkup(avatar,shownArtistName||"美")+'<div class="artist-main"><div class="artist-name">'+esc(shownArtistName)+'</div><div class="code">'+esc(artist.artist_code)+'</div>'+(myNote?'<div class="meta" style="margin-top:4px">我的备注：'+esc(myNote)+'</div>':'')+'<div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">当前余额 '+budgetMoney(balance)+'</div></div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(artist.artist_code)+'">查看排单</a><button class="ghost" type="button" data-message-artist="'+esc(id)+'">💬 发消息</button><button class="ghost" type="button" data-note-artist="'+esc(id)+'" data-current-note="'+esc(myNote)+'">✏️ 备注</button>'+detailButton+'</div></div>';
+    const giftContent=(group?.record?.gift_content||"").trim();
+    return '<div class="artist"><div style="display:flex;align-items:center;gap:10px;min-width:0">'+chatAvatarMarkup(avatar,shownArtistName||"美")+'<div class="artist-main"><div class="artist-name">'+esc(shownArtistName)+'</div><div class="code">'+esc(artist.artist_code)+'</div>'+(myNote?'<div class="meta" style="margin-top:4px">我的备注：'+esc(myNote)+'</div>':'')+'<div class="meta" style="margin-top:5px;font-weight:800;color:var(--text)">当前余额 '+budgetMoney(balance)+'</div><div style="margin-top:8px;padding:9px 10px;border:1px solid var(--line);border-radius:12px;background:var(--soft)"><div style="font-size:10px;font-weight:850;color:var(--rose)">🎁 美工赠送</div><div class="meta" style="margin-top:4px;white-space:pre-wrap;color:var(--text)">'+esc(giftContent||"暂无赠送内容")+'</div></div></div></div><div class="artist-actions"><a class="ghost" href="./customer.html?artist='+encodeURIComponent(artist.artist_code)+'">查看排单</a><button class="ghost" type="button" data-message-artist="'+esc(id)+'">💬 发消息</button><button class="ghost" type="button" data-note-artist="'+esc(id)+'" data-current-note="'+esc(myNote)+'">✏️ 备注</button>'+detailButton+'</div></div>';
   }).join("")||'<div class="empty">暂无美工资料。</div>';
 
   document.querySelectorAll("[data-budget-artist]").forEach(btn=>btn.onclick=()=>{
