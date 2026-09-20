@@ -462,7 +462,9 @@ function renderAccounts(){
     const statusClass=a.access_type==="permanent"||a.has_access?"good":a.access_type?"warn":"gray";
     const displayName=(a.admin_note||"").trim()||a.workspace_title||a.email||"未命名用户";
     const noteBadge=(a.admin_note||"").trim()?'<span class="tag" style="margin-left:7px">我的备注</span>':'';
-    const grant='<div class="quickbuttons" data-grant-box="'+esc(a.user_id)+'">'+
+    const currentEdition=a.edition==="artist"?"artist":"full";
+    const grant='<div class="field" style="margin-top:10px"><label>手动加时版本</label><select data-grant-edition="'+esc(a.user_id)+'"><option value="artist" '+(currentEdition==="artist"?"selected":"")+'>🎨 美工版</option><option value="full" '+(currentEdition==="full"?"selected":"")+'>🍓 一体版</option></select></div>'+
+      '<div class="quickbuttons" data-grant-box="'+esc(a.user_id)+'">'+
       [7,30,90,365].map(d=>'<button type="button" data-grant-days="'+d+'" data-user="'+esc(a.user_id)+'">＋'+d+'天</button>').join("")+
       '<button type="button" class="perm" data-grant-permanent data-user="'+esc(a.user_id)+'">设为永久</button></div>'+
       '<div class="customgrant"><input type="number" min="1" max="3650" placeholder="自定义天数" data-custom-days="'+esc(a.user_id)+'"><button class="ghost" type="button" data-custom-grant="'+esc(a.user_id)+'">加时</button></div>';
@@ -496,28 +498,33 @@ function renderAccounts(){
     toast("备注已保存 ✓");
     renderAccounts();
   });
-  document.querySelectorAll("[data-grant-days]").forEach(b=>b.onclick=()=>grantDays(b.dataset.user,Number(b.dataset.grantDays)));
-  document.querySelectorAll("[data-grant-permanent]").forEach(b=>b.onclick=()=>grantPermanent(b.dataset.user));
+  document.querySelectorAll("[data-grant-days]").forEach(b=>b.onclick=()=>grantDays(b.dataset.user,Number(b.dataset.grantDays),grantEditionFor(b.dataset.user)));
+  document.querySelectorAll("[data-grant-permanent]").forEach(b=>b.onclick=()=>grantPermanent(b.dataset.user,grantEditionFor(b.dataset.user)));
   document.querySelectorAll("[data-custom-grant]").forEach(b=>b.onclick=()=>{
     const input=document.querySelector('[data-custom-days="'+CSS.escape(b.dataset.customGrant)+'"]');
     const d=Number(input?.value||0);
     if(!d){toast("先填写天数");return}
-    grantDays(b.dataset.customGrant,d);
+    grantDays(b.dataset.customGrant,d,grantEditionFor(b.dataset.customGrant));
   });
 }
-async function grantDays(userId,days){
+function grantEditionFor(userId){
+  return document.querySelector('[data-grant-edition="'+CSS.escape(userId)+'"]')?.value==="artist"?"artist":"full";
+}
+async function grantDays(userId,days,edition="full"){
   const a=accounts.find(x=>x.user_id===userId);
-  if(!confirm("给 "+(a?.email||userId)+" 增加 "+days+" 天使用期？"))return;
-  const {data,error}=await supabase.rpc("admin_grant_access",{p_target_user_id:userId,p_days:days,p_permanent:false});
+  const editionLabel=edition==="artist"?"🎨 美工版":"🍓 一体版";
+  if(!confirm("给 "+(a?.email||userId)+" 增加 "+days+" 天使用期？\n版本："+editionLabel))return;
+  const {data,error}=await supabase.rpc("admin_grant_access_with_edition",{p_target_user_id:userId,p_days:days,p_permanent:false,p_edition:edition});
   if(error){alert("增加时间失败："+error.message);return}
   if(data?.reason==="ALREADY_PERMANENT"){toast("这个账号已经是永久");return}
   toast("已增加 "+days+" 天 ✓");
   await Promise.all([loadAccounts($("userSearch").value.trim()),loadLogs()]);
 }
-async function grantPermanent(userId){
+async function grantPermanent(userId,edition="full"){
   const a=accounts.find(x=>x.user_id===userId);
-  if(!confirm("确定把 "+(a?.email||userId)+" 设为永久使用？"))return;
-  const {error}=await supabase.rpc("admin_grant_access",{p_target_user_id:userId,p_days:null,p_permanent:true});
+  const editionLabel=edition==="artist"?"🎨 美工版":"🍓 一体版";
+  if(!confirm("确定把 "+(a?.email||userId)+" 设为永久使用？\n版本："+editionLabel))return;
+  const {error}=await supabase.rpc("admin_grant_access_with_edition",{p_target_user_id:userId,p_days:null,p_permanent:true,p_edition:edition});
   if(error){alert("设置失败："+error.message);return}
   toast("已设为永久 ✓");
   await Promise.all([loadAccounts($("userSearch").value.trim()),loadLogs()]);
