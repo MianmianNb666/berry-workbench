@@ -1090,8 +1090,15 @@ async function login(){
   if(!email||password.length<6){$("authHint").textContent="请输入邮箱和至少 6 位密码。";return}
   if(pending)sessionStorage.setItem("berry-pending-customer-code",pending);
   $("authHint").textContent="正在登录…";
-  const {error}=await supabase.auth.signInWithPassword({email,password});
-  $("authHint").textContent=error?"登录失败："+error.message:"登录成功…";
+  const {data,error}=await supabase.auth.signInWithPassword({email,password});
+  if(error){
+    $("authHint").textContent="登录失败："+error.message;
+    return;
+  }
+  $("authHint").textContent="登录成功，正在进入顾客端…";
+  if(data?.session){
+    setTimeout(()=>applySession(data.session),0);
+  }
 }
 async function signup(){
   const email=$("email").value.trim(),password=$("password").value;
@@ -1243,10 +1250,10 @@ async function applySession(session){
     $("customerAccountBar").classList.remove("hidden");
     $("welcomeText").textContent="查看已解锁美工为你记录的排单、进度和预计完成时间。";
 
-    await loadCustomerPreferences();
-    await loadMyCustomerChatProfile();
-    await loadBindings();
-    await loadCustomerChatConversations();
+    try{await loadCustomerPreferences()}catch(e){console.error("customer preferences:",e)}
+    try{await loadMyCustomerChatProfile()}catch(e){console.error("customer profile:",e)}
+    try{await loadBindings()}catch(e){console.error("customer bindings:",e)}
+    try{await loadCustomerChatConversations()}catch(e){console.error("customer chat:",e)}
     startCustomerHomeScheduleSync();
     startCapacityHeartbeat();
 
@@ -1288,13 +1295,15 @@ if(publicShareToken){
 }else{
   const {data:{session}}=await supabase.auth.getSession();
   await applySession(session);
-  supabase.auth.onAuthStateChange(async(event,session)=>{
+  supabase.auth.onAuthStateChange((event,session)=>{
     if(event==="PASSWORD_RECOVERY"){
       user=session?.user||null;
       $("loginView").classList.add("hidden");$("resetView").classList.remove("hidden");$("authGate").classList.remove("hidden");
       return;
     }
-    if(["SIGNED_IN","SIGNED_OUT","TOKEN_REFRESHED"].includes(event))await applySession(session);
+    if(["SIGNED_IN","SIGNED_OUT","TOKEN_REFRESHED"].includes(event)){
+      setTimeout(()=>applySession(session),0);
+    }
   });
 }
 </script>
