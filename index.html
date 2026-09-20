@@ -530,6 +530,11 @@ try{
     <span>当前余额</span>
     <b id="artistCustomerBalanceValue">¥0.00</b>
   </div>
+  <div class="profile-item" id="artistCustomerGiftBox" style="margin-top:12px">
+    <span>🎁 当前赠送内容</span>
+    <textarea id="artistCustomerGiftInput" rows="3" maxlength="1000" placeholder="例如：送 1 次加急 / 补 1 张海报 / 下次单抵 20"></textarea>
+    <div class="meta" style="margin-top:5px">这段内容会同步给顾客查看，但只有美工可以修改。</div>
+  </div>
   <div id="artistCustomerBudgetTools" style="margin-top:12px">
     <div class="formgrid">
       <label>调整金额 ¥<input id="artistCustomerAmountInput" type="text" inputmode="decimal" autocomplete="off" placeholder="例如：13+5 或 22+6"><span id="artistCustomerAmountCalc" class="meta" style="display:block;margin-top:5px">可以直接输入算式，系统会自动计算。</span></label>
@@ -1945,13 +1950,13 @@ async function loadArtistCustomers(){
   if(!host)return;
   host.innerHTML='<div class="empty">正在读取顾客…</div>';
   let result=await supabase.from("artist_customers")
-    .select("id,display_name,note,avatar_data,linked_customer_user_id,created_at,updated_at")
+    .select("id,display_name,note,gift_content,avatar_data,linked_customer_user_id,created_at,updated_at")
     .eq("artist_user_id",user.id)
     .order("created_at",{ascending:true});
   if(result.error&&String(result.error.message||"").includes("avatar_data")){
     artistCustomerAvatarReady=false;
     result=await supabase.from("artist_customers")
-      .select("id,display_name,note,linked_customer_user_id,created_at,updated_at")
+      .select("id,display_name,note,gift_content,linked_customer_user_id,created_at,updated_at")
       .eq("artist_user_id",user.id)
       .order("created_at",{ascending:true});
   }else{
@@ -2205,6 +2210,7 @@ async function openArtistCustomerModal(customerId=null){
   $("artistCustomerModalTitle").textContent=customer?"管理顾客 👥":"添加顾客 👥";
   $("artistCustomerNameInput").value=customer?.display_name||"";
   $("artistCustomerNoteInput").value=customer?.note||"";
+  $("artistCustomerGiftInput").value=customer?.gift_content||"";
   editingArtistCustomerAvatar="";
   renderCustomerAvatarPreview();
   $("artistCustomerAvatarHint").textContent=customer?.linked_customer_user_id?"头像由顾客自己设置并同步。":"顾客还没绑定账号，绑定后会显示她自己设置的头像。";
@@ -2216,6 +2222,7 @@ async function openArtistCustomerModal(customerId=null){
   $("deleteArtistCustomerBtn").classList.toggle("hidden",!customer);
   $("artistCustomerBudgetTools").classList.toggle("hidden",!customer);
   $("artistCustomerBalanceBox").classList.toggle("hidden",!customer);
+  $("artistCustomerGiftBox").classList.toggle("hidden",!customer);
   $("artistCustomerShareTools").classList.toggle("hidden",!customer);
   $("artistCustomerShareHint").textContent="";
   $("artistCustomerShareUrl").textContent=customer?"正在读取…":"新建顾客后自动生成";
@@ -2242,6 +2249,7 @@ async function saveArtistCustomer(){
   if(!user)return;
   const name=$("artistCustomerNameInput").value.trim();
   const note=$("artistCustomerNoteInput").value.trim();
+  const giftContent=$("artistCustomerGiftInput").value.trim();
   const linked=$("artistCustomerLinkSelect").value||null;
   if(!name){$("artistCustomerModalHint").textContent="先填写顾客昵称。";return}
   $("artistCustomerModalHint").textContent="正在保存…";
@@ -2249,6 +2257,7 @@ async function saveArtistCustomer(){
     artist_user_id:user.id,
     display_name:name.slice(0,40),
     note:note.slice(0,500),
+    gift_content:giftContent.slice(0,1000),
     linked_customer_user_id:linked,
     updated_at:new Date().toISOString()
   };
@@ -2280,6 +2289,7 @@ async function saveArtistCustomer(){
     $("artistCustomerModalHint").textContent="顾客档案已建立，专属码也生成好了。复制发给顾客即可直接绑定 ✓";
     $("artistCustomerBudgetTools").classList.remove("hidden");
     $("artistCustomerBalanceBox").classList.remove("hidden");
+    $("artistCustomerGiftBox").classList.remove("hidden");
     $("artistCustomerShareTools").classList.remove("hidden");
     const share=await ensureCustomerPersistentShare(editingArtistCustomerId);
     $("artistCustomerShareUrl").textContent=share?.token?publicShareUrl(share.token):(share?.error||"暂时无法读取");
