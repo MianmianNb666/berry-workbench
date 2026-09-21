@@ -38,13 +38,9 @@ begin
     coalesce(p_permanent,false)
   );
 
-  -- 美工版手动加时不会把已经是一体版的账号降级。
-  v_final_edition :=
-    case
-      when v_requested = 'full' then 'full'
-      when v_requested = 'artist' and v_before_edition = 'full' then 'full'
-      else 'artist'
-    end;
+  -- 手动选择的版本就是续期后的版本。
+  -- 选 artist 会切到美工版；选 full 会切到一体版。
+  v_final_edition := v_requested;
 
   update public.user_access
   set edition = v_final_edition,
