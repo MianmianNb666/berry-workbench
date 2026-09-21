@@ -228,7 +228,6 @@ begin
       'edition', v_new_edition,
       'renewal_edition', v_invite.renewal_edition,
       'upgraded', v_upgraded,
-    'downgraded', v_downgraded,
       'downgraded', v_downgraded
     );
   end if;
@@ -271,7 +270,6 @@ begin
       'edition', v_new_edition,
       'renewal_edition', v_invite.renewal_edition,
       'upgraded', v_upgraded,
-    'downgraded', v_downgraded,
       'downgraded', v_downgraded
     );
   end if;
