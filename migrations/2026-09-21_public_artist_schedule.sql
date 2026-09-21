@@ -58,6 +58,7 @@ declare
   v_workspace public.workspaces%rowtype;
   v_orders jsonb := '[]'::jsonb;
   v_name text;
+  v_theme jsonb := '{}'::jsonb;
 begin
   select *
     into v_profile
@@ -66,10 +67,7 @@ begin
   limit 1;
 
   if not found then
-    return jsonb_build_object(
-      'found', false,
-      'enabled', false
-    );
+    return jsonb_build_object('found', false, 'enabled', false);
   end if;
 
   select *
@@ -79,11 +77,12 @@ begin
   limit 1;
 
   v_name := coalesce(
+    nullif(trim(v_workspace.data->>'title'),''),
     nullif(trim(v_profile.public_name),''),
     nullif(trim(v_workspace.data->>'displayName'),''),
-    nullif(trim(v_workspace.data->>'title'),''),
     '莓桃美工'
   );
+  v_theme := coalesce(v_workspace.data->'theme','{}'::jsonb);
 
   if v_profile.public_schedule_enabled then
     select coalesce(
@@ -95,6 +94,18 @@ begin
               when coalesce(v_profile.privacy_mode,'private') = 'private' then '******'
               else coalesce(nullif(q.item->>'name',''),'未命名需求')
             end,
+          'customer_nickname',
+            coalesce(
+              nullif(q.item->>'client',''),
+              (
+                select nullif(ac.display_name,'')
+                from public.artist_customers ac
+                where ac.artist_user_id = v_profile.artist_user_id
+                  and ac.id::text = nullif(q.item->>'artistCustomerId','')
+                limit 1
+              ),
+              ''
+            ),
           'status', coalesce(nullif(q.item->>'status',''),'待处理'),
           'category', coalesce(q.item->>'cat',''),
           'start_date', coalesce(q.item->>'start',''),
@@ -123,6 +134,27 @@ begin
     'artist_name', v_name,
     'privacy_mode', coalesce(v_profile.privacy_mode,'private'),
     'updated_at', v_profile.public_schedule_updated_at,
+    'appearance', jsonb_build_object(
+      'title', v_name,
+      'avatar',
+        case
+          when coalesce(v_workspace.data->>'avatar','') like 'data:image/%'
+            then v_workspace.data->>'avatar'
+          else ''
+        end,
+      'app_icon',
+        case
+          when coalesce(v_workspace.data->>'appIcon','') like 'data:image/%'
+            then v_workspace.data->>'appIcon'
+          else ''
+        end,
+      'theme', jsonb_build_object(
+        'accent', coalesce(v_theme->>'accent',''),
+        'bg', coalesce(v_theme->>'bg',''),
+        'panel', coalesce(v_theme->>'panel',''),
+        'text', coalesce(v_theme->>'text','')
+      )
+    ),
     'orders', v_orders
   );
 end;
