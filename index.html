@@ -1718,13 +1718,40 @@ $("importBtn").onclick=()=>$("importFile").click();
 $("importFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{let x=JSON.parse(await f.text());if(Array.isArray(x.orders)&&Array.isArray(x.times)){S=normalize(x);applyTitle();applyAvatar();applyTheme();applyNavLabels();applyPersonalText();render();persist()}}catch(_){alert("备份文件无法识别")}};
 $("exportCsv").onclick=()=>{let rows=[["需求","客户","金额","状态","开始","截止","分类","进度","备注"],...S.orders.map(o=>[o.name,o.client,o.money,o.status,o.start,o.due,o.cat,o.progress,o.note])];dl("orders.csv","\ufeff"+rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\n"),"text/csv;charset=utf-8")};
 
+function authErrorText(error,action="操作"){
+  const raw=String(error?.message||error||"").trim();
+  const m=raw.toLowerCase();
+  if(m.includes("load failed")||m.includes("failed to fetch")||m.includes("network request failed")||m.includes("networkerror")){
+    return `${action}失败【网络连接】：没有连接到登录服务器。请切换 Wi-Fi / 移动网络，关闭 VPN 后重新打开工作台再试；账号和密码不会因此失效。`;
+  }
+  if(m.includes("invalid login credentials")){
+    return `${action}失败【账号验证】：邮箱或密码不正确。请使用注册时的邮箱，清空自动填充后重新输入密码；正常登录不需要邀请码。`;
+  }
+  if(m.includes("email not confirmed")){
+    return `${action}失败【邮箱未验证】：请先打开注册邮箱里的确认邮件，完成验证后再登录。`;
+  }
+  if(m.includes("rate limit")||m.includes("too many requests")||m.includes("over_email_send_rate_limit")){
+    return `${action}失败【请求过于频繁】：邮件或登录请求已达到临时限制，请不要连续点击，稍后再试。`;
+  }
+  if(m.includes("user already registered")||m.includes("already been registered")){
+    return `${action}失败【账号已存在】：这个邮箱已经注册过，请直接登录或使用“忘记密码”。`;
+  }
+  if(m.includes("signup")&&m.includes("disabled")){
+    return `${action}失败【暂不可注册】：当前注册入口已关闭，请联系管理员。`;
+  }
+  if(m.includes("password")&&(m.includes("weak")||m.includes("least"))){
+    return `${action}失败【密码不符合要求】：请使用至少 6 位、较难猜测的新密码。`;
+  }
+  return `${action}失败【未知错误】：${raw||"未收到服务器返回信息"}。请截图这条完整提示联系管理员。`;
+}
+
 async function doLogin(){
   $("authPassword").setAttribute("autocomplete","current-password");
   const email=$("authEmail").value.trim(),password=$("authPassword").value;
   if(!email||password.length<6){$("authHint").textContent="请输入邮箱和至少 6 位密码。";return}
   $("authHint").textContent="正在登录…";
   const {error}=await supabase.auth.signInWithPassword({email,password});
-  $("authHint").textContent=error?("登录失败："+error.message):"登录成功，正在读取工作台…";
+  $("authHint").textContent=error?authErrorText(error,"登录"):"登录成功，正在读取工作台…";
 }
 async function doSignup(){
   const email=$("authEmail").value.trim(),password=$("authPassword").value,invite=$("inviteCode").value.trim().toUpperCase();
@@ -1744,7 +1771,7 @@ async function doSignup(){
   if(error){
     const m=(error.message||"").toLowerCase();
     if(m.includes("invite")||m.includes("邀请码")) $("authHint").textContent="注册失败：邀请码无效、已使用或已过期。";
-    else $("authHint").textContent="注册失败："+error.message;
+    else $("authHint").textContent=authErrorText(error,"注册");
     return;
   }
   if(data.session)$("authHint").textContent="注册成功，正在进入工作台…";
@@ -1757,9 +1784,7 @@ async function sendPasswordReset(){
   const redirectTo=location.origin+location.pathname;
   const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo});
   if(error){
-    $("authHint").textContent=error.message?.toLowerCase().includes("rate limit")
-      ?"发送次数已达到限制：每小时最多发送 2 次密码重置邮件，请稍后再试。"
-      :"发送失败："+error.message;
+    $("authHint").textContent=authErrorText(error,"发送重置邮件");
     return;
   }
   $("authHint").textContent="重置邮件已发送。去邮箱点链接，再回来设置新密码。";
@@ -1777,7 +1802,7 @@ async function saveNewPassword(){
   if(p1!==p2){$("resetHint").textContent="两次输入的密码不一致。";return}
   $("resetHint").textContent="正在保存新密码…";
   const {error}=await supabase.auth.updateUser({password:p1});
-  if(error){$("resetHint").textContent="修改失败："+error.message;return}
+  if(error){$("resetHint").textContent=authErrorText(error,"修改密码");return}
   $("resetHint").textContent="密码修改成功，正在进入工作台…";
   setTimeout(()=>{
     $("resetView").classList.add("hidden");
