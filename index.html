@@ -1229,8 +1229,12 @@ function render(){
   $("sAll").textContent=all;$("sDoing").textContent=doing;$("sDone").textContent=done;$("sLate").textContent=late;
   let total=os.reduce((a,o)=>a+Number(o.money||0),0),dm=os.filter(o=>o.status==="已完成").reduce((a,o)=>a+Number(o.money||0),0),wm=os.filter(o=>o.status==="待付款").reduce((a,o)=>a+Number(o.money||0),0);
   const todayIncome=os.filter(o=>{
-    const raw=o.createdAt||(/^[0-9]{12,}$/.test(String(o.id||""))?new Date(Number(o.id)).toISOString():"");
-    return raw&&raw.slice(0,10)===T;
+    const raw=o.createdAt||(/^[0-9]{12,}$/.test(String(o.id||""))?Number(o.id):null);
+    if(!raw)return false;
+    const d=new Date(raw);
+    if(Number.isNaN(d.getTime()))return false;
+    const key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    return key===T;
   }).reduce((a,o)=>a+Number(o.money||0),0);
   if($("mToday"))$("mToday").textContent=money(todayIncome);
   $("mTotal").textContent=money(total);$("mDone").textContent=money(dm);$("mWait").textContent=money(wm);$("mNum").textContent=all;$("sideIncome").textContent=money(total);$("sideDone").textContent="已完成 "+done+" 单";
