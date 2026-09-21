@@ -17,7 +17,7 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="brand"><div class="logo">🍓</div><div><b>莓桃公开排单</b><small>公开安全版 · 无需登录</small></div></div>
+  <div class="brand"><div class="logo" id="brandLogo"><span id="brandEmoji">🍓</span><img id="brandImage" alt="美工头像" style="display:none;width:100%;height:100%;object-fit:cover"></div><div><b id="brandTitle">公开排单</b><small>公开排单 · 无需登录</small></div></div>
   <section class="hero">
     <h1 id="artistName">正在读取排单…</h1>
     <p id="updatedText">请稍候</p>
@@ -34,6 +34,29 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:fals
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const token=new URL(location.href).searchParams.get("t")||"";
+function safeColor(v,fallback){return /^#[0-9a-fA-F]{6}$/.test(String(v||""))?v:fallback}
+function applyAppearance(data){
+  const a=data?.appearance||{};
+  const t=a.theme||{};
+  document.documentElement.style.setProperty("--rose",safeColor(t.accent,"#e9789d"));
+  document.documentElement.style.setProperty("--rose2",safeColor(t.accent,"#f4a7bf"));
+  document.documentElement.style.setProperty("--bg",safeColor(t.bg,"#fff8fb"));
+  document.documentElement.style.setProperty("--panel",safeColor(t.panel,"#ffffff"));
+  document.documentElement.style.setProperty("--text",safeColor(t.text,"#45383d"));
+  const title=(a.title||data?.artist_name||"公开排单").trim();
+  $("brandTitle").textContent=title+" · 公开排单";
+  document.title=title+" · 公开排单";
+  const img=[a.avatar,a.app_icon].find(x=>String(x||"").startsWith("data:image/"))||"";
+  if(img){
+    $("brandImage").src=img;
+    $("brandImage").style.display="block";
+    $("brandEmoji").style.display="none";
+  }else{
+    $("brandImage").removeAttribute("src");
+    $("brandImage").style.display="none";
+    $("brandEmoji").style.display="";
+  }
+}
 function fmtDateTime(v){
   if(!v)return "暂无更新时间";
   const d=new Date(v);
@@ -41,6 +64,7 @@ function fmtDateTime(v){
   return new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).format(d);
 }
 function render(data){
+  applyAppearance(data);
   if(!data?.found){
     $("artistName").textContent="这个公开排单链接不存在";
     $("updatedText").textContent="请向美工确认链接是否正确。";
@@ -64,7 +88,7 @@ function render(data){
     const due=[o.due_date,o.due_time].filter(Boolean).join(" ");
     const range=[o.start_date,due].filter(Boolean).join(" → ");
     const pct=Math.max(0,Math.min(100,Number(o.progress)||0));
-    return '<article class="item"><div class="row"><div><div class="pos">排队 '+(i+1)+'</div><div class="title">'+esc(o.name||"未命名需求")+'</div></div><span class="status">'+esc(o.status||"待处理")+'</span></div>'+(o.category?'<div class="meta">分类：'+esc(o.category)+'</div>':'')+(range?'<div class="meta">时间：'+esc(range)+'</div>':'')+'<div class="meta">进度：'+pct+'%</div><div class="progress"><span style="width:'+pct+'%"></span></div></article>';
+    return '<article class="item"><div class="row"><div><div class="pos">排队 '+(i+1)+'</div><div class="title">'+esc(o.name||"未命名需求")+'</div></div><span class="status">'+esc(o.status||"待处理")+'</span></div>'+(o.customer_nickname?'<div class="meta">顾客：'+esc(o.customer_nickname)+'</div>':'')+(o.category?'<div class="meta">分类：'+esc(o.category)+'</div>':'')+(range?'<div class="meta">时间：'+esc(range)+'</div>':'')+'<div class="meta">进度：'+pct+'%</div><div class="progress"><span style="width:'+pct+'%"></span></div></article>';
   }).join("");
 }
 async function load(){
