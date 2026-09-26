@@ -96,7 +96,7 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
       <div class="stats">
         <div class="stat"><span>账号总数</span><b id="statUsers">0</b></div>
         <div class="stat"><span>有效美工</span><b id="statActive">0</b></div>
-        <div class="stat"><span>已到期</span><b id="statExpired">0</b></div>
+        <div class="stat"><span>权限异常</span><b id="statExpired">0</b></div>
         <div class="stat"><span>永久</span><b id="statPermanent">0</b></div>
       </div>
       <div class="system-switch">
@@ -183,7 +183,7 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
           <div class="hidden"><select id="inviteDuration"><option value="7" selected>7 天</option></select></div>
           <div class="field"><label>使用方式</label><select id="inviteMode"><option value="single">单次使用</option><option value="multi">多人通用</option></select></div>
           <div class="field"><label>最多使用次数</label><input id="inviteMaxUses" type="number" min="1" value="10" disabled></div>
-          <div class="field"><label>备注</label><input id="inviteLabel" maxlength="50" placeholder="例如：9月活动 / 小桃续期"></div>
+          <div class="field"><label>备注</label><input id="inviteLabel" maxlength="50" placeholder="例如：9月活动 / 新用户注册"></div>
           <div class="field"><label>邀请码自身失效时间（可不填）</label><input id="inviteExpires" type="datetime-local"></div>
         </div>
         <div class="actions" style="margin-top:12px"><button class="primary" id="createInviteBtn">生成邀请码</button></div>
