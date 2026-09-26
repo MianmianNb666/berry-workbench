@@ -141,14 +141,14 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
     <div class="tabs">
       <button class="tab active" data-panel="users">👤 用户管理</button>
       <button class="tab" data-panel="invites">🎟️ 邀请码</button>
-      <button class="tab" data-panel="logs">🧾 加时记录</button>
+      
       <button class="tab" data-panel="capacity">📊 系统容量</button>
     </div>
 
     <section class="panel active" id="panel-users">
       <div class="card">
         <h2>用户管理</h2>
-        <div class="meta">这里是给美工账号增加使用时间的地方。左边是当前可以使用的，右边是已经到期 / 停用的。可以按邮箱、UUID、工作台名称或你的备注搜索。</div>
+        <div class="meta">美工账号首次使用邀请码注册后即永久可用。这里用于查看账号与备注，不再提供续费或手动加时。</div>
         <div class="searchrow">
           <input id="userSearch" placeholder="搜索邮箱 / UUID / 工作台名称 / 备注">
           <button class="primary" id="searchBtn">搜索</button>
@@ -161,13 +161,13 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
           </div>
           <div class="user-column">
             <h3>⛔ 已停用</h3>
-            <div class="meta">已到期或还没有有效使用期的美工账号</div>
+            <div class="meta">权限异常或历史状态异常的美工账号</div>
             <div id="userInactiveList" class="list"><div class="empty">正在读取账号…</div></div>
           </div>
         </div>
         <div id="customerAccountsWrap" class="customer-accounts">
           <h3>👤 顾客账号</h3>
-          <div class="meta">顾客账号不参与美工使用期加时。</div>
+          <div class="meta">顾客账号与美工账号权限独立。</div>
           <div id="customerAccountList" class="list"></div>
         </div>
       </div>
@@ -176,11 +176,11 @@ input,select{width:100%;border:1px solid var(--line);background:var(--panel);col
     <section class="panel" id="panel-invites">
       <div class="card">
         <h2>生成邀请码</h2>
-        <div class="meta">注册邀请码固定赠送 7 天；续期码支持 7 / 30 / 90 / 365 天和永久。邀请码明文只会在生成这一刻显示，请立即复制。</div>
+        <div class="meta">这里只生成首次注册邀请码。美工使用邀请码注册成功后即永久可用，不再需要续费。邀请码明文只会在生成这一刻显示，请立即复制。</div>
         <div class="formgrid">
-          <div class="field"><label>用途</label><select id="invitePurpose"><option value="signup">注册邀请码</option><option value="renewal">续期码</option></select></div>
-          <div class="field hidden" id="inviteRenewalEditionField"><label>续费版本</label><select id="inviteRenewalEdition"><option value="artist">🎨 美工版</option><option value="full">🍓 完整版</option></select></div>
-          <div class="field"><label>时长</label><select id="inviteDuration"><option value="7">7 天</option><option value="30">30 天</option><option value="90">90 天</option><option value="365">365 天</option><option value="permanent">永久</option></select></div>
+          <div class="hidden"><select id="invitePurpose"><option value="signup" selected>注册邀请码</option></select></div>
+          <div class="field hidden" id="inviteRenewalEditionField"><label>续费版本</label><select id="inviteRenewalEdition"><option value="full">🍓 完整版</option></select></div>
+          <div class="hidden"><select id="inviteDuration"><option value="7" selected>7 天</option></select></div>
           <div class="field"><label>使用方式</label><select id="inviteMode"><option value="single">单次使用</option><option value="multi">多人通用</option></select></div>
           <div class="field"><label>最多使用次数</label><input id="inviteMaxUses" type="number" min="1" value="10" disabled></div>
           <div class="field"><label>备注</label><input id="inviteLabel" maxlength="50" placeholder="例如：9月活动 / 小桃续期"></div>
@@ -463,11 +463,7 @@ function renderAccounts(){
     const displayName=(a.admin_note||"").trim()||a.workspace_title||a.email||"未命名用户";
     const noteBadge=(a.admin_note||"").trim()?'<span class="tag" style="margin-left:7px">我的备注</span>':'';
     const currentEdition=a.edition==="artist"?"artist":"full";
-    const grant='<div class="field" style="margin-top:10px"><label>手动加时版本</label><select data-grant-edition="'+esc(a.user_id)+'"><option value="artist" '+(currentEdition==="artist"?"selected":"")+'>🎨 美工版</option><option value="full" '+(currentEdition==="full"?"selected":"")+'>🍓 一体版</option></select></div>'+
-      '<div class="quickbuttons" data-grant-box="'+esc(a.user_id)+'">'+
-      [7,30,90,365].map(d=>'<button type="button" data-grant-days="'+d+'" data-user="'+esc(a.user_id)+'">＋'+d+'天</button>').join("")+
-      '<button type="button" class="perm" data-grant-permanent data-user="'+esc(a.user_id)+'">设为永久</button></div>'+
-      '<div class="customgrant"><input type="number" min="1" max="3650" placeholder="自定义天数" data-custom-days="'+esc(a.user_id)+'"><button class="ghost" type="button" data-custom-grant="'+esc(a.user_id)+'">加时</button></div>';
+    const grant="";
     return '<article class="user">'+
       '<div class="userhead"><div><div style="display:flex;align-items:center;gap:2px;flex-wrap:wrap"><div class="email">'+esc(displayName)+'</div>'+noteBadge+'</div><div class="meta" style="margin-top:3px">工作台 · '+esc(a.workspace_title||"尚未设置")+'</div><div class="meta" style="margin-top:2px">'+esc(a.email||"无邮箱")+'</div><div class="uid">UUID · '+esc(a.user_id)+'</div></div><div class="tags"><span class="tag">'+esc(role)+'</span><span class="tag '+statusClass+'">'+status+'</span></div></div>'+
       '<div class="usergrid">'+
@@ -539,8 +535,8 @@ function syncInviteForm(){
   $("inviteMaxUses").disabled=$("inviteMode").value!=="multi";
 }
 async function createInvite(){
-  const purpose=$("invitePurpose").value;
-  const duration=$("inviteDuration").value;
+  const purpose="signup";
+  const duration="7";
   const mode=$("inviteMode").value;
   const maxUses=mode==="multi"?Number($("inviteMaxUses").value||0):1;
   if(mode==="multi"&&maxUses<1){toast("填写最多使用次数");return}
@@ -554,7 +550,7 @@ async function createInvite(){
     p_max_uses:maxUses,
     p_label:$("inviteLabel").value.trim()||null,
     p_expires_at:expiresRaw?new Date(expiresRaw).toISOString():null,
-    p_renewal_edition:purpose==="renewal"?$("inviteRenewalEdition").value:null
+    p_renewal_edition:null
   };
   $("createInviteBtn").disabled=true;
   const {data,error}=await supabase.rpc("admin_create_invite",args);
